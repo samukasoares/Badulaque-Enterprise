@@ -1,30 +1,32 @@
 <template>
-<SidebarMenu/>
+  <div :style="{ display: 'flex' }">
+    <SidebarMenu />
+    <div :style="{ marginLeft: sidebarWidth, padding: '20px', width: '100%' }">
+      <router-view />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent} from 'vue';
-import SidebarMenu  from './components/SidebarMenu.vue'
+import { defineComponent } from 'vue';
+import SidebarMenu from './components/sidebar/SidebarMenu.vue'
+import { sidebarWidth } from '@/components/sidebar/state'
 
 export default defineComponent({
   name: 'App',
-  components: {SidebarMenu},
+  components: { SidebarMenu },
   data() {
-    return {
-      name: 'Link',
-      age: 25
-    }
-  }, 
+    return {}
+  },
 
-  methods:{
-    changeName(name: string){
-      this.name =name 
-      return name
-    }
+  setup() {
+    return { sidebarWidth }
+  },
+
+  methods: {
   }
-});
+}
+);
 </script>
 
-<style>
-
-</style>
+<style></style>
