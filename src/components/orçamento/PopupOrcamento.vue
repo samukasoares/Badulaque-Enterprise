@@ -5,15 +5,15 @@
                 <div class="form-column">
                     <h4>Cliente</h4><br>
                     <label>Nome:</label>
-                    <input type="text" required>
+                    <input type="text" v-model="nome" required>
                     <label>Telefone:</label>
-                    <input type="tel" required>
+                    <input type="tel" v-model="telefone" required>
                     <label>Cidade:</label>
-                    <input type="text" required>
+                    <input type="text" v-model="cidade" required>
                     <label>Email:</label>
-                    <input type="email" required>
+                    <input type="email" v-model="email" required>
                     <label>Fonte:</label>
-                    <select required>
+                    <select v-model="fonte" required>
                         <option value="">Selecione</option>
                         <option value="internet">Internet</option>
                         <option value="amigos">Amigos</option>
@@ -23,25 +23,25 @@
                 <div class="form-column">
                     <h4>Orçamento</h4><br>
                     <label>Tipo de Evento:</label>
-                    <select required>
+                    <select v-model="tipoEvento" required>
                         <option value="">Selecione</option>
                         <option value="casamento">Casamento</option>
                         <option value="aniversario">Aniversário</option>
                         <option value="corporativo">Corporativo</option>
                     </select>
                     <label>Convidados:</label>
-                    <input type="number" required>
+                    <input type="number" v-model="convidados" required>
                     <label>Data:</label>
-                    <input type="date" required>
+                    <input type="date" v-model="data" required>
                     <label>Cardápio:</label>
-                    <select required>
+                    <select v-model="cardapio" required>
                         <option value="">Selecione</option>
                         <option value="vegetariano">Vegetariano</option>
                         <option value="churrasco">Churrasco</option>
                         <option value="buffet">Buffet</option>
                     </select>
                     <label>Cerveja:</label>
-                    <select required>
+                    <select v-model="cerveja" required>
                         <option value="">Selecione</option>
                         <option value="lager">Lager</option>
                         <option value="ipa">IPA</option>
@@ -50,7 +50,7 @@
                     <label class="checkbox-bar-label">
                         <input type="checkbox" v-model="barEnabled"> Bar
                     </label>
-                    <select :disabled="!barEnabled" required>
+                    <select v-model="bar" :disabled="!barEnabled" required>
                         <option value="">Selecione</option>
                         <option value="completo">Completo</option>
                         <option value="basico">Básico</option>
@@ -59,28 +59,46 @@
                 </div>
                 <div class="form-column checkboxes-column">
                     <label class="checkbox-label">
-                        <input type="checkbox"> Cerimônia
+                        <input type="checkbox" v-model="cerimonia"> Cerimônia
                     </label>
                     <label class="checkbox-label">
-                        <input type="checkbox"> Espaço da Noiva
+                        <input type="checkbox" v-model="espacoNoiva"> Espaço da Noiva
                     </label>
                     <label class="checkbox-label">
-                        <input type="checkbox"> Cabine de Fotos
+                        <input type="checkbox" v-model="cabineFotos"> Cabine de Fotos
                     </label>
                 </div>
             </div>
             <label>Observações</label>
-            <input type="text">
+            <input type="text" v-model="observacoes">
             <button type="submit" class="submit-button">Enviar</button>
         </form>
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: 'PopupOrcamento',
     data() {
         return {
-            barEnabled: false
+            nome: '',
+            telefone: '',
+            cidade: '',
+            email: '',
+            fonte: '',
+            tipoEvento: '',
+            convidados: '',
+            data: '',
+            cardapio: '',
+            cerveja: '',
+            barEnabled: false,
+            bar: '',
+            cerimonia: false,
+            espacoNoiva: false,
+            cabineFotos: false,
+            observacoes: ''
         };
     },
     methods: {
@@ -88,10 +106,28 @@ export default {
             this.$emit('close');
         },
         submitForm() {
+            // Lógica para submissão do formulário
+            console.log({
+                nome: this.nome,
+                telefone: this.telefone,
+                cidade: this.cidade,
+                email: this.email,
+                fonte: this.fonte,
+                tipoEvento: this.tipoEvento,
+                convidados: this.convidados,
+                data: this.data,
+                cardapio: this.cardapio,
+                cerveja: this.cerveja,
+                bar: this.barEnabled ? this.bar : 'Não selecionado',
+                cerimonia: this.cerimonia,
+                espacoNoiva: this.espacoNoiva,
+                cabineFotos: this.cabineFotos,
+                observacoes: this.observacoes
+            });
             this.close();
         }
     }
-}
+});
 </script>
 
 <style scoped>
