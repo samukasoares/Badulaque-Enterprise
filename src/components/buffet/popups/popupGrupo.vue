@@ -1,11 +1,9 @@
 <template>
     <div class="backdrop" @click.self="close">
         <form>
-            <h4>Criar Cardápio</h4><br>
+            <h4>Criar Grupo</h4><br>
             <label>Nome:</label>
             <input type="text" required>
-            <label>Preço:</label>
-            <input type="number" required>
             <button type="submit" class="submit-button">Criar</button>
         </form>
     </div>

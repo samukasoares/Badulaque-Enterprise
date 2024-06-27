@@ -5,6 +5,7 @@ import Cliente from '@/components/cliente/TelaCliente.vue'
 import Buffet from '@/components/buffet/TelaBuffet.vue'
 import Bardulaque from '@/components/bardulaque/TelaBardulaque.vue'
 import Relatorios from '@/components/relatorios/TelaRelatorios.vue'
+import Contrato from '@/components/contrato/TelaContrato.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -35,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/relatorios',
     name: 'relatorios',
     component: Relatorios
+  },
+  {
+    path: '/contratos',
+    name: 'contratos',
+    component: Contrato
   },
 ]
 

@@ -1,6 +1,6 @@
 <template>
     <div class="barraOpcoes">
-        <button>Novo</button>
+        <button @click="showModal = true">Novo</button>
         <div class="group">
             <label>Visualizando:</label>
             <select v-model="opcoes">
@@ -19,14 +19,38 @@
             <label>Nome do {{ opcoes }}</label>
         </div>
     </div>
+
+    <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" />
+
 </template>
+
+
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import popupCardapio from './popups/popupCardapio.vue';
+import popupGrupo from './popups/popupGrupo.vue'
+import popupItem from './popups/popupItem.vue'
+
 export default defineComponent({
     data() {
         return {
-            opcoes: ''
+            opcoes: '',
+            showModal: false
+        }
+    },
+    components: { popupCardapio, popupGrupo, popupItem },
+    computed: {
+        getPopupComponent() {
+            if (this.opcoes === 'Cardápios') {
+                return 'popupCardapio';
+            } else if (this.opcoes === 'Grupos') {
+                return 'popupGrupo';
+            } else if (this.opcoes === 'Itens') {
+                return 'popupItem';
+            } else {
+                return null;
+            }
         }
     }
 })
