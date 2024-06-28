@@ -25,6 +25,7 @@ export default {
         <div class="links-container">
             <SidebarLink to="/" icon="fas fa-home">Home</SidebarLink>
             <SidebarLink to="/orcamentos" icon="fa-solid fa-file-invoice-dollar">Orçamentos</SidebarLink>
+            <SidebarLink to="/contratos" icon="fa-solid fa-file-signature">Contratos</SidebarLink>
             <SidebarLink to="/clientes" icon="fa-solid fa-user-group">Clientes</SidebarLink>
             <SidebarLink to="/buffet" icon="fa-solid fa-utensils">Buffet</SidebarLink>
             <SidebarLink to="/bardulaque" icon="fa-solid fa-martini-glass">Bardulaque</SidebarLink>
@@ -57,6 +58,8 @@ export default {
     transition: 0.3s ease;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    /* Drop shadow */
 }
 
 .logo-container {

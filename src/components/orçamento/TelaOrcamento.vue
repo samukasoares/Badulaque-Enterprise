@@ -16,7 +16,7 @@
 
     <table>
         <tr>
-            <th style="width: 10%;">Código</th>
+            <th style="width: 10%;">Referência</th>
             <th style="width: 20%;">Cliente</th>
             <th style="width: 20%;">Contato</th>
             <th style="width: 10%;">Tipo</th>
@@ -102,7 +102,6 @@ td:last-child {
     border-radius: 5px;
     width: 100%;
     margin-bottom: 10px;
-    height: 30px;
     align-items: center;
     justify-content: space-between;
 }
@@ -121,14 +120,6 @@ td:last-child {
 
 .barraOpcoes button:hover {
     background-color: #2F4036;
-}
-
-.barraOpcoes select,
-.barraOpcoes input {
-    border-radius: 5px;
-    padding: 10px;
-    border: none;
-    font-family: MontSerrat;
 }
 
 .barraOpcoes select {
