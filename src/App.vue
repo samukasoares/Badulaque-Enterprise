@@ -29,24 +29,4 @@ export default defineComponent({
 );
 </script>
 
-<style>
-input,
-select {
-  border-radius: 5px;
-  padding: 10px;
-  border: none;
-  font-family: MontSerrat;
-}
-
-input:focus {
-  outline: none;
-  border-color: #2F4036;
-  box-shadow: 0 0 10px #2F4036;
-}
-
-select:focus {
-  outline: none;
-  border-color: #2F4036;
-  box-shadow: 0 0 10px #2F4036;
-}
-</style>
+<style></style>

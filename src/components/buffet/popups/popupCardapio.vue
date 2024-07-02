@@ -3,24 +3,41 @@
         <form>
             <h4>Criar Cardápio</h4><br>
             <label>Nome:</label>
-            <input type="text" required>
+            <input type="text" required class="especial">
             <label>Preço:</label>
-            <input type="number" required>
+            <input type="number" required class="especial">
+            <label>Itens:</label>
+            <VueMultiselect v-model="value" :options="options" :multiple="true" :close-on-select="false"
+                :clear-on-select="false" :preserve-search="true" placeholder="Escolha os itens..." label="name"
+                track-by="name" :preselect-first="false"></VueMultiselect>
             <button type="submit" class="submit-button">Criar</button>
+
         </form>
+
     </div>
 
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import VueMultiselect from 'vue-multiselect'
 
 export default defineComponent({
     name: 'PopupOrcamento',
+    components: { VueMultiselect },
     data() {
         return {
+            value: null,
 
-        };
+            options: [
+                { name: 'Vue.js', language: 'JavaScript' },
+                { name: 'Rails', language: 'Ruby' },
+                { name: 'Sinatra', language: 'Ruby' },
+                { name: 'Laravel', language: 'PHP' },
+                { name: 'Phoenix', language: 'Elixir' },
+            ]
+        }
+
     },
     methods: {
         close() {
@@ -30,6 +47,8 @@ export default defineComponent({
 }
 );
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
 <style scoped>
 form {
@@ -101,5 +120,15 @@ h4 {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: bold;
+}
+
+input:focus {
+    outline: none;
+}
+
+.especial:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
 }
 </style>
