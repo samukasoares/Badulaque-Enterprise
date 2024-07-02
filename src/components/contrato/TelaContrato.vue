@@ -4,7 +4,7 @@
             <label>Status:</label>
             <select>
                 <option>Ativo</option>
-                <option>Anterior</option>
+                <option>Realizado</option>
             </select>
         </div>
         <input type="text" placeholder="Pesquisar Contratos...">
@@ -60,5 +60,25 @@
     justify-content: space-between;
     align-items: center;
     gap: 5px;
+}
+
+input,
+select {
+    border-radius: 5px;
+    padding: 10px;
+    border: none;
+    font-family: MontSerrat;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
+}
+
+select:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
 }
 </style>
