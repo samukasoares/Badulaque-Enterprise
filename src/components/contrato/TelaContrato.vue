@@ -1,5 +1,6 @@
 <template>
     <div class="barraOpcoes">
+        <button>Novo Contrato</button>
         <div class="group">
             <label>Status:</label>
             <select>
@@ -40,6 +41,7 @@
             <th style="width: 20%;">Cliente</th>
             <th style="width: 20%;">Contato</th>
             <th style="width: 10%;">Tipo</th>
+            <th style="width: 10%;">Convidados</th>
             <th style="width: 10%;">Cardápio</th>
             <th style="width: 10%;">Total Contrato</th>
         </tr>
@@ -48,6 +50,7 @@
             <td>Samuel & Bruna</td>
             <td>(19)99710-4251</td>
             <td>Casamento</td>
+            <td>150</td>
             <td>Prata</td>
             <td>R$36.230,00</td>
         </tr>
