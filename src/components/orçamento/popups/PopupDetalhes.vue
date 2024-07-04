@@ -101,7 +101,7 @@
                 </div>
             </div>
             <div class="formgroup">
-                <button>Visualizar Orçamento</button>
+                <button @click="openInNewTab">Visualizar Orcamento</button>
                 <button>Visualizar Detalhado</button>
             </div>
 
@@ -112,9 +112,16 @@
 
 <script>
 import { defineComponent } from 'vue';
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
     methods: {
+        openInNewTab() {
+            // Resolve the route to get the full URL by route name
+            const route = this.$router.resolve({ name: 'detalhes-orcamento' });
+            const url = route.href;
+            window.open(url, '_blank');
+        },
         close() {
             this.$emit('close');
         },
