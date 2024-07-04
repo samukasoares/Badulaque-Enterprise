@@ -1,6 +1,6 @@
 <template>
   <div :style="{ display: 'flex' }">
-    <SidebarMenu />
+    <SidebarMenu v-if="showSidebar" />
     <div :style="{ marginLeft: sidebarWidth, padding: '20px', width: '100%' }">
       <router-view />
     </div>
@@ -8,25 +8,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import SidebarMenu from './components/sidebar/SidebarMenu.vue'
-import { sidebarWidth } from '@/components/sidebar/state'
+import { defineComponent, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import SidebarMenu from './components/sidebar/SidebarMenu.vue';
+import { sidebarWidth } from '@/components/sidebar/state';
 
 export default defineComponent({
   name: 'App',
   components: { SidebarMenu },
-  data() {
-    return {}
-  },
 
   setup() {
-    return { sidebarWidth }
-  },
+    const route = useRoute();
+    const showSidebar = computed(() => route.name !== 'login');
 
-  methods: {
+
+    return { sidebarWidth, showSidebar };
   }
-}
-);
+});
 </script>
 
 <style></style>

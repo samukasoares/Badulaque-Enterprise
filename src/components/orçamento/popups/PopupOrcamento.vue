@@ -15,9 +15,10 @@
                     <label>Fonte:</label>
                     <select v-model="fonte" required>
                         <option value="">Selecione</option>
-                        <option value="internet">Internet</option>
-                        <option value="amigos">Amigos</option>
-                        <option value="tv">TV</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="google">Google</option>
+                        <option value="site">Site</option>
+                        <option value="indicacao">Indicação</option>
                     </select>
                 </div>
                 <div class="form-column">
@@ -27,12 +28,16 @@
                         <option value="">Selecione</option>
                         <option value="casamento">Casamento</option>
                         <option value="aniversario">Aniversário</option>
-                        <option value="corporativo">Corporativo</option>
+                        <option value="corporativo">Empresa</option>
+                        <option value="bodas">Bodas</option>
+                        <option value="15anos">15 Anos</option>
                     </select>
                     <label>Convidados:</label>
                     <input type="number" v-model="convidados" required>
                     <label>Data:</label>
                     <input type="date" v-model="data" required>
+                    <label>Dia da Semana:</label>
+                    <input disabled type="text" v-model="diadasemana" required>
                     <label>Cardápio:</label>
                     <select v-model="cardapio" required>
                         <option value="">Selecione</option>
@@ -89,6 +94,7 @@ export default defineComponent({
             email: '',
             fonte: '',
             tipoEvento: '',
+            diadasemana: '',
             convidados: '',
             data: '',
             cardapio: '',
@@ -125,6 +131,20 @@ export default defineComponent({
                 observacoes: this.observacoes
             });
             this.close();
+        },
+        calcularDiaDaSemana(dataString: string) {
+            const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const data = new Date(dataString + 'T00:00:00');
+            return diasDaSemana[data.getUTCDay()];
+        }
+    },
+    watch: {
+        data(newValue) {
+            if (newValue) {
+                this.diadasemana = this.calcularDiaDaSemana(newValue);
+            } else {
+                this.diadasemana = '';
+            }
         }
     }
 });

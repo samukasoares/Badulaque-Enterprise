@@ -7,11 +7,12 @@ import Bardulaque from '@/components/bardulaque/TelaBardulaque.vue'
 import Relatorios from '@/components/relatorios/TelaRelatorios.vue'
 import Contrato from '@/components/contrato/TelaContrato.vue'
 import DetalhesOrcamento from '@/components/orçamento/DetalhesOrcamento.vue'
+import Login from '@/components/login/TelaLogin.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: '',
-    component: HomePage
+    name: 'login',
+    component: Login
   },
   {
     path: '/orcamentos',
@@ -51,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(process.env.BASE_URL),
+  history: createWebHashHistory(),
   routes
 })
 

@@ -2,7 +2,6 @@
 
     <div class="barraOpcoes">
         <button @click="showModal = true">Novo Orçamento</button>
-        <i class="fa-solid fa-handshake action-icon"></i>
         <div class="group">
             <label>Status:</label>
             <select>
@@ -23,6 +22,7 @@
                 <th style="width: 10%;">Tipo</th>
                 <th style="width: 10%;">Data de Criação</th>
                 <th style="width: 10%;">Data de Envio</th>
+                <th style="width: 10%;">Status</th>
                 <th style="width: 5%;">Enviar</th>
                 <th style="width: 5%;">Editar</th>
             </tr>
@@ -36,21 +36,24 @@
                 <td>{{ registro.tipo }}</td>
                 <td>{{ registro.dataCriacao }}</td>
                 <td>{{ registro.dataEnvio }}</td>
+                <td>{{ registro.status }}</td>
                 <td><i class="fa-solid fa-share action-icon"></i></td>
-                <td><i class="fa-solid fa-edit action-icon"></i></td>
+                <td @click="handleEditClick(registro, index)"><i class="fa-solid fa-edit action-icon"></i></td>
             </tr>
         </tbody>
     </table>
 
     <PopupOrcamento v-if="showModal" @close="showModal = false" />
     <PopupDetalhes v-if="showDetailModal" @close="closeDetailModal()" :registro="registroSelecionado" />
+    <PopupEditarOrcamento v-if="showEditModal" @close="closeEditModal()" :registro="registroSelecionado" />
 
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import PopupOrcamento from '@/components/orçamento/PopupOrcamento.vue';
-import PopupDetalhes from '@/components/orçamento/PopupDetalhes.vue'
+import PopupOrcamento from '@/components/orçamento/popups/PopupOrcamento.vue';
+import PopupDetalhes from '@/components/orçamento/popups/PopupDetalhes.vue';
+import PopupEditarOrcamento from '@/components/orçamento/popups/PopupEditarOrcamento.vue'
 
 interface Registro {
     id: number;
@@ -60,15 +63,17 @@ interface Registro {
     tipo: string;
     dataCriacao: string;
     dataEnvio: string;
+    status: string;
 }
 
 
 export default defineComponent({
-    components: { PopupOrcamento, PopupDetalhes },
+    components: { PopupOrcamento, PopupDetalhes, PopupEditarOrcamento },
     data() {
         return {
             showModal: false,
             showDetailModal: false,
+            showEditModal: false,
             selectedRow: null as number | null,
             registroSelecionado: null as Registro | null,
             searchQuery: '',
@@ -80,16 +85,18 @@ export default defineComponent({
                     contato: '(19)99710-4251',
                     tipo: 'Casamento',
                     dataCriacao: '25/06/24 17:46',
-                    dataEnvio: '25/06/24 17:54'
+                    dataEnvio: '25/06/24 17:54',
+                    status: 'Orçamento',
                 },
                 {
                     id: 2,
                     referencia: 'C251108',
-                    cliente: 'Pedro & Karol;',
+                    cliente: 'Pedro & Karol',
                     contato: '(19)99710-3211',
                     tipo: 'Casamento',
                     dataCriacao: '21/06/24 17:59',
-                    dataEnvio: '25/06/24 19:30'
+                    dataEnvio: '25/06/24 19:30',
+                    status: 'Descartado',
                 },
                 // Adicione mais registros conforme necessário
             ] as Registro[],
@@ -105,8 +112,17 @@ export default defineComponent({
             this.registroSelecionado = registro;
             this.showDetailModal = true;
         },
+        handleEditClick(registro: Registro, index: number) {
+            this.selectedRow = index;
+            this.registroSelecionado = registro;
+            this.showEditModal = true;
+        },
         closeDetailModal() {
             this.showDetailModal = false;
+            this.selectedRow = null;
+        },
+        closeEditModal() {
+            this.showEditModal = false;
             this.selectedRow = null;
         },
         filterRegistros() {
