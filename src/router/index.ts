@@ -6,6 +6,7 @@ import Buffet from '@/components/buffet/TelaBuffet.vue'
 import Bardulaque from '@/components/bardulaque/TelaBardulaque.vue'
 import Relatorios from '@/components/relatorios/TelaRelatorios.vue'
 import Contrato from '@/components/contrato/TelaContrato.vue'
+import DetalhesOrcamento from '@/components/orçamento/DetalhesOrcamento.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -41,6 +42,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/contratos',
     name: 'contratos',
     component: Contrato
+  },
+  {
+    path: '/detalhes-orcamento',
+    name: 'detalhes-orcamento',
+    component: DetalhesOrcamento
   },
 ]
 

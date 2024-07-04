@@ -18,7 +18,7 @@
             <p class="segunda-linha"><span style="color: var(--verde-escuro); font-weight:bold">Data:</span> sábado, 1 de novembro de 2025</p>
             <p class="segunda-linha"><span style="color: var(--verde-escuro); font-weight:bold">Cerimônia:</span></p>
         </div>
-        <div class="inclusos-orçamento">
+        <div class="inclusos-orcamento">
             <h3 class="background">ESTRUTURA E SERVIÇOS INCLUSOS NO ORÇAMENTO</h3>
             <ul>
             <li>Salão com capacidade para 250 pessoas podendo variar conforme o projeto de montagem</li>
@@ -117,5 +117,6 @@ export default {
 .dados-evento, .inclusos-orcamento, .servico-buffet, .outros-cardapios, .valores, .forma-pagamento {
     color:var(--verde-claro);
     font-size: var(--fonte-primaria);
+    font-family: 'Times New Roman', Times, serif;
 }
 </style>
