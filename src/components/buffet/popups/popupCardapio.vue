@@ -3,14 +3,14 @@
         <form>
             <h4>Criar Cardápio</h4><br>
             <label>Nome:</label>
-            <input type="text" required class="especial">
+            <input type="text" required class="especial" v-model="nomeCardapio">
             <label>Preço:</label>
-            <input type="number" required class="especial">
+            <input type="number" required class="especial" v-model=precoCardapio>
             <label>Itens:</label>
-            <VueMultiselect v-model="value" :options="options" :multiple="true" :close-on-select="false"
-                :clear-on-select="false" :preserve-search="true" placeholder="Escolha os itens..." label="name"
-                track-by="name" :preselect-first="false"></VueMultiselect>
-            <button type="submit" class="submit-button">Criar</button>
+            <VueMultiselect v-model="items" :options="options" :multiple="true" :close-on-select="false"
+                :clear-on-select="false" :preserve-search="true" placeholder="Escolha os itens..." label="nomeItem"
+                track-by="idItem" :preselect-first="false"></VueMultiselect>
+            <button type="submit" class="submit-button" @click="criarCardapio">Criar</button>
 
         </form>
 
@@ -19,30 +19,52 @@
 </template>
 
 <script lang="ts">
+import instance from '@/common/utils/AuthService';
+import { Item } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 import VueMultiselect from 'vue-multiselect'
+
 
 export default defineComponent({
     name: 'PopupOrcamento',
     components: { VueMultiselect },
     data() {
         return {
-            value: null,
-
-            options: [
-                { name: 'Vue.js', language: 'JavaScript' },
-                { name: 'Rails', language: 'Ruby' },
-                { name: 'Sinatra', language: 'Ruby' },
-                { name: 'Laravel', language: 'PHP' },
-                { name: 'Phoenix', language: 'Elixir' },
-            ]
+            options: [] as Item[],
+            nomeCardapio: '',
+            precoCardapio: '',
+            items: [] as Item[]
         }
-
     },
     methods: {
         close() {
             this.$emit('close');
         },
+        async fetchItens() {
+            try {
+                let response = await instance.get<Item[]>('/buffet/itens');
+                this.options = response.data
+            } catch (error) {
+                console.error('Erro ao buscar itens:', error);
+            }
+        },
+        async criarCardapio() {
+            try {
+                const selectedIds = this.items.map(item => item.idItem);
+                console.log(selectedIds)
+                const data = await instance.post('/buffet/criar-cardapio', {
+                    nomeCardapio: this.nomeCardapio,
+                    precoCardapio: this.precoCardapio,
+                    items: selectedIds
+                });
+                window.location.reload()
+            } catch (error) {
+                alert('Erro ao criar cardápio!')
+            }
+        }
+    },
+    mounted() {
+        this.fetchItens();
     }
 }
 );

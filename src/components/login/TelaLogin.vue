@@ -4,11 +4,51 @@
             <img :src="require('@/assets/logos/MenuFullVerde.png')" alt="Menu Full" width="150px">
         </caption>
         <label>Entrar</label>
-        <input type="text" placeholder="Email" name="email" id="email">
-        <input type="password" placeholder="Senha" name="password" id="password">
-        <button class="btn-Enviar">Entrar</button>
+        <input type="text" placeholder="Email" name="email" id="email" v-model="email">
+        <input type="password" placeholder="Senha" name="password" id="password" v-model="password">
+        <button class="btn-Enviar" @click="loginUser()">Entrar</button>
+        <button @click="logoutUser()">Logout</button>
     </form>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import axios, { AxiosError } from 'axios';
+import instance from '../../common/utils/AuthService'
+
+export default defineComponent({
+    data() {
+        return {
+            email: '',
+            password: ''
+        }
+    },
+    components: {},
+    methods: {
+        async loginUser() {
+            try {
+                const response = await axios.post('http://localhost:3001/login', {
+                    email: this.email,
+                    senha: this.password,
+                });
+                const token = response.data.token;
+                localStorage.setItem('token', token); // ou outra forma de armazenamento de token
+                // Agora o token está armazenado e será usado em todas as requisições subsequentes
+                console.log(token)
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+            }
+        },
+        async logoutUser() {
+
+            const response = await instance.post('/logout');
+            localStorage.removeItem('token');
+            console.log(response.data)
+            if (response instanceof AxiosError) console.log(response.response?.data)
+        }
+    }
+})
+</script>
 
 <style scoped>
 caption {
