@@ -4,10 +4,15 @@
 export interface Item {
     idItem: number;
     nomeItem: string;
-    tipo: string;
-    preco: number;
-    Grupo_idGrupo: number;
+    unidade: string;
     baseReceita: number;
+    consumoPorPessoa: number;
+    Grupo_idGrupo: number;
+}
+
+export interface GroupedItem {
+    grupo: string;
+    itens: Item[];
 }
 
 export interface Cardapio {
