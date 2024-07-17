@@ -1,73 +1,98 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <form>
-            <h4>Criar Cardápio</h4><br>
-            <label>Nome:</label>
-            <input type="text" required class="especial" v-model="nomeCardapio">
-            <label>Preço:</label>
-            <input type="number" required class="especial" v-model=precoCardapio>
-            <label>Itens:</label>
-            <VueMultiselect v-model="items" :options="options" :multiple="true" :close-on-select="false"
-                :clear-on-select="false" :preserve-search="true" placeholder="Escolha os itens..." label="nomeItem"
-                track-by="idItem" :preselect-first="false"></VueMultiselect>
-            <button type="submit" class="submit-button" @click="criarCardapio">Criar</button>
+        <form :class="{ 'with-dynamic-items': filteredGroups.length > 0 }">
+            <h4>Criar Cardápio</h4>
+            <div class="form-columns">
+                <div class="form-column">
+                    <label>Nome:</label>
+                    <input type="text" required class="especial" v-model="nomeCardapio">
+                    <label>Preço:</label>
+                    <input type="number" required class="especial" v-model="precoCardapio">
 
+                    <label>Tipo:</label>
+                    <VueMultiselect v-model="tipoCardapio" :options="opcTipoCardapio" :multiple="false"
+                        :close-on-select="true" :show-labels="false" :preselect-first="true"></VueMultiselect>
+
+                    <label>Itens:</label>
+                    <VueMultiselect v-model="items" :options="itensAgrupados" :multiple="true" :close-on-select="false"
+                        group-values='itens' group-label='grupo' :group-select="true" :show-labels="false"
+                        :preserve-search="true" placeholder="Escolha os itens..." label="name" track-by="id"
+                        :preselect-first="false" :max-height="250"></VueMultiselect>
+                </div>
+
+                <!-- Seção Dinâmica -->
+                <div v-if="filteredGroups.length > 0" class="form-column">
+                    <div v-for="group in filteredGroups" :key="group.grupo">
+                        <label>{{ group.grupo }}</label>
+                        <input type="text" v-model="inputValues[group.grupo]"
+                            placeholder="Quantidade que pode escolher...">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button" @click.prevent="criarCardapio">Criar</button>
         </form>
-
     </div>
-
 </template>
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { Item } from '@/common/utils/Interfaces';
+import { GroupedItem, Item } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
-import VueMultiselect from 'vue-multiselect'
-
+import VueMultiselect from 'vue-multiselect';
 
 export default defineComponent({
     name: 'PopupOrcamento',
     components: { VueMultiselect },
     data() {
         return {
-            options: [] as Item[],
             nomeCardapio: '',
             precoCardapio: '',
-            items: [] as Item[]
-        }
+            tipoCardapio: '',
+            items: [] as Item[],
+            itensAgrupados: [] as GroupedItem[],
+            opcTipoCardapio: ['Padrão', 'Personalizado'],
+            inputValues: {} as Record<string, string>, // Para armazenar os valores dos inputs dinâmicos
+        };
     },
     methods: {
         close() {
             this.$emit('close');
         },
-        async fetchItens() {
+        async fetchItensAgrupados() {
             try {
-                let response = await instance.get<Item[]>('/buffet/itens');
-                this.options = response.data
+                let response = await instance.get<GroupedItem[]>('/buffet/itensAgrupados');
+                this.itensAgrupados = response.data;
+
+                // Inicializa inputValues com os grupos
+                this.itensAgrupados.forEach(group => {
+                    this.inputValues[group.grupo] = '';
+                });
+
             } catch (error) {
-                console.error('Erro ao buscar itens:', error);
+                console.error('Erro ao achar itens agrupados:', error);
             }
         },
         async criarCardapio() {
             try {
-                const selectedIds = this.items.map(item => item.idItem);
-                console.log(selectedIds)
-                const data = await instance.post('/buffet/criar-cardapio', {
-                    nomeCardapio: this.nomeCardapio,
-                    precoCardapio: this.precoCardapio,
-                    items: selectedIds
-                });
-                window.location.reload()
+                console.log(this.items);
+                console.log(this.inputValues); // Log dos valores dinâmicos
             } catch (error) {
-                alert('Erro ao criar cardápio!')
+                alert('Erro ao criar cardápio!');
             }
         }
     },
     mounted() {
-        this.fetchItens();
-    }
-}
-);
+        this.fetchItensAgrupados();
+    },
+    computed: {
+        filteredGroups(): GroupedItem[] {
+            return this.itensAgrupados.filter((group: GroupedItem) => {
+                return this.items.some((item: Item) => item.Grupo_idGrupo === group.itens[0].Grupo_idGrupo);
+            });
+        },
+    },
+});
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
@@ -75,6 +100,7 @@ export default defineComponent({
 <style scoped>
 form {
     max-width: 400px;
+    /* Largura padrão */
     margin: 30px auto;
     background: white;
     text-align: left;
@@ -82,7 +108,27 @@ form {
     border-radius: 10px;
     position: relative;
     z-index: 2;
-    /* Garanta que o formulário esteja acima do backdrop */
+    display: flex;
+    flex-direction: column;
+}
+
+form.with-dynamic-items {
+    max-width: 800px;
+    /* Aumentar largura quando houver itens dinâmicos */
+}
+
+.form-columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-column {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.form-column:last-child {
+    margin-right: 0;
 }
 
 label {

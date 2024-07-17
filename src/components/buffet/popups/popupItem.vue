@@ -4,12 +4,16 @@
             <h4>Criar Item</h4><br>
             <label>Nome:</label>
             <input type="text" required v-model="nome">
+            <label>Unidade:</label>
+            <select v-model="unidade">
+                <option>Gramas</option>
+                <option>Litros</option>
+                <option>Unidades</option>
+            </select>
+            <label>Consumo Por Pessoa:</label>
+            <input type="number" required v-model="consumoPorPessoa">
             <label>Base Receita:</label>
             <input type="number" required v-model="baseReceita">
-            <label>Preço:</label>
-            <input type="number" required v-model="preco">
-            <label>Tipo:</label>
-            <input type="text" required v-model="tipo">
             <label>Grupo:</label>
             <select v-model="grupo">
                 <option v-for="grupo in grupos" :key="grupo.idGrupo" :value="grupo.idGrupo">{{ grupo.nomeGrupo }}
@@ -35,9 +39,9 @@ export default defineComponent({
         return {
             grupos: [] as Grupo[],
             nome: '',
+            unidade: '',
             baseReceita: '',
-            preco: '',
-            tipo: '',
+            consumoPorPessoa: '',
             grupo: '' as number | string
         };
     },
@@ -57,9 +61,9 @@ export default defineComponent({
             try {
                 const data = await instance.post('/buffet/criar-item', {
                     nomeItem: this.nome,
+                    unidade: this.unidade,
                     baseReceita: this.baseReceita,
-                    preco: this.preco,
-                    tipo: this.tipo,
+                    consumoPorPessoa: this.consumoPorPessoa,
                     Grupo_idGrupo: this.grupo
                 });
                 window.location.reload()
