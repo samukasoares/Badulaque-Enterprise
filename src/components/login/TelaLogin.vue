@@ -7,7 +7,6 @@
         <input type="text" placeholder="Email" name="email" id="email" v-model="email">
         <input type="password" placeholder="Senha" name="password" id="password" v-model="password">
         <button class="btn-Enviar" @click="loginUser()">Entrar</button>
-        <button @click="logoutUser()">Logout</button>
     </form>
 </template>
 

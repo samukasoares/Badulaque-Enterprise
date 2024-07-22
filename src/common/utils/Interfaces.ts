@@ -26,4 +26,24 @@ export interface Grupo {
     idGrupo: number;
 }
 
+// Registro Cardapio
+ 
+export interface CardapioGrupos {
+    idGrupo: number;
+    qtdItens: number;
+}
+
+export interface RegistroCardapio {
+    nomeCardapio: string,
+    precoCardapio: number,
+    tipo: string,
+    items: number[],
+    grupos: CardapioGrupos[],
+}
+
+
 // Fim interfaces Buffet
+
+export interface Card {
+    name: string;
+}

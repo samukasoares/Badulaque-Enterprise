@@ -16,7 +16,7 @@
                     <label>Itens:</label>
                     <VueMultiselect v-model="items" :options="itensAgrupados" :multiple="true" :close-on-select="false"
                         group-values='itens' group-label='grupo' :group-select="true" :show-labels="false"
-                        :preserve-search="true" placeholder="Escolha os itens..." label="name" track-by="id"
+                        :preserve-search="true" placeholder="Escolha os itens..." label="name" track-by="idItem"
                         :preselect-first="false" :max-height="250"></VueMultiselect>
                 </div>
 
@@ -24,7 +24,7 @@
                 <div v-if="filteredGroups.length > 0" class="form-column">
                     <div v-for="group in filteredGroups" :key="group.grupo">
                         <label>{{ group.grupo }}</label>
-                        <input type="text" v-model="inputValues[group.grupo]"
+                        <input type="number" v-model="inputValues[group.grupo]"
                             placeholder="Quantidade que pode escolher...">
                     </div>
                 </div>
@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { GroupedItem, Item } from '@/common/utils/Interfaces';
+import { CardapioGrupos, GroupedItem, Item, RegistroCardapio } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 import VueMultiselect from 'vue-multiselect';
 
@@ -47,12 +47,17 @@ export default defineComponent({
     data() {
         return {
             nomeCardapio: '',
-            precoCardapio: '',
+            precoCardapio: 0,
             tipoCardapio: '',
-            items: [] as Item[],
-            itensAgrupados: [] as GroupedItem[],
             opcTipoCardapio: ['Padrão', 'Personalizado'],
+
+            cardapioGrupos: [] as CardapioGrupos[],
+            selectedItemsIds: [] as number[],
+
+            items: [] as Item[],
             inputValues: {} as Record<string, string>, // Para armazenar os valores dos inputs dinâmicos
+            itensAgrupados: [] as GroupedItem[],
+
         };
     },
     methods: {
@@ -64,10 +69,6 @@ export default defineComponent({
                 let response = await instance.get<GroupedItem[]>('/buffet/itensAgrupados');
                 this.itensAgrupados = response.data;
 
-                // Inicializa inputValues com os grupos
-                this.itensAgrupados.forEach(group => {
-                    this.inputValues[group.grupo] = '';
-                });
 
             } catch (error) {
                 console.error('Erro ao achar itens agrupados:', error);
@@ -75,8 +76,32 @@ export default defineComponent({
         },
         async criarCardapio() {
             try {
-                console.log(this.items);
-                console.log(this.inputValues); // Log dos valores dinâmicos
+
+                // Construir o array de IDs dos itens selecionados
+                this.selectedItemsIds = this.items.map((item: Item) => item.idItem);
+
+                // Construi o array de CardapioGrupos
+                this.cardapioGrupos = this.filteredGroups.map(group => {
+                    return {
+                        idGrupo: group.itens[0].Grupo_idGrupo,
+                        qtdItens: parseInt(this.inputValues[group.grupo] || '0'),
+                    };
+                });
+
+                // Criar o objeto cardapio usando a interface RegistroCardapio
+                const cardapio: RegistroCardapio = {
+                    nomeCardapio: this.nomeCardapio,
+                    precoCardapio: this.precoCardapio,
+                    tipo: this.tipoCardapio,
+                    items: this.selectedItemsIds,
+                    grupos: this.cardapioGrupos,
+                };
+
+                const response = await instance.post('http://localhost:3001/buffet/criar-cardapio', cardapio);
+
+
+                window.location.reload()
+
             } catch (error) {
                 alert('Erro ao criar cardápio!');
             }

@@ -7,6 +7,8 @@
                 <option>Cardápios</option>
                 <option>Grupos</option>
                 <option>Itens</option>
+                <option>Produtos</option>
+                <option>Bebidas</option>
             </select>
         </div>
         <input type="text" placeholder="Pesquisar..." v-model="searchText">
@@ -28,35 +30,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import popupCardapio from './popups/popupCardapio.vue';
-import popupGrupo from './popups/popupGrupo.vue'
-import popupItem from './popups/popupItem.vue'
+import popupCardapio from './popups/popupCriar/popupCriarCardapio.vue';
+import popupGrupo from './popups/popupCriar/popupCriarGrupo.vue'
+import popupItem from './popups/popupCriar/popupCriarItem.vue'
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
+import { Card, Cardapio, Grupo, Item } from '@/common/utils/Interfaces';
 
-interface Card {
-    name: string;
-}
-
-interface Grupo {
-    nomeGrupo: string;
-    idGrupo: number;
-}
-
-interface Cardapio {
-    nomeCardapio: string,
-    precoCardapio: number,
-    items: string[]
-}
-
-interface Item {
-    idItem: number;
-    nomeItem: string;
-    tipo: string;
-    preco: number;
-    Grupo_idGrupo: number;
-    baseReceita: number;
-}
 
 export default defineComponent({
     data() {
