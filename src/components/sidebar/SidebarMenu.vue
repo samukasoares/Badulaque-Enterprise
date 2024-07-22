@@ -29,6 +29,7 @@ export default {
             <SidebarLink to="/clientes" icon="fa-solid fa-user-group">Clientes</SidebarLink>
             <SidebarLink to="/buffet" icon="fa-solid fa-utensils">Buffet</SidebarLink>
             <SidebarLink to="/bardulaque" icon="fa-solid fa-martini-glass">Bardulaque</SidebarLink>
+            <SidebarLink to="/parametros" icon="fa-solid fa-gear">Parâmetros</SidebarLink>
             <SidebarLink to="/relatorios" icon="fa-solid fa-file-lines">Relatórios</SidebarLink>
         </div>
 

@@ -7,6 +7,7 @@ import Bardulaque from '@/components/bardulaque/TelaBardulaque.vue'
 import Relatorios from '@/components/relatorios/TelaRelatorios.vue'
 import Contrato from '@/components/contrato/TelaContrato.vue'
 import DetalhesOrcamento from '@/components/orçamento/DetalhesOrcamento.vue'
+import Parametros from '@/components/parametros/telaParametros.vue'
 import Login from '@/components/login/TelaLogin.vue'
 const routes: Array<RouteRecordRaw> = [
   {
@@ -43,6 +44,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/contratos',
     name: 'contratos',
     component: Contrato
+  },
+  {
+    path: '/parametros',
+    name: 'parametros',
+    component: Parametros
   },
   {
     path: '/detalhes-orcamento',
