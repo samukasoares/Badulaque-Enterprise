@@ -16,7 +16,7 @@
 
     <!--Container para os cards-->
     <div class="containerCards" v-if="opcoes">
-        <div class="card" v-for="(card, id) in filteredCards" :key="id">
+        <div class="card" v-for="(card, id) in filteredCards" :key="id" @click="showCard(card.id)">
             <label>{{ card.name }}</label>
         </div>
     </div>
@@ -70,13 +70,13 @@ export default defineComponent({
                 let response;
                 if (this.opcoes === 'Cardápios') {
                     response = await instance.get<Cardapio[]>('/buffet/cardapios');
-                    this.cards = response.data.map((cardapio: Cardapio) => ({ name: cardapio.nomeCardapio }))
+                    this.cards = response.data.map((cardapio: Cardapio) => ({ name: cardapio.nomeCardapio, id: cardapio.idCardapio }))
                 } else if (this.opcoes === 'Grupos') {
                     response = await instance.get<Grupo[]>('/buffet/grupos');
-                    this.cards = response.data.map((grupo: Grupo) => ({ name: grupo.nomeGrupo }));
+                    this.cards = response.data.map((grupo: Grupo) => ({ name: grupo.nomeGrupo, id: grupo.idGrupo }));
                 } else if (this.opcoes === 'Itens') {
                     response = await instance.get<Item[]>('/buffet/itens');
-                    this.cards = response.data.map((item: Item) => ({ name: item.nomeItem }));
+                    this.cards = response.data.map((item: Item) => ({ name: item.nomeItem, id: item.idItem }));
                 }
 
             } catch (error) {
@@ -89,6 +89,15 @@ export default defineComponent({
             } else {
                 console.log(String(error));
             }
+        },
+        async showCard(id: number) {
+            try {
+                const data2 = await instance.get('/buffet/cardapio/' + id)
+                console.log(data2.data);
+            } catch (error) {
+                console.log(String(error));
+            }
+
         }
     },
     watch: {

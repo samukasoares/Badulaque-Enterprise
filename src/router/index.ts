@@ -57,13 +57,6 @@ const routes: Array<RouteRecordRaw> = [
     component: Parametros,
     meta: { requiresAuth: true }
   },
-  {
-    path: '/detalhes-orcamento',
-    name: 'detalhes-orcamento',
-    component: DetalhesOrcamento,
-    meta: { requiresAuth: true }
-  },
-
 ]
 
 const router = createRouter({
