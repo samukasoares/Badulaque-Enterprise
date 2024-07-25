@@ -18,43 +18,52 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/orcamentos',
     name: 'orcamentos',
-    component: Orcamento
+    component: Orcamento,
+    meta: { requiresAuth: true }
   },
   {
     path: '/clientes',
     name: 'clientes',
-    component: Cliente
+    component: Cliente,
+    meta: { requiresAuth: true }
   },
   {
     path: '/buffet',
     name: 'buffet',
-    component: Buffet
+    component: Buffet,
+    meta: { requiresAuth: true }
   },
   {
     path: '/bardulaque',
     name: 'bardulaque',
-    component: Bardulaque
+    component: Bardulaque,
+    meta: { requiresAuth: true }
   },
   {
     path: '/relatorios',
     name: 'relatorios',
-    component: Relatorios
+    component: Relatorios,
+    meta: { requiresAuth: true }
   },
   {
     path: '/contratos',
     name: 'contratos',
-    component: Contrato
+    component: Contrato,
+    meta: { requiresAuth: true }
   },
   {
     path: '/parametros',
     name: 'parametros',
-    component: Parametros
+    component: Parametros,
+    meta: { requiresAuth: true }
   },
   {
     path: '/detalhes-orcamento',
     name: 'detalhes-orcamento',
-    component: DetalhesOrcamento
+    component: DetalhesOrcamento,
+    meta: { requiresAuth: true }
   },
+
 ]
 
 const router = createRouter({
@@ -62,4 +71,15 @@ const router = createRouter({
   routes
 })
 
+/*
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token'); // Verifica se o token está presente no localStorage
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next({ name: 'login' }); // Redireciona para a página de login se não estiver autenticado
+  } else {
+    next(); // Permite a navegação
+  }
+});
+
+*/
 export default router 
