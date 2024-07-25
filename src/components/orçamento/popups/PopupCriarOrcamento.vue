@@ -20,6 +20,8 @@
                         <option value="site">Site</option>
                         <option value="indicacao">Indicação</option>
                     </select>
+                    <label>Referência:</label>
+                    <input type="text" v-model="referencia" disabled required>
                 </div>
                 <div class="form-column">
                     <h4>Orçamento</h4><br>
@@ -28,9 +30,9 @@
                         <option value="">Selecione</option>
                         <option value="casamento">Casamento</option>
                         <option value="aniversario">Aniversário</option>
-                        <option value="corporativo">Empresa</option>
+                        <option value="empresa">Empresa</option>
                         <option value="bodas">Bodas</option>
-                        <option value="15anos">15 Anos</option>
+                        <option value="debutante">15 Anos</option>
                     </select>
                     <label>Convidados:</label>
                     <input type="number" v-model="convidados" required>
@@ -40,10 +42,10 @@
                     <input disabled type="text" v-model="diadasemana" required>
                     <label>Cardápio:</label>
                     <select v-model="cardapio" required>
-                        <option value="">Selecione</option>
-                        <option value="vegetariano">Vegetariano</option>
-                        <option value="churrasco">Churrasco</option>
-                        <option value="buffet">Buffet</option>
+                        <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio.idCardapio">{{
+                            cardapio.nomeCardapio
+                            }}
+                        </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cerveja" required>
@@ -82,6 +84,8 @@
 </template>
 
 <script lang="ts">
+import instance from '@/common/utils/AuthService';
+import { Cardapio } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -95,16 +99,19 @@ export default defineComponent({
             fonte: '',
             tipoEvento: '',
             diadasemana: '',
+            referencia: '',
             convidados: '',
             data: '',
-            cardapio: '',
+            cardapio: '' as number | string,
             cerveja: '',
             barEnabled: false,
             bar: '',
             cerimonia: false,
             espacoNoiva: false,
             cabineFotos: false,
-            observacoes: ''
+            observacoes: '',
+
+            cardapios: [] as Cardapio[],
         };
     },
     methods: {
@@ -113,39 +120,49 @@ export default defineComponent({
         },
         submitForm() {
             // Lógica para submissão do formulário
-            console.log({
-                nome: this.nome,
-                telefone: this.telefone,
-                cidade: this.cidade,
-                email: this.email,
-                fonte: this.fonte,
-                tipoEvento: this.tipoEvento,
-                convidados: this.convidados,
-                data: this.data,
-                cardapio: this.cardapio,
-                cerveja: this.cerveja,
-                bar: this.barEnabled ? this.bar : 'Não selecionado',
-                cerimonia: this.cerimonia,
-                espacoNoiva: this.espacoNoiva,
-                cabineFotos: this.cabineFotos,
-                observacoes: this.observacoes
-            });
             this.close();
         },
         calcularDiaDaSemana(dataString: string) {
             const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const data = new Date(dataString + 'T00:00:00');
             return diasDaSemana[data.getUTCDay()];
+        },
+        gerarReferencia() {
+            if (this.tipoEvento && this.data) {
+                const tipoEventoInicial = this.tipoEvento.charAt(0).toUpperCase();
+                const data = new Date(this.data + 'T00:00:00');
+                const ano = String(data.getUTCFullYear()).slice(-2);
+                const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+                const dia = String(data.getUTCDate()).padStart(2, '0');
+                this.referencia = `${tipoEventoInicial}${ano}${mes}${dia}`;
+            }
+        },
+        async fetchCardapios() {
+            try {
+                let response = await instance.get<Cardapio[]>('/buffet/cardapios');
+                this.cardapios = response.data
+            } catch (error) {
+                console.error('Erro ao buscar cardápios:', error);
+            }
         }
     },
     watch: {
         data(newValue) {
             if (newValue) {
                 this.diadasemana = this.calcularDiaDaSemana(newValue);
+                this.gerarReferencia();
             } else {
                 this.diadasemana = '';
             }
+        },
+        tipoEvento(newValue) {
+            if (newValue) {
+                this.gerarReferencia();
+            }
         }
+    },
+    mounted() {
+        this.fetchCardapios();
     }
 });
 </script>

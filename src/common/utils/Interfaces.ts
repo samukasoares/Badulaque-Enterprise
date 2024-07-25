@@ -16,9 +16,10 @@ export interface GroupedItem {
 }
 
 export interface Cardapio {
+    idCardapio: number,
     nomeCardapio: string,
     precoCardapio: number,
-    items: string[]
+    tipo: string
 }
 
 export interface Grupo {
@@ -27,7 +28,6 @@ export interface Grupo {
 }
 
 // Registro Cardapio
- 
 export interface CardapioGrupos {
     idGrupo: number;
     qtdItens: number;
@@ -40,7 +40,6 @@ export interface RegistroCardapio {
     items: number[],
     grupos: CardapioGrupos[],
 }
-
 
 // Fim interfaces Buffet
 
