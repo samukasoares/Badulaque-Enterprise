@@ -15,6 +15,15 @@ export interface GroupedItem {
     itens: Item[];
 }
 
+export type CardapioInfo = {
+    cardapio: {
+        nome: string,
+        preco: number,
+        itensAgrupados: GroupedItem,
+        grupos: Array<{ nomeGrupo: string, qtdItens: number; }>;
+    };
+};
+
 export interface Cardapio {
     idCardapio: number,
     nomeCardapio: string,
@@ -45,4 +54,5 @@ export interface RegistroCardapio {
 
 export interface Card {
     name: string;
+    id: number;
 }
