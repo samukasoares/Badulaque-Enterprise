@@ -1,0 +1,59 @@
+<!-- public/template.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Orçamento</title>
+    <style>
+      body {
+        font-family: Montserrat;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      h1 {
+        color: #ce3535;
+        text-align: center;
+      }
+      p {
+        color: #666;
+        margin: 0;
+        padding: 4px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Orçamsnto</h1>
+      <p>ID: {{id}}</p>
+      <p>Referência: {{referencia}}</p>
+      <p>Nome: {{nome}}</p>
+      <p>Tipo de Evento: {{tipoEvento}}</p>
+      <p>Data: {{data}}</p>
+      <p>Convidados: {{convidados}}</p>
+      <p>Total Proposta: {{totalProposta}}</p>
+      <p>Data Envio: {{dataEnvio}}</p>
+      <p>Hora Envio: {{horaEnvio}}</p>
+      <p>Observações: {{observacoes}}</p>
+      <p>Dia da Semana: {{diaSemana}}</p>
+      <p>Valor do Espaço: {{valorEspaco}}</p>
+      <p>Cardápio do Buffet: {{cardapioBuffet}}</p>
+      <p>Tipo de Bebida: {{tipoBebida}}</p>
+      <p>Valor por Pessoa (Buffet): {{valorPorPessoaBuffet}}</p>
+      <p>Valor Total (Buffet): {{valorTotalBuffet}}</p>
+      <p>Cardápio do Bar: {{cardapioBar}}</p>
+      <p>Valor por Pessoa (Bar): {{valorPorPessoaBar}}</p>
+      <p>Valor Total (Bar): {{valorTotalBar}}</p>
+      <p>Valor do Espaço da Noiva: {{valorNoiva}}</p>
+      <p>Valor da Cabine de Fotos/Plataforma 360: {{valorCabine}}</p>
+    </div>
+  </body>
+</html>

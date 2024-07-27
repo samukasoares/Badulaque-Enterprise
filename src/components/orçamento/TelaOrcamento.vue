@@ -52,7 +52,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import PopupOrcamento from '@/components/orçamento/popups/PopupCriarOrcamento.vue';
-import PopupDetalhes from '@/components/orçamento/popups/PopupDetalhes.vue';
+import PopupDetalhes from '@/components/orçamento/popups/PopupDetalhesOrcamento.vue';
 import PopupEditarOrcamento from '@/components/orçamento/popups/PopupEditarOrcamento.vue'
 
 interface Registro {
