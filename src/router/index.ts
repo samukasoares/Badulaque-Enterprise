@@ -1,13 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Orcamento from '@/components/orçamento/TelaOrcamento.vue'
-import HomePage from '@/components/home/TelaHome.vue'
 import Cliente from '@/components/cliente/TelaCliente.vue'
 import Buffet from '@/components/buffet/TelaBuffet.vue'
 import Bardulaque from '@/components/bardulaque/TelaBardulaque.vue'
-import Relatorios from '@/components/relatorios/TelaRelatorios.vue'
+import Relatorios from '@/components/relatorio/TelaRelatorio.vue'
 import Contrato from '@/components/contrato/TelaContrato.vue'
-import DetalhesOrcamento from '@/components/orçamento/DetalhesOrcamento.vue'
-import Parametros from '@/components/parametros/telaParametros.vue'
+import Parametros from '@/components/parametro/TelaParametro.vue'
 import Login from '@/components/login/TelaLogin.vue'
 const routes: Array<RouteRecordRaw> = [
   {
