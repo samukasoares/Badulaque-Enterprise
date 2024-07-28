@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Orcamento from '@/components/orçamento/TelaOrcamento.vue'
-import HomePage from '@/components/home/HomePage.vue'
+import HomePage from '@/components/home/TelaHome.vue'
 import Cliente from '@/components/cliente/TelaCliente.vue'
 import Buffet from '@/components/buffet/TelaBuffet.vue'
 import Bardulaque from '@/components/bardulaque/TelaBardulaque.vue'

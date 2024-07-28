@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import criarOpcional from './popups/criarOpcional.vue'
+import criarOpcional from './popups/PopupCriarOpcional.vue'
 
 export default ({
     data() {
