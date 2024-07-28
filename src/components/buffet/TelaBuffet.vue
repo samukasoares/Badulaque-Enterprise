@@ -30,9 +30,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import popupCardapio from './popups/popupCriar/popupCriarCardapio.vue';
-import popupGrupo from './popups/popupCriar/popupCriarGrupo.vue'
-import popupItem from './popups/popupCriar/popupCriarItem.vue'
+import popupCardapio from './popups/PopupCriar/PopupCriarCardapio.vue';
+import popupGrupo from './popups/PopupCriar/PopupCriarGrupo.vue'
+import popupItem from './popups/PopupCriar/PopupCriarItem.vue'
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
 import { Card, Cardapio, Grupo, Item } from '@/common/utils/Interfaces';
