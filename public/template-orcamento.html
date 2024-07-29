@@ -4,56 +4,202 @@
   <head>
     <title>Orçamento</title>
     <style>
-      body {
-        font-family: Montserrat;
+      body,html {
         margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
+        padding: 5px;
+        font-family: Montserrat;
+        font-size: 5px;
+        color: #2f4036;
+      }
+
+
+      hr {
+        border: none;
+        border-top: 1px solid #2f4036; /* Ajuste a cor e a espessura conforme necessário */
+      }
+
+      img {
+        width: 40px;
+      }
+
+      .cabecalho {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
       }
-      .container {
-        padding: 20px;
-        width: 100%;
-        box-sizing: border-box;
+
+      h3 {
+        color: #2f4036;
       }
-      h1 {
-        color: #ce3535;
-        text-align: center;
+
+      .cabecalho-texto {
+        flex: 1;
       }
-      p {
-        color: #666;
-        margin: 0;
-        padding: 4px 0;
+
+
+      .titulo {
+        background-color: #2f4036;
+        color: white;
+        display: flex;
+        align-items: center;
+        padding: 1px;
       }
+
+      .titulo50 {
+        background-color: #2f4036;
+        color: white;
+        display: flex;
+        align-items: center;
+        padding: 1px;
+        width: 50%;
+      }
+
+
+    .dados-evento {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .dados-evento .linha {
+      flex: 1;
+      margin: 3px 0;
+      white-space: nowrap; /* Impede a quebra de linha */
+    }
+    .dados-evento .item {
+      flex: 1;
+    }
+    .dados-evento .item label {
+      font-weight: bold;
+    }
+
+    .estrutura{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .estrutura span {
+      margin-bottom: 1px;
+    }
+
+.cardapios{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-item {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+}
+
+
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Orçamsnto</h1>
-      <p>ID: {{id}}</p>
-      <p>Referência: {{referencia}}</p>
-      <p>Nome: {{nome}}</p>
-      <p>Tipo de Evento: {{tipoEvento}}</p>
-      <p>Data: {{data}}</p>
-      <p>Convidados: {{convidados}}</p>
-      <p>Total Proposta: {{totalProposta}}</p>
-      <p>Data Envio: {{dataEnvio}}</p>
-      <p>Hora Envio: {{horaEnvio}}</p>
-      <p>Observações: {{observacoes}}</p>
-      <p>Dia da Semana: {{diaSemana}}</p>
-      <p>Valor do Espaço: {{valorEspaco}}</p>
-      <p>Cardápio do Buffet: {{cardapioBuffet}}</p>
-      <p>Tipo de Bebida: {{tipoBebida}}</p>
-      <p>Valor por Pessoa (Buffet): {{valorPorPessoaBuffet}}</p>
-      <p>Valor Total (Buffet): {{valorTotalBuffet}}</p>
-      <p>Cardápio do Bar: {{cardapioBar}}</p>
-      <p>Valor por Pessoa (Bar): {{valorPorPessoaBar}}</p>
-      <p>Valor Total (Bar): {{valorTotalBar}}</p>
-      <p>Valor do Espaço da Noiva: {{valorNoiva}}</p>
-      <p>Valor da Cabine de Fotos/Plataforma 360: {{valorCabine}}</p>
+      <div class="cabecalho">
+        <div class="cabecalho-texto">
+          <h3>Orçamento #{{id}}</h3>
+          <p>A proposta tem validade de 15 dias!</p>
+          <p><strong>Evento :</strong> {{tipoEvento}}</p>
+        </div>
+        <img src="assets/MenuFullVerde.png" />
+      </div>
+
+  <div class="titulo">DADOS DO EVENTO</div>
+  <div class="dados-evento">
+    <div class="linha">
+      <div class="item">
+        <label>Nome :</label>
+        <span>{{nome}}</span>
+      </div>
+      <div class="item">
+        <label>Telefone :</label>
+        <span>5519989970313</span>
+      </div>
+      <div class="item">
+        <label>Cidade :</label>
+        <span>Vinhedo - SP</span>
+      </div>
     </div>
+    <div class="linha">
+      <div class="item">
+        <label>Convidados :</label>
+        <span>150</span>
+      </div>
+      <div class="item">
+        <label>Data :</label>
+        <span>sábado, 29 de março de 2025</span>
+      </div>
+      <div class="item">
+        <label>Cerimônia no local :</label>
+        <span>Sim</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="titulo">ESTRUTURA E SERVIÇOS INCLUSOS NO ORÇAMENTO</div>
+  <div class="estrutura">
+      <span>• Salão com capacidade para 200 pessoas podendo variar conforme projeto de montagem</span>
+      <span>• Espaço para cerimônia ao ar livre em frente ao lago e com deck coberto</span>
+      <span>• Bancos para cerimônia</span>
+      <span>• Mesas redondas e cadeiras brancas</span>
+      <span>• Estacionamento para 90 veículos</span>
+      <span>• Gerador de 50Kva sem limite de utilização</span>
+      <span>• Ar-condicionado no salão principal</span>
+      <span>• Espaço Kids com monitos</span>
+      <span>• Banheiros masculinos, femininos e para deficientes físicos</span>
+      <span>• Fraldário e sala de amamentação</span>
+      <span>• Iluminação estrutural interna e externa</span>
+      <span>• Taxa ECAD </span>
+  </div>
+
+  <div class="titulo">SERVIÇO DE BUFFET</div>
+  <div class="estrutura">
+    <span>• 5 horas de serviço com possibilidade de horas extras com serviço de bebidas</span>
+    <span>• Personalização dos cardápios</span>
+    <span>• Sousplat de Inox ou Rattan</span>
+    <span>• Taças de Vidro</span>
+    <span>• Atendimento com 1 garçom para até 20 convidados</span>
+    <span>• Crianças de 0-5 anos livres, 6-10 pagam 50% e 10+ anos pagam 100%</span>
+    <span class="flex-item"><strong>Cardápio Solicitado :</strong><span>{{cardapioBuffet}}</span></span>
+    <span class="flex-item"><strong>Cerveja :</strong><span>{{tipoBebida}}</span></span>
+    <span class="flex-item"><strong>Valor por pessoa :</strong><span>{{valorPorPessoaBuffet}}</span></span>
+    <span class="flex-item"><strong>Observações :</strong><span>{{observacoes}}</span></span>
+
+    <div class="flex-container">
+      <div class="titulo50">OUTROS CARDÁPIOS</div>
+      <div class="titulo50">OPCIONAIS</div>
+    </div>
+    <div class="flex-container">
+      <div class="cardapios">
+        <span class="flex-item"><strong>Bronze:</strong><span>R$142</span></span>
+        <span class="flex-item"><strong>Prata:</strong><span>R$142</span></span>
+        <span class="flex-item"><strong>Ouro:</strong><span>R$142</span></span>
+        <span class="flex-item"><strong>Mineiro:</strong><span>R$142</span></span>
+        <span class="flex-item"><strong>Churrasco Fatiado:</strong><span>R$142</span></span>
+        <span class="flex-item"><strong>Coquetel:</strong><span>R$142</span></span>
+        <span class="flex-item"><strong>Boteco:</strong><span>R$142</span></span>
+      </div>
+
+      <div class="cardapios">
+        <span class="flex-item"><strong>Cabine/Plataforma 360:</strong><span>R$1600</span></span>
+        <span class="flex-item"><strong>Espaço da Noiva:</strong><span>R$2000</span></span>
+      </div>
+    </div>
+
+    <div class="titulo">VALORES</div>
+
+  </div>
+
+
   </body>
+
+
 </html>

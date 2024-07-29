@@ -17,6 +17,10 @@
                         <input ref="nome" disabled type="text">
                     </div>
                     <div class="formgroup">
+                        <label>Telefone:</label>
+                        <input ref="telefone" disabled type="text">
+                    </div>
+                    <div class="formgroup">
                         <label>Tipo de Evento:</label>
                         <input ref="tipoEvento" disabled type="text">
                     </div>
@@ -169,7 +173,7 @@ export default defineComponent({
                 .replace('{{valorNoiva}}', this.valorNoiva)
                 .replace('{{valorCabine}}', this.valorCabine);
 
-            const doc = new jsPDF();
+            const doc = new jsPDF('p', 'mm', 'a4');
             doc.setProperties({
                 title: this.referencia
             });
@@ -182,38 +186,27 @@ export default defineComponent({
             iframeDoc.close();
 
             iframe.onload = () => {
-                html2canvas(iframeDoc.body).then((canvas) => {
+                html2canvas(iframeDoc.body, { scale: 4 }).then((canvas) => {
                     const imgData = canvas.toDataURL('image/png');
-                    doc.addImage(imgData, 'PNG', 10, 10);
-                    const pdfDataUri = doc.output('datauristring');
-                    const newTab = window.open();
-                    if (newTab) {
-                        newTab.document.write(`
-                        <html>
-                            <head>
-                                <style>
-                                    body, html {
-                                        margin: 0;
-                                        padding: 0;
-                                        height: 100%;
-                                        overflow: hidden;
-                                    }
-                                    iframe {
-                                        position: absolute;
-                                        top: 0;
-                                        left: 0;
-                                        width: 100%;
-                                        height: 100%;
-                                        border: none;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <iframe src="${pdfDataUri}" frameborder="0"></iframe>
-                            </body>
-                        </html>
-                    `);
+                    const imgWidth = 210; // Largura da página A4 em mm
+                    const pageHeight = 295; // Altura da página A4 em mm
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    let heightLeft = imgHeight;
+
+                    let position = 0;
+
+                    while (heightLeft >= 0) {
+                        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                        if (heightLeft >= 0) {
+                            position = heightLeft - imgHeight;
+                            doc.addPage();
+                        }
                     }
+
+                    const pdfBlob = doc.output('blob');
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+                    window.open(pdfUrl);
                     document.body.removeChild(iframe);
                 });
             };
