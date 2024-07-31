@@ -8,15 +8,14 @@
     <h4>Espaço</h4>
     <div class="containerCards">
 
-        <div class="card">Sábado</div>
-        <div class="card">Sexta-Feira</div>
-        <div class="card">Domingo</div>
-        <div class="card">Outros</div>
+        <div v-for="card in cardsDiaSemana" :key="card.id" class="card" @click="modalValorEspaco(card.id, card.name)">
+            {{ card.name }}
+        </div>
 
     </div>
 
     <h4>Opcionais</h4>
-    <div class="containerCards">
+    <div class=" containerCards">
 
         <!--
             <div class="card" v-for="(card, id) in filteredCards" :key="id">
@@ -28,21 +27,40 @@
 
     </div>
 
-    <criarOpcional v-if="showModal" @close="showModal = false" />
+    <PopupCriarOpcional v-if="showModal" @close="showModal = false" />
+    <PopupEditarValorEspaco v-if="showModalEspaco" @close="showModalEspaco = false" :dia-da-semana="currentCardName"
+        :id-dia-da-semana="currentCardID" />
 </template>
 
 <script lang="ts">
-import criarOpcional from './popups/PopupCriarOpcional.vue'
+import { defineComponent } from 'vue';
+import PopupCriarOpcional from './popups/PopupCriarOpcional.vue';
+import PopupEditarValorEspaco from './popups/PopupEditarValorEspaco.vue';
 
-export default ({
+export default defineComponent({
+    components: { PopupCriarOpcional, PopupEditarValorEspaco },
     data() {
         return {
             showModal: false,
-        }
+            showModalEspaco: false,
+            currentCardID: '',
+            currentCardName: '',
+            cardsDiaSemana: [
+                { id: '1', name: 'Sábado' },
+                { id: '2', name: 'Sexta-Feira' },
+                { id: '3', name: 'Domingo' },
+                { id: '4', name: 'Outros' }
+            ]
+        };
     },
-    components: { criarOpcional },
-})
-
+    methods: {
+        modalValorEspaco(cardId: string, cardName: string) {
+            this.currentCardID = cardId;
+            this.currentCardName = cardName;
+            this.showModalEspaco = true;
+        }
+    }
+});
 </script>
 
 <style>

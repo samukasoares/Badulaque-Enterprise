@@ -1,21 +1,15 @@
-<!-- public/template.html -->
 <!DOCTYPE html>
 <html>
   <head>
     <title>Orçamento</title>
     <style>
-      body,html {
+      body,
+      html {
         margin: 0;
-        padding: 5px;
+        padding: 0 10px;
         font-family: Montserrat;
         font-size: 5px;
         color: #2f4036;
-      }
-
-
-      hr {
-        border: none;
-        border-top: 1px solid #2f4036; /* Ajuste a cor e a espessura conforme necessário */
       }
 
       img {
@@ -32,174 +26,185 @@
         color: #2f4036;
       }
 
-      .cabecalho-texto {
-        flex: 1;
-      }
-
-
       .titulo {
         background-color: #2f4036;
         color: white;
-        display: flex;
-        align-items: center;
         padding: 1px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
-      .titulo50 {
-        background-color: #2f4036;
-        color: white;
+      .dados-evento .linha,
+      .estrutura span,
+      .cardapios span,
+      .forma-pagamento span {
         display: flex;
-        align-items: center;
-        padding: 1px;
-        width: 50%;
+        justify-content: space-between;
+        margin-bottom: 1px;
+        white-space: nowrap;
       }
 
-
-    .dados-evento {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    .dados-evento .linha {
-      flex: 1;
-      margin: 3px 0;
-      white-space: nowrap; /* Impede a quebra de linha */
-    }
-    .dados-evento .item {
-      flex: 1;
-    }
-    .dados-evento .item label {
-      font-weight: bold;
-    }
-
-    .estrutura{
-      display: flex;
-      flex-direction: column;
-    }
-
-    .estrutura span {
-      margin-bottom: 1px;
-    }
-
-.cardapios{
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-}
-
-.flex-container {
-  display: flex;
-  justify-content: space-between;
-}
-
-.flex-item {
-  display: flex;
-  justify-content: space-between;
-  width: 50%;
-}
-
-
+      .flex-item-estrutura {
+        width: 35%;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="cabecalho">
         <div class="cabecalho-texto">
-          <h3>Orçamento #{{id}}</h3>
+          <h3>Orçamento #{{id}} - Enviado em 22/07/2024</h3>
           <p>A proposta tem validade de 15 dias!</p>
           <p><strong>Evento :</strong> {{tipoEvento}}</p>
         </div>
         <img src="assets/MenuFullVerde.png" />
       </div>
 
-  <div class="titulo">DADOS DO EVENTO</div>
-  <div class="dados-evento">
-    <div class="linha">
-      <div class="item">
-        <label>Nome :</label>
-        <span>{{nome}}</span>
+      <div class="titulo">DADOS DO EVENTO</div>
+      <div class="dados-evento">
+        <div class="linha">
+          <div><strong>Nome :</strong> {{nome}}</div>
+          <div><strong>Telefone :</strong> 5519989970313</div>
+          <div><strong>Cidade :</strong> Vinhedo - SP</div>
+        </div>
+        <div class="linha">
+          <div><strong>Convidados :</strong> 150</div>
+          <div><strong>Data :</strong> sábado, 29 de março de 2025</div>
+          <div><strong>Cerimônia no local :</strong> Sim</div>
+        </div>
       </div>
-      <div class="item">
-        <label>Telefone :</label>
-        <span>5519989970313</span>
-      </div>
-      <div class="item">
-        <label>Cidade :</label>
-        <span>Vinhedo - SP</span>
-      </div>
-    </div>
-    <div class="linha">
-      <div class="item">
-        <label>Convidados :</label>
-        <span>150</span>
-      </div>
-      <div class="item">
-        <label>Data :</label>
-        <span>sábado, 29 de março de 2025</span>
-      </div>
-      <div class="item">
-        <label>Cerimônia no local :</label>
-        <span>Sim</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="titulo">ESTRUTURA E SERVIÇOS INCLUSOS NO ORÇAMENTO</div>
-  <div class="estrutura">
-      <span>• Salão com capacidade para 200 pessoas podendo variar conforme projeto de montagem</span>
-      <span>• Espaço para cerimônia ao ar livre em frente ao lago e com deck coberto</span>
-      <span>• Bancos para cerimônia</span>
-      <span>• Mesas redondas e cadeiras brancas</span>
-      <span>• Estacionamento para 90 veículos</span>
-      <span>• Gerador de 50Kva sem limite de utilização</span>
-      <span>• Ar-condicionado no salão principal</span>
-      <span>• Espaço Kids com monitos</span>
-      <span>• Banheiros masculinos, femininos e para deficientes físicos</span>
-      <span>• Fraldário e sala de amamentação</span>
-      <span>• Iluminação estrutural interna e externa</span>
-      <span>• Taxa ECAD </span>
-  </div>
+      <div class="titulo">ESTRUTURA E SERVIÇOS INCLUSOS NO ORÇAMENTO</div>
+      <div class="estrutura">
+        <span
+          >• Salão com capacidade para 200 pessoas podendo variar conforme
+          projeto de montagem</span
+        >
+        <span
+          >• Espaço para cerimônia ao ar livre em frente ao lago e com deck
+          coberto</span
+        >
+        <span>• Bancos para cerimônia</span>
+        <span>• Mesas redondas e cadeiras brancas</span>
+        <span>• Estacionamento para 90 veículos</span>
+        <span>• Gerador de 50Kva sem limite de utilização</span>
+        <span>• Ar-condicionado no salão principal</span>
+        <span>• Espaço Kids com monitores</span>
+        <span
+          >• Banheiros masculinos, femininos e para deficientes físicos</span
+        >
+        <span>• Fraldário e sala de amamentação</span>
+        <span>• Iluminação estrutural interna e externa</span>
+        <span>• Taxa ECAD </span>
+      </div>
 
-  <div class="titulo">SERVIÇO DE BUFFET</div>
-  <div class="estrutura">
-    <span>• 5 horas de serviço com possibilidade de horas extras com serviço de bebidas</span>
-    <span>• Personalização dos cardápios</span>
-    <span>• Sousplat de Inox ou Rattan</span>
-    <span>• Taças de Vidro</span>
-    <span>• Atendimento com 1 garçom para até 20 convidados</span>
-    <span>• Crianças de 0-5 anos livres, 6-10 pagam 50% e 10+ anos pagam 100%</span>
-    <span class="flex-item"><strong>Cardápio Solicitado :</strong><span>{{cardapioBuffet}}</span></span>
-    <span class="flex-item"><strong>Cerveja :</strong><span>{{tipoBebida}}</span></span>
-    <span class="flex-item"><strong>Valor por pessoa :</strong><span>{{valorPorPessoaBuffet}}</span></span>
-    <span class="flex-item"><strong>Observações :</strong><span>{{observacoes}}</span></span>
+      <div class="titulo">SERVIÇO DE BUFFET</div>
+      <div class="estrutura">
+        <span
+          >• 5 horas de serviço com possibilidade de horas extras com serviço de
+          bebidas</span
+        >
+        <span>• Personalização dos cardápios</span>
+        <span>• Sousplat de Inox ou Rattan</span>
+        <span>• Taças de Vidro</span>
+        <span>• Atendimento com 1 garçom para até 20 convidados</span>
+        <span
+          >• Crianças de 0-5 anos livres, 6-10 pagam 50% e 10+ anos pagam
+          100%</span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Cardápio Solicitado :</strong
+          ><span>{{cardapioBuffet}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Cerveja :</strong><span>{{tipoBebida}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Valor por pessoa :</strong
+          ><span>{{valorPorPessoaBuffet}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Observações :</strong><span>{{observacoes}}</span></span
+        >
+      </div>
 
-    <div class="flex-container">
-      <div class="titulo50">OUTROS CARDÁPIOS</div>
-      <div class="titulo50">OPCIONAIS</div>
-    </div>
-    <div class="flex-container">
+      <div class="titulo">OUTROS CARDÁPIOS</div>
+      <div class="estrutura">
+        <span class="flex-item-estrutura"
+          ><strong>Bronze:</strong><span>R$142</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Prata:</strong><span>R$142</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Ouro:</strong><span>R$142</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Mineiro:</strong><span>R$142</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Churrasco Fatiado:</strong><span>R$142</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Coquetel:</strong><span>R$142</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Boteco:</strong><span>R$142</span></span
+        >
+      </div>
+
+      <div class="titulo">OPCIONAIS</div>
+      <div class="estrutura">
+        <span class="flex-item-estrutura"
+          ><strong>Cabine/Plataforma 360:</strong><span>R$1600</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Espaço da Noiva:</strong><span>R$2000</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Bartender:</strong><span>R$2000</span></span
+        >
+      </div>
+
+      <div class="titulo">VALORES</div>
       <div class="cardapios">
-        <span class="flex-item"><strong>Bronze:</strong><span>R$142</span></span>
-        <span class="flex-item"><strong>Prata:</strong><span>R$142</span></span>
-        <span class="flex-item"><strong>Ouro:</strong><span>R$142</span></span>
-        <span class="flex-item"><strong>Mineiro:</strong><span>R$142</span></span>
-        <span class="flex-item"><strong>Churrasco Fatiado:</strong><span>R$142</span></span>
-        <span class="flex-item"><strong>Coquetel:</strong><span>R$142</span></span>
-        <span class="flex-item"><strong>Boteco:</strong><span>R$142</span></span>
+        <span class="flex-item-estrutura"
+          ><strong>Espaço:</strong><span>R$1600</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Buffet:</strong><span>R$2000</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Opcionais:</strong><span>R$2000</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Total da Proposta:</strong
+          ><span><strong>R$2000</strong></span></span
+        >
       </div>
 
-      <div class="cardapios">
-        <span class="flex-item"><strong>Cabine/Plataforma 360:</strong><span>R$1600</span></span>
-        <span class="flex-item"><strong>Espaço da Noiva:</strong><span>R$2000</span></span>
+      <div class="titulo">FORMA DE PAGAMENTO</div>
+      <div class="estrutura">
+        <span class="forma-pagamento"
+          >Sinal de <strong>R$2000</strong> para reserva da data.
+          <strong
+            >Em caso de desistência o sinal não é devolvido !</strong
+          ></span
+        >
+        <span class="forma-pagamento"
+          >1ª Parcelado mensalmente em <strong>5</strong> parcelas de
+          <strong>R$2500</strong></span
+        >
+        <span class="forma-pagamento"
+          >2ª Entrada de <strong>R$4500</strong> em <strong>3x</strong> de
+          <strong>R$2500</strong> e o saldo 15 dias antes
+        </span>
+        <span class="forma-pagamento"
+          >3ª À vista: <strong>R$4500</strong> Desconto:
+          <strong>R$8,99%</strong></span
+        >
       </div>
     </div>
-
-    <div class="titulo">VALORES</div>
-
-  </div>
-
-
   </body>
-
-
 </html>

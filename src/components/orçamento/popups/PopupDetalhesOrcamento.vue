@@ -146,11 +146,66 @@ export default defineComponent({
             this.$emit('close');
         },
         async gerarPDF() {
-            const templatePath = '/template-orcamento.html';
-            const response = await fetch(templatePath);
-            let template = await response.text();
+            try {
+                const templatePath = '/template-orcamento.html';
+                const response = await fetch(templatePath);
+                let template = await response.text();
 
-            template = template
+                template = this.preencherTemplate(template);
+
+                const doc = new jsPDF('p', 'mm', 'a4');
+                doc.setProperties({
+                    title: this.referencia
+                });
+
+                // Cria um iframe invisível
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'absolute';
+                iframe.style.left = '-9999px';
+                document.body.appendChild(iframe);
+
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(template);
+                iframeDoc.close();
+
+                iframe.onload = async () => {
+                    try {
+                        const canvas = await html2canvas(iframeDoc.body, { scale: 4 });
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 210; // Largura da página A4 em mm
+                        const pageHeight = 295; // Altura da página A4 em mm
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        let heightLeft = imgHeight;
+
+                        let position = 0;
+
+                        while (heightLeft >= 0) {
+                            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                            heightLeft -= pageHeight;
+                            if (heightLeft >= 0) {
+                                position = heightLeft - imgHeight;
+                                doc.addPage();
+                            }
+                        }
+
+                        const pdfBlob = doc.output('blob');
+                        const pdfUrl = URL.createObjectURL(pdfBlob);
+                        window.open(pdfUrl);
+
+                        // Remove o iframe após a geração do PDF
+                        document.body.removeChild(iframe);
+                    } catch (error) {
+                        console.error('Erro ao gerar o canvas:', error);
+                    }
+                };
+            } catch (error) {
+                console.error('Erro ao carregar o template:', error);
+            }
+        },
+
+        preencherTemplate(template) {
+            return template
                 .replace('{{id}}', this.id)
                 .replace('{{referencia}}', this.referencia)
                 .replace('{{nome}}', this.nome)
@@ -172,45 +227,7 @@ export default defineComponent({
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
                 .replace('{{valorNoiva}}', this.valorNoiva)
                 .replace('{{valorCabine}}', this.valorCabine);
-
-            const doc = new jsPDF('p', 'mm', 'a4');
-            doc.setProperties({
-                title: this.referencia
-            });
-
-            const iframe = document.createElement('iframe');
-            document.body.appendChild(iframe);
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(template);
-            iframeDoc.close();
-
-            iframe.onload = () => {
-                html2canvas(iframeDoc.body, { scale: 4 }).then((canvas) => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = 210; // Largura da página A4 em mm
-                    const pageHeight = 295; // Altura da página A4 em mm
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                    let heightLeft = imgHeight;
-
-                    let position = 0;
-
-                    while (heightLeft >= 0) {
-                        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                        heightLeft -= pageHeight;
-                        if (heightLeft >= 0) {
-                            position = heightLeft - imgHeight;
-                            doc.addPage();
-                        }
-                    }
-
-                    const pdfBlob = doc.output('blob');
-                    const pdfUrl = URL.createObjectURL(pdfBlob);
-                    window.open(pdfUrl);
-                    document.body.removeChild(iframe);
-                });
-            };
-        }
+        },
     },
     mounted() {
         // Preenchendo dados para teste
