@@ -1,0 +1,79 @@
+.backdrop {
+    top: 0;
+    left: 0;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Ajuste o z-index para garantir que o backdrop esteja acima de outros conteúdos */
+}
+
+.modal-form {
+    max-width: 400px;
+    margin: 30px auto;
+    background: white;
+    text-align: left;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    z-index: 2;
+    /* Garanta que o formulário esteja acima do backdrop */
+}
+
+.modal-form label {
+    color: #aaa;
+    display: inline-block;
+    margin: 25px 0 15px;
+    font-size: 0.6em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+.modal-form input {
+    display: block;
+    padding: 10px 6px;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+}
+
+.modal-form select {
+    display: block;
+    padding: 10px 6px;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+}
+
+.modal-form button.submit-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #425C4D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-family: Montserrat;
+}
+
+.modal-form button.submit-button:hover {
+    background-color: #2F4036;
+}
+
+.modal-form h4 {
+    color: black;
+    display: inline-block;
+    margin: 25px 0 15px;
+    font-size: 0.6em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+}

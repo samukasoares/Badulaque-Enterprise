@@ -35,18 +35,28 @@
         align-items: center;
       }
 
-      .dados-evento .linha,
-      .estrutura span,
-      .cardapios span,
-      .forma-pagamento span {
+      .estrutura {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 3px;
+      }
+
+      .dados-evento .linha {
         display: flex;
         justify-content: space-between;
         margin-bottom: 1px;
         white-space: nowrap;
       }
 
+      .forma-pagamento {
+        margin-bottom: 2px;
+      }
+
       .flex-item-estrutura {
         width: 35%;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2px;
       }
     </style>
   </head>
@@ -125,7 +135,7 @@
           ><span>{{valorPorPessoaBuffet}}</span></span
         >
         <span class="flex-item-estrutura"
-          ><strong>Observações :</strong><span>{{observacoes}}</span></span
+          ><strong>Obs :</strong><span>{{observacoes}}</span></span
         >
       </div>
 
@@ -168,7 +178,7 @@
       </div>
 
       <div class="titulo">VALORES</div>
-      <div class="cardapios">
+      <div class="estrutura">
         <span class="flex-item-estrutura"
           ><strong>Espaço:</strong><span>R$1600</span></span
         >
@@ -187,22 +197,26 @@
       <div class="titulo">FORMA DE PAGAMENTO</div>
       <div class="estrutura">
         <span class="forma-pagamento"
-          >Sinal de <strong>R$2000</strong> para reserva da data.
-          <strong
+          >Sinal de <strong>R$2000</strong> para reserva da data.</span
+        >
+        <span class="forma-pagamento"
+          ><strong
             >Em caso de desistência o sinal não é devolvido !</strong
           ></span
         >
         <span class="forma-pagamento"
-          >1ª Parcelado mensalmente em <strong>5</strong> parcelas de
-          <strong>R$2500</strong></span
+          >1ª Parcelado mensalmente em <strong>5</strong> parcelas de<strong
+            >R$2500</strong
+          ></span
         >
         <span class="forma-pagamento"
-          >2ª Entrada de <strong>R$4500</strong> em <strong>3x</strong> de
-          <strong>R$2500</strong> e o saldo 15 dias antes
-        </span>
+          >2ª Entrada de <strong> R$4500 </strong> em <strong>3x</strong> de
+          <strong>R$2500</strong> e o saldo 15 dias antes</span
+        >
         <span class="forma-pagamento"
-          >3ª À vista: <strong>R$4500</strong> Desconto:
-          <strong>R$8,99%</strong></span
+          >3ª À vista: <strong>R$4500</strong> Desconto:<strong
+            >R$8,99%</strong
+          ></span
         >
       </div>
     </div>

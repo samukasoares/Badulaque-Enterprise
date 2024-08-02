@@ -10,6 +10,24 @@ export interface Item {
     Grupo_idGrupo: number;
 }
 
+export interface Grupo {
+    nomeGrupo: string;
+    idGrupo: number;
+}
+
+export interface Cardapio {
+    idCardapio: number,
+    nomeCardapio: string,
+    precoCardapio: number,
+    tipo: string
+}
+
+export interface Cerveja {
+    idCerveja: number,
+    nome: string,
+    valor: number
+}
+
 export interface GroupedItem {
     grupo: string;
     itens: Item[];
@@ -24,18 +42,6 @@ export type CardapioInfo = {
     };
 };
 
-export interface Cardapio {
-    idCardapio: number,
-    nomeCardapio: string,
-    precoCardapio: number,
-    tipo: string
-}
-
-export interface Grupo {
-    nomeGrupo: string;
-    idGrupo: number;
-}
-
 // Registro Cardapio
 export interface CardapioGrupos {
     idGrupo: number;
@@ -49,6 +55,7 @@ export interface RegistroCardapio {
     items: number[],
     grupos: CardapioGrupos[],
 }
+//Fim registro Cardápio
 
 // Fim interfaces Buffet
 

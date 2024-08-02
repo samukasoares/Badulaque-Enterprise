@@ -1,13 +1,14 @@
 <template>
     <div class="backdrop" @click.self="close">
         <form class="modal-form">
-            <h4>Criar Grupo</h4><br>
+            <h4>Criar Cerveja</h4><br>
             <label>Nome:</label>
-            <input type="text" required v-model='nomeGrupo'>
+            <input type="text" required v-model='nomeCerveja'>
+            <label>Valor:</label>
+            <input type="number" required v-model='valorCerveja'>
             <button type="submit" class="submit-button" @click="criarGrupo">Criar</button>
         </form>
     </div>
-
 </template>
 
 <script lang="ts">
@@ -18,7 +19,8 @@ export default defineComponent({
     name: 'PopupOrcamento',
     data() {
         return {
-            nomeGrupo: ''
+            nomeCerveja: '',
+            valorCerveja: ''
         };
     },
     methods: {
@@ -27,12 +29,13 @@ export default defineComponent({
         },
         async criarGrupo() {
             try {
-                const data = await instance.post('/buffet/criar-grupo', {
-                    nomeGrupo: this.nomeGrupo
+                const data = await instance.post('/cerveja/create', {
+                    valor: this.valorCerveja,
+                    nome: this.nomeCerveja
                 });
                 window.location.reload()
             } catch (error) {
-                alert('Erro ao criar grupo')
+                alert('Erro ao criar cerveja')
             }
         }
     }
