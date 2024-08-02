@@ -8,7 +8,7 @@
                 <option>Grupos</option>
                 <option>Itens</option>
                 <option>Produtos</option>
-                <option>Bebidas</option>
+                <option>Cervejas</option>
             </select>
         </div>
         <input type="text" placeholder="Pesquisar..." v-model="searchText">
@@ -33,9 +33,10 @@ import { defineComponent } from 'vue';
 import popupCardapio from './popups/PopupCriar/PopupCriarCardapio.vue';
 import popupGrupo from './popups/PopupCriar/PopupCriarGrupo.vue'
 import popupItem from './popups/PopupCriar/PopupCriarItem.vue'
+import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue'
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
-import { Card, Cardapio, Grupo, Item } from '@/common/utils/Interfaces';
+import { Card, Cardapio, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
 
 
 export default defineComponent({
@@ -47,7 +48,7 @@ export default defineComponent({
             searchText: ''
         }
     },
-    components: { popupCardapio, popupGrupo, popupItem },
+    components: { popupCardapio, popupGrupo, popupItem, popupCerveja },
     computed: {
         getPopupComponent() {
             if (this.opcoes === 'Cardápios') {
@@ -56,6 +57,8 @@ export default defineComponent({
                 return 'popupGrupo';
             } else if (this.opcoes === 'Itens') {
                 return 'popupItem';
+            } else if (this.opcoes === 'Cervejas') {
+                return 'popupCerveja';
             } else {
                 return null;
             }
@@ -77,6 +80,9 @@ export default defineComponent({
                 } else if (this.opcoes === 'Itens') {
                     response = await instance.get<Item[]>('/buffet/itens');
                     this.cards = response.data.map((item: Item) => ({ name: item.nomeItem, id: item.idItem }));
+                } else if (this.opcoes === 'Cervejas') {
+                    response = await instance.get<Cerveja[]>('/cerveja/get-all');
+                    this.cards = response.data.map((cerveja: Cerveja) => ({ name: cerveja.nome, id: cerveja.idCerveja }));
                 }
 
             } catch (error) {
@@ -110,56 +116,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style scoped>
-.containerCards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    /* Ajuste o valor conforme necessário */
-}
-
-.card {
-    display: flex;
-    flex-direction: column;
-    width: 200px;
-    padding: 5px;
-    height: 35px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: 5px;
-    background-color: #425C4D;
-    color: white;
-    box-shadow: 2px 2px 1px #888888;
-    cursor: pointer;
-}
-
-.card label {
-    cursor: pointer;
-}
-
-.card:hover {
-    background-color: #2F4036;
-}
-
-input,
-select {
-    border-radius: 5px;
-    padding: 10px;
-    border: none;
-    font-family: MontSerrat;
-}
-
-input:focus {
-    outline: none;
-    border-color: #2F4036;
-    box-shadow: 0 0 10px #2F4036;
-}
-
-select:focus {
-    outline: none;
-    border-color: #2F4036;
-    box-shadow: 0 0 10px #2F4036;
-}
-</style>

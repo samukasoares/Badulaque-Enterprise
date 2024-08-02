@@ -49,10 +49,10 @@
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cerveja" required>
-                        <option value="">Selecione</option>
-                        <option value="lager">Lager</option>
-                        <option value="ipa">IPA</option>
-                        <option value="pilsen">Pilsen</option>
+                        <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.nome">{{
+                            cerveja.nome
+                            }}
+                        </option>
                     </select>
                     <label class="checkbox-bar-label">
                         <input type="checkbox" v-model="barEnabled"> Bar
@@ -85,7 +85,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { Cardapio } from '@/common/utils/Interfaces';
+import { Cardapio, Cerveja } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -112,6 +112,7 @@ export default defineComponent({
             observacoes: '',
 
             cardapios: [] as Cardapio[],
+            cervejas: [] as Cerveja[]
         };
     },
     methods: {
@@ -144,7 +145,15 @@ export default defineComponent({
             } catch (error) {
                 console.error('Erro ao buscar cardápios:', error);
             }
-        }
+        },
+        async fetchCervejas() {
+            try {
+                let response = await instance.get<Cerveja[]>('/cerveja/get-all');
+                this.cervejas = response.data
+            } catch (error) {
+                console.error('Erro ao buscar cervejas:', error);
+            }
+        },
     },
     watch: {
         data(newValue) {
@@ -163,6 +172,7 @@ export default defineComponent({
     },
     mounted() {
         this.fetchCardapios();
+        this.fetchCervejas();
     }
 });
 </script>

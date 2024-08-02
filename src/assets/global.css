@@ -4,3 +4,164 @@ body{
     font-family: Montserrat;
     background-color: #F0E8DD;
 }
+
+input,
+select {
+    border-radius: 5px;
+    padding: 10px;
+    border: none;
+    font-family: MontSerrat;
+}
+
+label {
+    font-family: MontSerrat;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
+}
+
+select:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
+}
+
+/* Inicio Tabela*/
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+th,
+td {
+    border-right: 1px solid #2F4036;
+    text-align: center;
+    padding: 8px;
+}
+
+th {
+
+    background-color: #425C4D;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #ABA089;
+}
+
+tr:hover {
+    cursor: pointer;
+}
+
+/* Remove the border from the last cell in each row */
+th:last-child,
+td:last-child {
+    border-right: none;
+}
+
+.selected-row {
+    background-color: #E1C59C !important;
+    /* Amarelo dourado */
+}
+
+/* Final Tabela*/
+
+/* Inicio Barra Opções*/
+.barraOpcoes {
+    display: flex;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.barraOpcoes button {
+    background-color: #425C4D;
+    border: none;
+    padding: 5px 10px;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: MontSerrat;
+    width: 200px;
+}
+
+.barraOpcoes button:hover {
+    background-color: #2F4036;
+}
+
+.barraOpcoes select {
+    width: 200px;
+}
+
+.barraOpcoes input {
+    width: 300px;
+}
+
+.barraOpcoes input:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
+}
+
+.barraOpcoes select:focus {
+    outline: none;
+    border-color: #2F4036;
+    box-shadow: 0 0 10px #2F4036;
+}
+
+/* Final Barra Opções*/
+
+.action-icon {
+    color: #425C4D;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+.action-icon:hover {
+    color: #2F4036;
+}
+
+/* Inicio Card View */
+
+.containerCards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* Ajuste o valor conforme necessário */
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    padding: 5px;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 5px;
+    background-color: #425C4D;
+    color: white;
+    box-shadow: 2px 2px 1px #888888;
+    cursor: pointer;
+}
+
+.card label {
+    cursor: pointer;
+}
+
+.card:hover {
+    background-color: #2F4036;
+}
+
+/* Final Card View */
