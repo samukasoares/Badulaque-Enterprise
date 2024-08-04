@@ -17,11 +17,13 @@ label {
     font-family: MontSerrat;
 }
 
+/* Isso aqui está afetando o multiselect
 input:focus {
     outline: none;
     border-color: #2F4036;
     box-shadow: 0 0 10px #2F4036;
 }
+ */
 
 select:focus {
     outline: none;

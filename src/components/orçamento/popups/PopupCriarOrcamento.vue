@@ -58,10 +58,10 @@
                         <input type="checkbox" v-model="barEnabled"> Bar
                     </label>
                     <select v-model="bar" :disabled="!barEnabled" required>
-                        <option value="">Selecione</option>
-                        <option value="completo">Completo</option>
-                        <option value="basico">Básico</option>
-                        <option value="premium">Premium</option>
+                        <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar.idCardapioBar">{{
+                            bar.nomeCardapioBar
+                        }}
+                        </option>
                     </select>
                 </div>
                 <div class="form-column checkboxes-column">
@@ -85,7 +85,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { Cardapio, Cerveja } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -104,13 +104,15 @@ export default defineComponent({
             data: '',
             cardapio: '' as number | string,
             cerveja: '',
-            barEnabled: false,
             bar: '',
+            barEnabled: false,
+
             cerimonia: false,
             espacoNoiva: false,
             cabineFotos: false,
             observacoes: '',
 
+            cardapioBar: [] as CardapioBar[],
             cardapios: [] as Cardapio[],
             cervejas: [] as Cerveja[]
         };
@@ -154,6 +156,14 @@ export default defineComponent({
                 console.error('Erro ao buscar cervejas:', error);
             }
         },
+        async fetchCardapioBar() {
+            try {
+                let response = await instance.get<CardapioBar[]>('/bar/get-all');
+                this.cardapioBar = response.data
+            } catch (error) {
+                console.error('Erro ao buscar cervejas:', error);
+            }
+        },
     },
     watch: {
         data(newValue) {
@@ -173,6 +183,7 @@ export default defineComponent({
     mounted() {
         this.fetchCardapios();
         this.fetchCervejas();
+        this.fetchCardapioBar();
     }
 });
 </script>
