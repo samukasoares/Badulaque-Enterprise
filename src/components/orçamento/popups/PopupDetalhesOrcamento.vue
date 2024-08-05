@@ -110,10 +110,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Cardapio } from '@/common/utils/Interfaces';
+import instance from '@/common/utils/AuthService';
 
 export default defineComponent({
     data() {
@@ -139,11 +141,50 @@ export default defineComponent({
             valorTotalBar: '',
             valorNoiva: '',
             valorCabine: '',
+
+            cardapios: [] as Cardapio[],
         };
     },
     methods: {
         close() {
             this.$emit('close');
+        },
+        async fetchCardapios() {
+            try {
+                let response = await instance.get<Cardapio[]>('/buffet/cardapios');
+                this.cardapios = response.data
+            } catch (error) {
+                console.error('Erro ao buscar cardápios:', error);
+            }
+        },
+        preencherTemplate(template: string) {
+            const cardapiosHTML = this.cardapios.map(cardapio => {
+                return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span>R$ ${cardapio.precoCardapio}</span></span>`;
+            }).join('');
+
+            return template
+                .replace('{{id}}', this.id)
+                .replace('{{referencia}}', this.referencia)
+                .replace('{{nome}}', this.nome)
+                .replace('{{tipoEvento}}', this.tipoEvento)
+                .replace('{{data}}', this.data)
+                .replace('{{convidados}}', this.convidados)
+                .replace('{{totalProposta}}', this.totalProposta)
+                .replace('{{dataEnvio}}', this.dataEnvio)
+                .replace('{{horaEnvio}}', this.horaEnvio)
+                .replace('{{observacoes}}', this.observacoes)
+                .replace('{{diaSemana}}', this.diaSemana)
+                .replace('{{valorEspaco}}', this.valorEspaco)
+                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
+                .replace('{{tipoBebida}}', this.tipoBebida)
+                .replace('{{valorPorPessoaBuffet}}', this.valorPorPessoaBuffet)
+                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
+                .replace('{{cardapioBar}}', this.cardapioBar)
+                .replace('{{valorPorPessoaBar}}', this.valorPorPessoaBar)
+                .replace('{{valorTotalBar}}', this.valorTotalBar)
+                .replace('{{valorNoiva}}', this.valorNoiva)
+                .replace('{{valorCabine}}', this.valorCabine)
+                .replace('{{cardapios}}', cardapiosHTML);
         },
         async gerarPDF() {
             try {
@@ -164,7 +205,17 @@ export default defineComponent({
                 iframe.style.left = '-9999px';
                 document.body.appendChild(iframe);
 
+                // Verifica se o contentWindow não é null
+                if (!iframe.contentWindow) {
+                    console.error('Erro: iframe.contentWindow é nulo');
+                    return;
+                }
+
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!iframeDoc) {
+                    console.error('Erro: Não foi possível acessar o documento do iframe');
+                    return;
+                }
                 iframeDoc.open();
                 iframeDoc.write(template);
                 iframeDoc.close();
@@ -203,33 +254,9 @@ export default defineComponent({
                 console.error('Erro ao carregar o template:', error);
             }
         },
-
-        preencherTemplate(template) {
-            return template
-                .replace('{{id}}', this.id)
-                .replace('{{referencia}}', this.referencia)
-                .replace('{{nome}}', this.nome)
-                .replace('{{tipoEvento}}', this.tipoEvento)
-                .replace('{{data}}', this.data)
-                .replace('{{convidados}}', this.convidados)
-                .replace('{{totalProposta}}', this.totalProposta)
-                .replace('{{dataEnvio}}', this.dataEnvio)
-                .replace('{{horaEnvio}}', this.horaEnvio)
-                .replace('{{observacoes}}', this.observacoes)
-                .replace('{{diaSemana}}', this.diaSemana)
-                .replace('{{valorEspaco}}', this.valorEspaco)
-                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
-                .replace('{{tipoBebida}}', this.tipoBebida)
-                .replace('{{valorPorPessoaBuffet}}', this.valorPorPessoaBuffet)
-                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
-                .replace('{{cardapioBar}}', this.cardapioBar)
-                .replace('{{valorPorPessoaBar}}', this.valorPorPessoaBar)
-                .replace('{{valorTotalBar}}', this.valorTotalBar)
-                .replace('{{valorNoiva}}', this.valorNoiva)
-                .replace('{{valorCabine}}', this.valorCabine);
-        },
     },
     mounted() {
+
         // Preenchendo dados para teste
         this.id = '123';
         this.referencia = 'Ref002';
@@ -252,6 +279,9 @@ export default defineComponent({
         this.valorTotalBar = '2000';
         this.valorNoiva = '1000';
         this.valorCabine = '800';
+
+        this.fetchCardapios();
+
     }
 });
 </script>

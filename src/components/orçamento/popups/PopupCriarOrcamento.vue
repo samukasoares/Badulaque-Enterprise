@@ -44,14 +44,14 @@
                     <select v-model="cardapio" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio.idCardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cerveja" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.nome">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-bar-label">
@@ -60,7 +60,7 @@
                     <select v-model="bar" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar.idCardapioBar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
