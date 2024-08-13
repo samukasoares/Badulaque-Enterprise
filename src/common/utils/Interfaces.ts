@@ -84,3 +84,15 @@ export interface Card {
     name: string;
     id: number;
 }
+
+export interface ValorEspaco {
+    idValorEspaco: number;
+    dia: string | null;
+    valor: number | null;
+}
+
+export interface Opcional {
+    idOpcional:number,
+    nomeOpcional:string,
+    valorAtual:number
+}

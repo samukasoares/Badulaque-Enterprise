@@ -7,35 +7,29 @@
 
     <h4>Espaço</h4>
     <div class="containerCards">
-
-        <div v-for="card in cardsDiaSemana" :key="card.id" class="card" @click="modalValorEspaco(card.id, card.name)">
-            {{ card.name }}
+        <div v-for="dia in diasDaSemana" :key="dia.idValorEspaco" class="card" @click="openEditModal(dia)">
+            {{ dia.dia }}
         </div>
-
     </div>
 
     <h4>Opcionais</h4>
-    <div class=" containerCards">
-
-        <!--
-            <div class="card" v-for="(card, id) in filteredCards" :key="id">
-            <label>{{ card.name }}</label>
+    <div class="containerCards">
+        <div v-for="opcional in opcionais" :key="opcional.idOpcional" class="card">
+            {{ opcional.nomeOpcional }}
         </div>
-        -->
-
-        <div class="card">Espaço da Noiva</div>
-
     </div>
 
     <PopupCriarOpcional v-if="showModal" @close="showModal = false" />
-    <PopupEditarValorEspaco v-if="showModalEspaco" @close="showModalEspaco = false" :dia-da-semana="currentCardName"
-        :id-dia-da-semana="currentCardID" />
+    <PopupEditarValorEspaco v-if="showModalEspaco" @close="showModalEspaco = false" :dia-da-semana="currentDia"
+        :valor-espaco="currentValorEspaco" @update="updateValorEspaco" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import PopupCriarOpcional from './popups/PopupCriarOpcional.vue';
 import PopupEditarValorEspaco from './popups/PopupEditarValorEspaco.vue';
+import { Opcional, ValorEspaco } from '@/common/utils/Interfaces';
+import instance from '@/common/utils/AuthService';
 
 export default defineComponent({
     components: { PopupCriarOpcional, PopupEditarValorEspaco },
@@ -43,22 +37,55 @@ export default defineComponent({
         return {
             showModal: false,
             showModalEspaco: false,
-            currentCardID: '',
-            currentCardName: '',
-            cardsDiaSemana: [
-                { id: '1', name: 'Sábado' },
-                { id: '2', name: 'Sexta-Feira' },
-                { id: '3', name: 'Domingo' },
-                { id: '4', name: 'Outros' }
-            ]
+            diasDaSemana: [] as ValorEspaco[],
+            currentDia: '',
+            currentValorEspaco: {} as ValorEspaco,
+
+            opcionais: [] as Opcional[]
         };
     },
     methods: {
-        modalValorEspaco(cardId: string, cardName: string) {
-            this.currentCardID = cardId;
-            this.currentCardName = cardName;
+        openEditModal(dia: ValorEspaco) {
+            this.currentDia = dia.dia ?? 'Desconhecido';
+            this.currentValorEspaco = { ...dia };
             this.showModalEspaco = true;
+        },
+        async updateValorEspaco(updatedData: ValorEspaco) {
+            try {
+                const response = await instance.post('/espaco/update', updatedData);
+
+                const index = this.diasDaSemana.findIndex(d => d.idValorEspaco === updatedData.idValorEspaco);
+                if (index !== -1) {
+                    this.diasDaSemana[index] = { ...response.data };
+                }
+
+                this.showModalEspaco = false;
+            } catch (error) {
+                console.error('Erro ao atualizar o valor do espaço:', error);
+            }
+        },
+
+        async fetchValorEspaco() {
+            try {
+                const response = await instance.get<ValorEspaco[]>('/espaco/get-all');
+                this.diasDaSemana = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar dias da semana:', error);
+            }
+        },
+
+        async fetchOpcionais() {
+            try {
+                const response = await instance.get<Opcional[]>('/opcional/get-all');
+                this.opcionais = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar opcionais:', error);
+            }
         }
+    },
+    mounted() {
+        this.fetchValorEspaco();
+        this.fetchOpcionais();
     }
 });
 </script>

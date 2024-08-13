@@ -1,40 +1,59 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <form>
+        <form @submit.prevent="atualizarValor">
             <h4>{{ diaDaSemana }}</h4><br>
 
             <label>Valor:</label>
-            <input type="number" required v-model='valorAtual'>
+            <input type="number" required v-model.number="valorAtual">
 
-            <button type="submit" class="submit-button">Criar</button>
+            <button type="submit" class="submit-button">Atualizar</button>
         </form>
     </div>
-
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { ValorEspaco } from '@/common/utils/Interfaces';
 
 export default defineComponent({
+    props: {
+        diaDaSemana: {
+            type: String,
+            required: true
+        },
+        valorEspaco: {
+            type: Object as PropType<ValorEspaco>,
+            required: true
+        }
+    },
     data() {
         return {
-            valorAtual: ''
+            valorAtual: this.valorEspaco.valor
         };
-    },
-    props: {
-        diaDaSemana: String,
-        idDiaDaSemana: String
     },
     methods: {
         close() {
             this.$emit('close');
         },
         async atualizarValor() {
-            return null;
-        },
+            if (this.valorAtual !== this.valorEspaco.valor) {
+                try {
+                    this.$emit('update', {
+                        ...this.valorEspaco,
+                        valor: this.valorAtual
+                    });
+                    this.close();
+                    alert('Valor alterado com sucesso!')
+
+                } catch (error) {
+                    console.error('Erro ao atualizar o valor do espaço:', error);
+                }
+            } else {
+                this.close();
+            }
+        }
     }
-}
-);
+});
 </script>
 
 <style scoped>
@@ -47,7 +66,6 @@ form {
     border-radius: 10px;
     position: relative;
     z-index: 2;
-    /* Garanta que o formulário esteja acima do backdrop */
 }
 
 label {
@@ -79,7 +97,6 @@ select {
     width: 100%;
     height: 100%;
     z-index: 1;
-    /* Ajuste o z-index para garantir que o backdrop esteja acima de outros conteúdos */
 }
 
 button.submit-button {
