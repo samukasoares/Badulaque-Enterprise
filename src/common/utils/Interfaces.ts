@@ -90,3 +90,9 @@ export interface ValorEspaco {
     dia: string | null;
     valor: number | null;
 }
+
+export interface Opcional {
+    idOpcional:number,
+    nomeOpcional:string,
+    valorAtual:number
+}

@@ -8,13 +8,14 @@
             <label>Valor:</label>
             <input type="number" required v-model='valorAtual'>
 
-            <button type="submit" class="submit-button">Criar</button>
+            <button type="submit" class="submit-button" @click="criarOpcional()">Criar</button>
         </form>
     </div>
 
 </template>
 
 <script lang="ts">
+import instance from '@/common/utils/AuthService';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -28,6 +29,17 @@ export default defineComponent({
         close() {
             this.$emit('close');
         },
+        async criarOpcional() {
+            try {
+                const data = await instance.post('/opcional/create', {
+                    nomeOpcional: this.nomeOpcional,
+                    valorAtual: this.valorAtual
+                });
+                window.location.reload()
+            } catch (error) {
+                alert('Erro ao criar opcional')
+            }
+        }
     }
 }
 );

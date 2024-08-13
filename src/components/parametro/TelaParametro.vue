@@ -14,7 +14,9 @@
 
     <h4>Opcionais</h4>
     <div class="containerCards">
-        <div class="card">Espaço da Noiva</div>
+        <div v-for="opcional in opcionais" :key="opcional.idOpcional" class="card">
+            {{ opcional.nomeOpcional }}
+        </div>
     </div>
 
     <PopupCriarOpcional v-if="showModal" @close="showModal = false" />
@@ -26,7 +28,7 @@
 import { defineComponent } from 'vue';
 import PopupCriarOpcional from './popups/PopupCriarOpcional.vue';
 import PopupEditarValorEspaco from './popups/PopupEditarValorEspaco.vue';
-import { ValorEspaco } from '@/common/utils/Interfaces';
+import { Opcional, ValorEspaco } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 
 export default defineComponent({
@@ -37,7 +39,9 @@ export default defineComponent({
             showModalEspaco: false,
             diasDaSemana: [] as ValorEspaco[],
             currentDia: '',
-            currentValorEspaco: {} as ValorEspaco
+            currentValorEspaco: {} as ValorEspaco,
+
+            opcionais: [] as Opcional[]
         };
     },
     methods: {
@@ -49,7 +53,6 @@ export default defineComponent({
         async updateValorEspaco(updatedData: ValorEspaco) {
             try {
                 const response = await instance.post('/espaco/update', updatedData);
-                console.log('Atualização bem-sucedida:', response.data);
 
                 const index = this.diasDaSemana.findIndex(d => d.idValorEspaco === updatedData.idValorEspaco);
                 if (index !== -1) {
@@ -69,10 +72,20 @@ export default defineComponent({
             } catch (error) {
                 console.error('Erro ao buscar dias da semana:', error);
             }
+        },
+
+        async fetchOpcionais() {
+            try {
+                const response = await instance.get<Opcional[]>('/opcional/get-all');
+                this.opcionais = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar opcionais:', error);
+            }
         }
     },
     mounted() {
         this.fetchValorEspaco();
+        this.fetchOpcionais();
     }
 });
 </script>
