@@ -37,7 +37,7 @@
                 <td>{{ registro.dataCriacao }}</td>
                 <td>{{ registro.dataEnvio }}</td>
                 <td>{{ registro.status }}</td>
-                <td><i class="fa-solid fa-share action-icon"></i></td>
+                <td @click="handleEnvioOrcamento(registro, index)"><i class="fa-solid fa-share action-icon"></i></td>
                 <td @click="handleEditClick(registro, index)"><i class="fa-solid fa-edit action-icon"></i></td>
             </tr>
         </tbody>
@@ -77,6 +77,9 @@ export default defineComponent({
             selectedRow: null as number | null,
             registroSelecionado: null as Registro | null,
             searchQuery: '',
+
+            link: '',
+
             registros: [
                 {
                     id: 1,
@@ -137,6 +140,21 @@ export default defineComponent({
                     registro.dataEnvio.toLowerCase().includes(query)
                 );
             });
+        },
+
+        async fetchLinks() {
+            const response = await fetch('/links-orcamentos.json');
+            return response.json();
+
+        },
+        async getLink(orcamentoId: number) {
+            const links = await this.fetchLinks();
+            const index = (orcamentoId) % links.length;
+            this.link = links[index];
+        },
+        async handleEnvioOrcamento(registro: Registro, index: number) {
+            await this.getLink(registro.id);
+            console.log(this.link)
         }
     }
 });
