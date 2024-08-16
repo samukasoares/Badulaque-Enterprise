@@ -49,7 +49,6 @@ td {
 }
 
 th {
-
     background-color: #425C4D;
     color: white;
 }
@@ -73,11 +72,78 @@ td:last-child {
     /* Amarelo dourado */
 }
 
+/* Scroll horizontal para telas pequenas */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    th,
+    td {
+        padding: 6px;
+        font-size: 14px;
+    }
+}
+
+/* Estilo de card para telas muito pequenas */
+@media (max-width: 480px) {
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+
+    th {
+        /* Ocultar cabeçalhos em telas pequenas */
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #2F4036;
+        padding: 10px 0;
+    }
+
+    td {
+        /* Adiciona label antes de cada célula em telas pequenas */
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        border-right: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 15px;
+        font-weight: bold;
+        text-align: left;
+        background-color: #E1C59C;
+    }
+
+    td:last-child {
+        border-right: none;
+    }
+}
+
 /* Final Tabela*/
 
 /* Inicio Barra Opções*/
 .barraOpcoes {
     display: flex;
+    flex-wrap: wrap;
     border-radius: 5px;
     width: 100%;
     margin-bottom: 10px;
@@ -88,11 +154,10 @@ td:last-child {
 .barraOpcoes button {
     background-color: #425C4D;
     border: none;
-    padding: 5px 10px;
+    padding: 10px;
     color: white;
     cursor: pointer;
     border-radius: 5px;
-    padding: 10px;
     font-family: MontSerrat;
     width: 200px;
 }
@@ -106,7 +171,7 @@ td:last-child {
 }
 
 .barraOpcoes input {
-    width: 300px;
+    width: 200px;
 }
 
 .barraOpcoes input:focus {
@@ -119,6 +184,70 @@ td:last-child {
     outline: none;
     border-color: #2F4036;
     box-shadow: 0 0 10px #2F4036;
+}
+
+.groupConsolidado {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.groupConsolidado label {
+    margin-bottom: 5px;
+}
+
+/* Media query para telas menores */
+@media (max-width: 1024px) {
+    .barraOpcoes {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .barraOpcoes button,
+    .barraOpcoes select,
+    .barraOpcoes input {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 10px;
+    }
+
+    .groupConsolidado {
+        display: none; /* Ocultar os grupos consolidados em telas menores */
+    }
+}
+
+/* Media query para telas ainda menores */
+@media (max-width: 768px) {
+    .barraOpcoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .barraOpcoes button,
+    .barraOpcoes select,
+    .barraOpcoes input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .group {
+        width: 100%;
+    }
+}
+
+/* Media query para telas pequenas, exibindo alguns elementos novamente */
+@media (max-width: 480px) {
+    .groupConsolidado {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .groupConsolidado label {
+        width: auto;
+        margin: 0;
+        text-align: left;
+    }
 }
 
 /* Final Barra Opções*/

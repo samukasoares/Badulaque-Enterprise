@@ -64,16 +64,20 @@
                         </option>
                     </select>
                 </div>
-                <div class="form-column checkboxes-column">
+                <div class="form-column">
+                    <h4>Opcionais</h4><br>
                     <label class="checkbox-label">
-                        <input type="checkbox" v-model="cerimonia"> Cerimônia
+                        <input type="checkbox" v-model="cerimonia">Cerimônia
                     </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" v-model="espacoNoiva"> Espaço da Noiva
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" v-model="cabineFotos"> Cabine de Fotos
-                    </label>
+
+                    <div v-for="opcional in opcionais" :key="opcional.idOpcional" class="checkbox-container">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opcional.idOpcional" :value="opcional.nomeOpcional"
+                                v-model="selectedOpcionais" /> {{ opcional.nomeOpcional }}
+                        </label>
+                    </div>
+
+
                 </div>
             </div>
             <label>Observações</label>
@@ -85,7 +89,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { Cardapio, CardapioBar, Cerveja } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -105,16 +109,14 @@ export default defineComponent({
             cardapio: '' as number | string,
             cerveja: '',
             bar: '',
-            barEnabled: false,
-
-            cerimonia: false,
-            espacoNoiva: false,
-            cabineFotos: false,
             observacoes: '',
-
+            cerimonia: false,
+            barEnabled: false,
+            selectedOpcionais: [],
             cardapioBar: [] as CardapioBar[],
             cardapios: [] as Cardapio[],
-            cervejas: [] as Cerveja[]
+            cervejas: [] as Cerveja[],
+            opcionais: [] as Opcional[]
         };
     },
     methods: {
@@ -164,6 +166,15 @@ export default defineComponent({
                 console.error('Erro ao buscar cervejas:', error);
             }
         },
+
+        async fetchOpcionais() {
+            try {
+                let response = await instance.get<Opcional[]>('/opcional/get-all')
+                this.opcionais = response.data
+            } catch (error) {
+                console.error('Erro ao buscar opcionais:', error);
+            }
+        }
     },
     watch: {
         data(newValue) {
@@ -184,13 +195,14 @@ export default defineComponent({
         this.fetchCardapios();
         this.fetchCervejas();
         this.fetchCardapioBar();
+        this.fetchOpcionais();
     }
 });
 </script>
 
 <style scoped>
 form {
-    max-width: 700px;
+    max-width: 800px;
     margin: 30px auto;
     background: white;
     text-align: left;
@@ -211,10 +223,7 @@ form {
     padding: 0 10px;
 }
 
-.checkboxes-column {
-    margin-top: 60px;
-    /* Ajuste conforme necessário para alinhar com "Orçamento" */
-}
+
 
 label {
     color: #aaa;
