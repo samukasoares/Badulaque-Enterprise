@@ -1,6 +1,6 @@
 <template>
     <div class="barraOpcoes">
-        <button>Novo Contrato</button>
+        <button @click="showModal = true">Novo Contrato</button>
         <div class="group">
             <label>Status:</label>
             <select>
@@ -55,7 +55,23 @@
             <td>R$36.230,00</td>
         </tr>
     </table>
+
+    <PopupCriarContrato v-if="showModal" @close="showModal = false" />
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import PopupCriarContrato from '../contrato/popups/PopupCriarContrato.vue'
+
+export default defineComponent({
+    components: { PopupCriarContrato },
+    data() {
+        return {
+            showModal: false,
+        }
+    }
+})
+</script>
 
 <style scoped>
 .groupConsolidado {
