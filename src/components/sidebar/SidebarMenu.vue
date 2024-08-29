@@ -1,16 +1,3 @@
-<script>
-import SidebarLink from './SidebarLink'
-import { collapsed, toggleSidebar, sidebarWidth } from './state'
-
-export default {
-    props: {},
-    components: { SidebarLink },
-    setup() {
-        return { collapsed, toggleSidebar, sidebarWidth }
-    }
-}
-</script>
-
 <template>
     <div class="sidebar" :style="{ width: sidebarWidth }">
         <div class="logo-container" :class="{ 'expanded': !collapsed }">
@@ -33,11 +20,59 @@ export default {
             <SidebarLink to="/relatorios" icon="fa-solid fa-file-lines">Relatórios</SidebarLink>
         </div>
 
+        <!-- Novo container de usuário -->
+        <div class="user-container">
+            <!-- Exibe o nome do usuário usando SidebarLink desativado -->
+            <SidebarLink to="" icon="fa-solid fa-user" :disabled="true">{{ username }}</SidebarLink>
+            <!-- Botão de Logout que aparece no hover -->
+            <div class="logout" @click="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </div>
+        </div>
+
         <span class="collapse-icon" :class="{ 'rotate-180': collapsed }" @click="toggleSidebar">
             <i class="fas fa-angle-double-left"></i>
         </span>
     </div>
 </template>
+
+<script>
+import instance from '@/common/utils/AuthService';
+import SidebarLink from './SidebarLink';
+import { collapsed, toggleSidebar, sidebarWidth } from './state';
+
+export default {
+    components: { SidebarLink },
+    data() {
+        return {
+            username: '', // Inicializa o username como string vazia
+            collapsed,
+            sidebarWidth,
+        };
+    },
+    created() {
+        // Recupera o nome do usuário do localStorage quando o componente é criado
+        const storedUsername = localStorage.getItem('username');
+        if (storedUsername) {
+            this.username = storedUsername;
+        }
+    },
+    methods: {
+        toggleSidebar() {
+            toggleSidebar();
+        },
+        async logout() {
+            try {
+                await instance.post('/logout');
+                localStorage.clear(); // Limpa todo o localStorage ao fazer logout
+                this.$router.push('/');
+            } catch (error) {
+                alert('Erro ao deslogar!');
+            }
+        }
+    }
+};
+</script>
 
 <style>
 :root {
@@ -59,8 +94,8 @@ export default {
     transition: 0.3s ease;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    /* Drop shadow */
 }
 
 .logo-container {
@@ -68,24 +103,50 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100px;
-    /* Altura padrão */
     transition: height 0.3s ease;
 }
 
 .logo-container.expanded {
     height: 200px;
-    /* Altura quando expandida */
 }
 
 .links-container {
     margin-top: 0.5em;
-    /* Espaço entre o logotipo e os links */
     transition: margin-top 0.3s ease;
+    flex-grow: 1;
 }
 
+.user-container {
+    position: relative;
+    padding: 1em 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2em;
+}
 
-.sidebar h1 {
-    height: 2.5em;
+.user-container .logout {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    padding: 0.5em 2em;
+    cursor: pointer;
+    background-color: #2F4036;
+    color: white;
+    width: auto;
+    text-align: center;
+    border-radius: 4px;
+    transition: background-color 0.5s ease;
+    font-size: 1em;
+    white-space: nowrap;
+}
+
+.user-container:hover .logout {
+    display: block;
+}
+
+.user-container .logout:hover {
+    background-color: var(--sidebar-item-hover);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
 }
 
 .collapse-icon {

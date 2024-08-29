@@ -6,7 +6,8 @@ import { collapsed } from './state'
 export default {
     props: {
         to: { type: String, required: true },
-        icon: { type: String, required: true }
+        icon: { type: String, required: true },
+        disabled: { type: Boolean, default: false }
     },
     setup(props) {
         const route = useRoute()
@@ -17,7 +18,17 @@ export default {
 </script>
 
 <template>
-    <router-link :to="to" class="link" :class="{ active: isActive }">
+    <div v-if="disabled" class="link disabled">
+        <!-- Renderiza como texto quando desativado -->
+        <i class="icon" :class="icon"></i>
+        <transition name="fade">
+            <span v-if="!collapsed">
+                <slot></slot>
+            </span>
+        </transition>
+    </div>
+    <router-link v-else :to="to" class="link" :class="{ active: isActive }">
+        <!-- Renderiza como link quando não está desativado -->
         <i class="icon" :class="icon"></i>
         <transition name="fade">
             <span v-if="!collapsed">
