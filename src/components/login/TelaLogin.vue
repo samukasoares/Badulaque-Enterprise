@@ -19,7 +19,8 @@ export default defineComponent({
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            username: '',
         }
     },
     components: {},
@@ -30,8 +31,12 @@ export default defineComponent({
                     email: this.email,
                     senha: this.password,
                 });
+
                 const token = response.data.token;
+                const username = response.data.user.username;
+
                 localStorage.setItem('token', token);   // Armazena o token no localStorage
+                localStorage.setItem('username', username)
                 this.$router.push('/orcamentos');       // Redireciona para a rota após o login
                 console.log(token);
             } catch (error) {

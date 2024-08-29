@@ -62,7 +62,7 @@ const router = createRouter({
   routes
 })
 
-/*
+
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token'); // Verifica se o token está presente no localStorage
   if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
@@ -72,5 +72,5 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-*/
+
 export default router 
