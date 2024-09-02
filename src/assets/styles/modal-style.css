@@ -25,7 +25,6 @@
 .modal-form label {
     color: #aaa;
     display: inline-block;
-    margin: 25px 0 15px;
     font-size: 0.6em;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -35,7 +34,6 @@
 .modal-form input,
 .modal-form select {
     display: block;
-    padding: 10px 6px;
     width: 100%;
     box-sizing: border-box;
     border: none;
@@ -63,11 +61,14 @@
 .modal-form h4 {
     color: black;
     display: inline-block;
-    margin: 25px 0 15px;
     font-size: 0.6em;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: bold;
+}
+
+.modal-form span{
+    font-size: 12px;
 }
 
 .form-row {
@@ -127,3 +128,5 @@
     cursor: pointer;
     color: #9f865D;
 }
+
+
