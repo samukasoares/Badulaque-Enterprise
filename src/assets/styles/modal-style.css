@@ -1,3 +1,4 @@
+/* Estilos Gerais */
 .backdrop {
     top: 0;
     left: 0;
@@ -11,10 +12,10 @@
 .modal-form {
     max-width: 700px;
     margin: 30px auto;
-    background: white;
-    text-align: left;
     padding: 20px;
+    background: white;
     border-radius: 10px;
+    text-align: left;
     position: relative;
     z-index: 2;
     box-sizing: border-box;
@@ -22,35 +23,40 @@
     overflow-y: auto; /* Adiciona barra de rolagem vertical se o conteúdo exceder a altura */
 }
 
-.modal-form label {
-    color: #aaa;
+.modal-form label, 
+.modal-form h4 {
     display: inline-block;
     font-size: 0.6em;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: bold;
+    color: #aaa;
+}
+
+.modal-form h4 {
+    color: black; /* Cor específica para <h4> */
 }
 
 .modal-form input,
 .modal-form select {
     display: block;
     width: 100%;
-    box-sizing: border-box;
     border: none;
     border-bottom: 1px solid #ddd;
     color: #555;
+    box-sizing: border-box;
 }
 
 .modal-form button.submit-button {
     display: block;
     width: 100%;
     padding: 10px;
+    margin-top: 20px;
     background-color: #425C4D;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
     font-family: Montserrat;
 }
 
@@ -58,31 +64,53 @@
     background-color: #2F4036;
 }
 
-.modal-form h4 {
-    color: black;
-    display: inline-block;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-.modal-form span{
+.modal-form span {
     font-size: 12px;
 }
 
-.form-row {
+.modal-form .form-row {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
 }
 
-.form-column {
+.modal-form .form-column {
     flex: 1;
     padding: 0 10px;
     min-width: 100px;
 }
 
+.botao-add {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #2F4036;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.botao-add:hover {
+    color: #9f865D;
+}
+
+.modal-form .checkbox-bar-label,
+.modal-form .checkbox-label {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.modal-form .checkbox-bar-label {
+    margin: 25px 0 5px;
+}
+
+.modal-form input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+/* Media Queries */
 @media (max-width: 768px) {
     .modal-form {
         max-width: 90%;
@@ -106,7 +134,8 @@
         padding: 10px;
     }
 
-    .modal-form label {
+    .modal-form label,
+    .modal-form h4 {
         font-size: 0.7em;
     }
 
@@ -114,19 +143,3 @@
         font-size: 0.8em;
     }
 }
-
-.botao-add {
-    display: block;
-    width: 100%;
-    background-color: transparent;
-    border: none;
-    color: #2F4036;
-    margin-top: 20px;
-}
-
-.botao-add:hover {
-    cursor: pointer;
-    color: #9f865D;
-}
-
-

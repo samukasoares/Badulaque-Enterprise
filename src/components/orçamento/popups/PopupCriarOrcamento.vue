@@ -1,6 +1,6 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <form @submit.prevent="submitForm">
+        <form class="modal-form" @submit.prevent="submitForm">
             <div class="form-row">
                 <div class="form-column">
                     <h4>Cliente</h4><br>
@@ -44,14 +44,14 @@
                     <select v-model="cardapio" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio.idCardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cerveja" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.nome">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-bar-label">
@@ -60,7 +60,7 @@
                     <select v-model="bar" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar.idCardapioBar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -201,102 +201,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-form {
-    max-width: 800px;
-    margin: 30px auto;
-    background: white;
-    text-align: left;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2;
-    /* Garanta que o formulário esteja acima do backdrop */
-}
-
-.form-row {
-    display: flex;
-    justify-content: space-between;
-}
-
-.form-column {
-    flex: 1;
-    padding: 0 10px;
-}
-
-
-
-label {
-    color: #aaa;
-    display: inline-block;
-    margin: 25px 0 15px;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-.checkbox-bar-label {
-    display: flex;
-    align-items: center;
-    margin: 25px 0 5px;
-}
-
-h4 {
-    color: black;
-    display: inline-block;
-    margin: 25px 0 15px;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-input,
-select {
-    display: block;
-    padding: 10px 6px;
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    color: #555;
-}
-
-input[type="checkbox"] {
-    width: auto;
-    margin-right: 10px;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    margin: 10px 0;
-}
-
-button.submit-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #425C4D;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-button.submit-button:hover {
-    background-color: #2F4036;
-}
-
-.backdrop {
-    top: 0;
-    left: 0;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    /* Ajuste o z-index para garantir que o backdrop esteja acima de outros conteúdos */
-}
+@import '../../../assets/styles/modal-style.css'
 </style>
