@@ -8,6 +8,9 @@
             <label>Valor:</label>
             <input type="number" required v-model='valorAtual'>
 
+            <label>Mostrar no Orçamento:</label>
+            <input type="checkbox" required v-model='mostrarOrcamento'>
+
             <button type="submit" class="submit-button" @click="criarOpcional()">Criar</button>
         </form>
     </div>
@@ -22,7 +25,8 @@ export default defineComponent({
     data() {
         return {
             nomeOpcional: '',
-            valorAtual: ''
+            valorAtual: '',
+            mostrarOrcamento: null
         };
     },
     methods: {
@@ -33,7 +37,8 @@ export default defineComponent({
             try {
                 const data = await instance.post('/opcional/create', {
                     nomeOpcional: this.nomeOpcional,
-                    valorAtual: this.valorAtual
+                    valorAtual: this.valorAtual,
+                    mostrarOrcamento: Number(this.mostrarOrcamento)
                 });
                 window.location.reload()
             } catch (error) {
