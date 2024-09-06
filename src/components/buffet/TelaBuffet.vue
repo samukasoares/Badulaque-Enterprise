@@ -1,6 +1,6 @@
 <template>
     <div class="barraOpcoes">
-        <button @click="showModal = true">Novo</button>
+        <button @click="showCreateModal">Novo</button>
         <div class="group">
             <label>Visualizando:</label>
             <select v-model="opcoes" @change="fetchData">
@@ -22,7 +22,7 @@
     </div>
 
     <!--Componente Popup de Criar Cardapios, Itens ou Grupos-->
-    <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" />
+    <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId" />
 
 </template>
 
@@ -31,9 +31,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import popupCardapio from './popups/PopupCriar/PopupCriarCardapio.vue';
-import popupGrupo from './popups/PopupCriar/PopupCriarGrupo.vue'
-import popupItem from './popups/PopupCriar/PopupCriarItem.vue'
-import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue'
+import popupGrupo from './popups/PopupCriar/PopupCriarGrupo.vue';
+import popupItem from './popups/PopupCriar/PopupCriarItem.vue';
+import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue';
+import popupDetalhesCardapio from '../buffet/popups/PopupDetalhes/PopupDetalhesCardapio.vue'
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
 import { Card, Cardapio, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
@@ -45,23 +46,33 @@ export default defineComponent({
             opcoes: localStorage.getItem('selectedOption'),
             showModal: false,
             cards: [] as Card[],
-            searchText: ''
+            searchText: '',
+            isViewingDetails: false,
+            selectedCardId: null as number | null,
         }
     },
-    components: { popupCardapio, popupGrupo, popupItem, popupCerveja },
+    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio },
     computed: {
         getPopupComponent() {
-            if (this.opcoes === 'Cardápios') {
-                return 'popupCardapio';
-            } else if (this.opcoes === 'Grupos') {
-                return 'popupGrupo';
-            } else if (this.opcoes === 'Itens') {
-                return 'popupItem';
-            } else if (this.opcoes === 'Cervejas') {
-                return 'popupCerveja';
+            if (this.isViewingDetails) {
+                // Retorna o popup de detalhes dependendo do tipo selecionado
+                if (this.opcoes === 'Cardápios') {
+                    return 'popupDetalhesCardapio';
+                }
+                // Adicione lógica para outros tipos se necessário
             } else {
-                return null;
+                // Retorna o popup de criação
+                if (this.opcoes === 'Cardápios') {
+                    return 'popupCardapio';
+                } else if (this.opcoes === 'Grupos') {
+                    return 'popupGrupo';
+                } else if (this.opcoes === 'Itens') {
+                    return 'popupItem';
+                } else if (this.opcoes === 'Cervejas') {
+                    return 'popupCerveja';
+                }
             }
+            return null;
         },
         filteredCards(): Card[] {
             return this.cards.filter(card => card.name.toLowerCase().includes(this.searchText.toLowerCase()));
@@ -96,15 +107,21 @@ export default defineComponent({
                 console.log(String(error));
             }
         },
-        async showCard(id: number) {
-            try {
-                const data2 = await instance.get('/buffet/cardapio/' + id)
-                console.log(data2.data);
-            } catch (error) {
-                console.log(String(error));
-            }
-
+        showCard(id: number) {
+            this.isViewingDetails = true;
+            this.selectedCardId = id; // Passa apenas o ID para o modal
+            this.showModal = true;
+        },
+        showCreateModal() {
+            this.isViewingDetails = false; // Define que estamos criando um novo item
+            this.selectedCardId = null;
+            this.showModal = true;
+        },
+        closeModal() {
+            this.showModal = false;
+            this.selectedCardId = null;
         }
+
     },
     watch: {
         opcoes(newVal) {

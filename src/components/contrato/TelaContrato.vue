@@ -44,6 +44,7 @@
             <th style="width: 10%;">Convidados</th>
             <th style="width: 10%;">Cardápio</th>
             <th style="width: 10%;">Total Contrato</th>
+            <th style="width: 10%;">Definir Cardápio</th>
         </tr>
         <tr>
             <td>29/09/2025</td>
@@ -53,6 +54,7 @@
             <td>150</td>
             <td>Prata</td>
             <td>R$36.230,00</td>
+            <td><i class="fa-solid fa-edit action-icon"></i></td>
         </tr>
     </table>
 
