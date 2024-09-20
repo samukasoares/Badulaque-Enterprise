@@ -80,6 +80,51 @@ export interface RegistroCardapioBar{
 }
 //Fim Interface Bar
 
+
+//Inicio Interface Orçamento
+
+export interface RegistroLead {
+    nomeLead: string;
+    celular: string;
+    email: string;
+    cidade: string;
+}
+
+export interface RegistroOrcamentoData {
+    referenciaOrcamento: string,
+    cadeira: string | null,
+    Cardapio_idCardapio: number,
+    Cerveja_idCerveja: number,
+    numConvidados: number,
+    observacoesOrcamento: string | null,
+    dataEvento: string,
+    ValorEspaco_idValorEspaco: number,
+    valorPPBar: number,
+    valorPPCardapio:number,
+    tipoEvento: string,
+    cerimoniaLocal: number,
+    fonte: string,
+    CardapioBar_idCardapioBar: number
+} 
+
+export interface RegistroOrcamento {
+    orcamento: RegistroOrcamentoData,
+    opcional: number[],
+    lead: RegistroLead;
+}
+
+export interface OrcamentoTabela {
+    id: number;
+    referencia: string;
+    cliente: string;
+    contato: string;
+    tipo: string;
+    dataCriacao: string;
+    dataEnvio: string;
+    status: string;
+}
+
+//Fim Interfaces Orcamento
 export interface Card {
     name: string;
     id: number;

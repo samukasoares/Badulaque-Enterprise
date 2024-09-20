@@ -28,7 +28,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(registro, index) in filteredRegistros" :key="registro.id"
+            <tr v-for="(registro, index) in filteredOrcamentos" :key="registro.id"
                 @dblclick="handleDoubleClick(registro, index)" :class="{ 'selected-row': selectedRow === index }">
                 <td>{{ registro.referencia }}</td>
                 <td>{{ registro.cliente }}</td>
@@ -43,9 +43,12 @@
         </tbody>
     </table>
 
-    <PopupOrcamento v-if="showModal" @close="showModal = false" />
-    <PopupDetalhes v-if="showDetailModal" @close="closeDetailModal()" :registro="registroSelecionado" />
-    <PopupEditarOrcamento v-if="showEditModal" @close="closeEditModal()" :registro="registroSelecionado" />
+    <!-- Exibe a mensagem de sucesso fora do modal -->
+    <NotificationMessage :message="successMessage" />
+
+    <PopupOrcamento v-if="showModal" @close="showModal = false" @success="handleSuccessMessage" />
+    <PopupDetalhes v-if="showDetailModal" @close="closeDetailModal()" :orcamentoId="orcamentoSelecionado.id" />
+    <PopupEditarOrcamento v-if="showEditModal" @close="closeEditModal()" :orcamento="orcamentoSelecionado" />
 
 </template>
 
@@ -54,35 +57,27 @@ import { defineComponent } from 'vue';
 import PopupOrcamento from '@/components/orçamento/popups/PopupCriarOrcamento.vue';
 import PopupDetalhes from '@/components/orçamento/popups/PopupDetalhesOrcamento.vue';
 import PopupEditarOrcamento from '@/components/orçamento/popups/PopupEditarOrcamento.vue'
+import NotificationMessage from '@/views/NotificationMessage.vue';
+import { OrcamentoTabela } from '@/common/utils/Interfaces';
 
-interface Registro {
-    id: number;
-    referencia: string;
-    cliente: string;
-    contato: string;
-    tipo: string;
-    dataCriacao: string;
-    dataEnvio: string;
-    status: string;
-}
 
 
 export default defineComponent({
-    components: { PopupOrcamento, PopupDetalhes, PopupEditarOrcamento },
+    components: { PopupOrcamento, PopupDetalhes, PopupEditarOrcamento, NotificationMessage },
     data() {
         return {
             showModal: false,
             showDetailModal: false,
             showEditModal: false,
             selectedRow: null as number | null,
-            registroSelecionado: null as Registro | null,
+            orcamentoSelecionado: {} as OrcamentoTabela,
             searchQuery: '',
-
+            successMessage: '',
             link: '',
 
-            registros: [
+            orcamentos: [
                 {
-                    id: 1,
+                    id: 42,
                     referencia: 'C250926',
                     cliente: 'Samuel & Bruna',
                     contato: '(19)99710-4251',
@@ -91,33 +86,24 @@ export default defineComponent({
                     dataEnvio: '25/06/24 17:54',
                     status: 'Orçamento',
                 },
-                {
-                    id: 2,
-                    referencia: 'C251108',
-                    cliente: 'Pedro & Karol',
-                    contato: '(19)99710-3211',
-                    tipo: 'Casamento',
-                    dataCriacao: '21/06/24 17:59',
-                    dataEnvio: '25/06/24 19:30',
-                    status: 'Descartado',
-                },
                 // Adicione mais registros conforme necessário
-            ] as Registro[],
-            filteredRegistros: [] as Registro[]
+            ] as OrcamentoTabela[],
+
+            filteredOrcamentos: [] as OrcamentoTabela[]
         };
     },
     created() {
-        this.filteredRegistros = this.registros;
+        this.filteredOrcamentos = this.orcamentos;
     },
     methods: {
-        handleDoubleClick(registro: Registro, index: number) {
+        handleDoubleClick(orcamento: OrcamentoTabela, index: number) {
             this.selectedRow = index;
-            this.registroSelecionado = registro;
+            this.orcamentoSelecionado = orcamento;
             this.showDetailModal = true;
         },
-        handleEditClick(registro: Registro, index: number) {
+        handleEditClick(orcamento: OrcamentoTabela, index: number) {
             this.selectedRow = index;
-            this.registroSelecionado = registro;
+            this.orcamentoSelecionado = orcamento;
             this.showEditModal = true;
         },
         closeDetailModal() {
@@ -129,15 +115,15 @@ export default defineComponent({
             this.selectedRow = null;
         },
         filterRegistros() {
-            this.filteredRegistros = this.registros.filter((registro) => {
+            this.filteredOrcamentos = this.orcamentos.filter((orcamento) => {
                 const query = this.searchQuery.toLowerCase();
                 return (
-                    registro.referencia.toLowerCase().includes(query) ||
-                    registro.cliente.toLowerCase().includes(query) ||
-                    registro.contato.toLowerCase().includes(query) ||
-                    registro.tipo.toLowerCase().includes(query) ||
-                    registro.dataCriacao.toLowerCase().includes(query) ||
-                    registro.dataEnvio.toLowerCase().includes(query)
+                    orcamento.referencia.toLowerCase().includes(query) ||
+                    orcamento.cliente.toLowerCase().includes(query) ||
+                    orcamento.contato.toLowerCase().includes(query) ||
+                    orcamento.tipo.toLowerCase().includes(query) ||
+                    orcamento.dataCriacao.toLowerCase().includes(query) ||
+                    orcamento.dataEnvio.toLowerCase().includes(query)
                 );
             });
         },
@@ -152,9 +138,17 @@ export default defineComponent({
             const index = (orcamentoId) % links.length;
             this.link = links[index];
         },
-        async handleEnvioOrcamento(registro: Registro, index: number) {
+        async handleEnvioOrcamento(registro: OrcamentoTabela, index: number) {
             await this.getLink(registro.id);
             console.log(this.link)
+        },
+
+        handleSuccessMessage(message: string) {
+            this.successMessage = message;
+
+            setTimeout(() => {
+                this.successMessage = '';
+            }, 3000); // 5 segundos
         }
     }
 });

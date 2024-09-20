@@ -37,16 +37,16 @@
             <button class="submit-button" type="submit">Criar Contrato</button>
         </form>
     </div>
-    <ErrorMessage :message="errorMessage" />
+    <NotificationMessage :message="errorMessage" type="error" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ErrorMessage from '../../../views/ErrorMessage.vue'
+import NotificationMessage from '@/views/NotificationMessage.vue';
 
 export default defineComponent({
     components: {
-        ErrorMessage
+        NotificationMessage
     },
     data() {
         return {
