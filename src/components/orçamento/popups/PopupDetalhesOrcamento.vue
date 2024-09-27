@@ -15,6 +15,8 @@
                         <input v-model="email" disabled type="text">
                         <label>Telefone:</label>
                         <input v-model="telefone" disabled type="text">
+                        <label>Cidade:</label>
+                        <input v-model="cidade" disabled type="text">
                         <label>Tipo de Evento:</label>
                         <input v-model="tipoEvento" disabled type="text">
                         <label>Data:</label>
@@ -23,24 +25,20 @@
                         <input v-model="convidados" disabled type="text">
                         <label>Total Proposta:</label>
                         <input v-model="totalProposta" disabled type="text">
-                        <h4>Controle</h4><br>
-                        <label>Data Envio:</label>
-                        <input v-model="dataEnvio" disabled type="text">
-                        <label>Hora Envio:</label>
-                        <input v-model="horaEnvio" disabled type="text">
+
 
                     </div>
 
                     <div class="form-column">
                         <h4>Espaço</h4><br>
-                        <label>Dia da Semana:</label>
-                        <input v-model="diaSemana" disabled type="text">
                         <label>Valor:</label>
                         <input v-model="valorEspaco" disabled type="text">
+                        <label>Cerimônia no Local:</label>
+                        <input v-model="cerimonia" disabled type="text">
                         <h4>Buffet</h4><br>
                         <label>Cardápio:</label>
                         <input v-model="cardapioBuffet" disabled type="text">
-                        <label>Tipo de Bebida:</label>
+                        <label>Tipo de Cerveja:</label>
                         <input v-model="tipoBebida" disabled type="text">
                         <label>Valor por pessoa:</label>
                         <input v-model="valorPorPessoaBuffet" disabled type="text">
@@ -56,13 +54,20 @@
                     </div>
 
                     <div class="form-column">
+                        <h4>Controle</h4><br>
+                        <label>Data Criação:</label>
+                        <input v-model="dataCriação" disabled type="text">
+                        <label>Data Envio:</label>
+                        <input v-model="dataEnvio" disabled type="text">
                         <h4>Opcionais</h4>
                         <div v-if="opcionaisSelecionados.length">
+
                             <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <input :value="opcional.Opcional.valorAtual" disabled type="text">
                             </div>
                         </div>
+
                     </div>
 
                     <div class="form-column">
@@ -106,18 +111,19 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { Cardapio, RegistroOrcamento } from '@/common/utils/Interfaces';
+import { Cardapio } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
-import { formatarCelular, formatarData } from '@/common/utils/Helper';
+import { formatarCelular, formatarDataExtenso, formatarDateToString, formatarValorMonetario } from '@/common/utils/Helper';
+import { gerarPDFDoHtml } from '@/common/utils/pdfService';
+
 
 export default defineComponent({
     props: {
         orcamentoId: {
             type: Number,
-            required: true,
+            required: false,
+            default: null,
         },
     },
     data() {
@@ -127,12 +133,14 @@ export default defineComponent({
             nome: '',
             email: '',
             tipoEvento: '',
+            cidade: '',
             data: '',
             convidados: '',
+            cerimonia: '',
             totalProposta: '',
-            dataEnvio: '',
+            dataCriação: '',
             telefone: '',
-            horaEnvio: '',
+            dataEnvio: '',
             observacoes: '',
             diaSemana: '',
             valorEspaco: '',
@@ -145,6 +153,7 @@ export default defineComponent({
             valorTotalBar: '',
             valorNoiva: '',
             valorCabine: '',
+            valorOpcionais: '',
             loading: false,
 
             opcionaisSelecionados: [] as OrcamentoOpcional[],
@@ -153,6 +162,7 @@ export default defineComponent({
             sinalEntrada: '',
             parcelasEntrada: '',
             valorEntrada: '',
+            valorParcelasEntrada: '',
             saldoEntrada: '',
 
             sinalAVista: '',
@@ -180,35 +190,42 @@ export default defineComponent({
                 this.nome = orcamento.Lead.nomeLead;
                 this.email = orcamento.Lead.email;
                 this.referencia = orcamento.referenciaOrcamento;
-                this.data = formatarData(orcamento.dataEvento);
+                this.data = formatarDataExtenso(orcamento.dataEvento);
                 this.tipoEvento = orcamento.tipoEvento;
+                this.cidade = orcamento.Lead.cidade;
                 this.telefone = formatarCelular(orcamento.Lead.celular);
                 this.convidados = orcamento.numConvidados.toString();
-                this.valorEspaco = orcamento.valorEspacoFinal.toString();
+                this.valorEspaco = formatarValorMonetario(orcamento.valorEspacoFinal);
                 this.cardapioBuffet = orcamento.Cardapio.nomeCardapio;
                 this.tipoBebida = orcamento.Cerveja.nome;
-                this.valorPorPessoaBuffet = orcamento.valorPPCardapio.toString();
-                this.valorTotalBuffet = (orcamento.valorPPCardapio * orcamento.numConvidados).toString();
+                this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio)
+                this.valorTotalBuffet = formatarValorMonetario(orcamento.valorPPCardapio * orcamento.numConvidados)
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
-                this.valorPorPessoaBar = orcamento.valorPPBar.toString();
-                this.valorTotalBar = (orcamento.valorPPBar * orcamento.numConvidados).toString();
-                this.totalProposta = orcamento.FormaPagamento[2].valorTotal.toString();
-                this.opcionaisSelecionados = orcamento.Orcamento_Opcional
-                console.log(this.opcionaisSelecionados)
+                this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
+                this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
+                this.totalProposta = formatarValorMonetario(orcamento.FormaPagamento[2].valorTotal);
+                this.observacoes = orcamento.observacoesOrcamento;
+                this.dataCriação = formatarDateToString(orcamento.createdAt);
+                this.dataEnvio = orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-';
+                this.cerimonia = orcamento.cerimoniaLocal === 1 ? 'Sim' : 'Não';
+
+                this.opcionaisSelecionados = orcamento.Orcamento_Opcional;
+
                 //Forma Pagamento à vista
-                this.sinalAVista = orcamento.FormaPagamento[0].valorSinal.toString();
-                this.valorAVista = orcamento.FormaPagamento[0].valorTotal.toString();
+                this.sinalAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorSinal);
+                this.valorAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorTotal);
 
                 //Forma Pagamento Entrada
-                this.sinalEntrada = orcamento.FormaPagamento[1].valorSinal.toString();
-                this.parcelasEntrada = orcamento.FormaPagamento[1].numeroParcelasEntrada.toString();
-                this.valorEntrada = orcamento.FormaPagamento[1].valorParcela.toString();
-                this.saldoEntrada = (orcamento.FormaPagamento[1].valorTotal - orcamento.FormaPagamento[1].valorEntrada).toString();
+                this.sinalEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorSinal);
+                this.parcelasEntrada = (orcamento.FormaPagamento[1].numeroParcelasEntrada).toString();
+                this.valorEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela);
+                this.saldoEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorTotal - orcamento.FormaPagamento[1].valorEntrada);
+                this.valorParcelasEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela / orcamento.FormaPagamento[1].numeroParcelasEntrada);
 
                 //Forma Pagamento Parcelado
-                this.sinalParcelado = orcamento.FormaPagamento[2].valorSinal.toString();
-                this.parcelasParcelado = orcamento.FormaPagamento[2].numeroParcelas.toString();
-                this.valorParcelas = orcamento.FormaPagamento[2].valorParcela.toString();
+                this.sinalParcelado = formatarValorMonetario(orcamento.FormaPagamento[2].valorSinal);
+                this.parcelasParcelado = (orcamento.FormaPagamento[2].numeroParcelas).toString();
+                this.valorParcelas = formatarValorMonetario(orcamento.FormaPagamento[2].valorParcela);
 
             } catch (error) {
                 console.error('Erro ao buscar detalhes do orçamento:', error);
@@ -229,16 +246,22 @@ export default defineComponent({
                 return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span>R$ ${cardapio.precoCardapio}</span></span>`;
             }).join('');
 
+            const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
+                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span>R$ ${opcional.Opcional.valorAtual}</span></span>`;
+            }).join('');
+
             return template
                 .replace('{{id}}', this.id)
                 .replace('{{referencia}}', this.referencia)
                 .replace('{{nome}}', this.nome)
+                .replace('{{cidade}}', this.cidade)
+                .replace('{{telefone}}', this.telefone)
                 .replace('{{tipoEvento}}', this.tipoEvento)
                 .replace('{{data}}', this.data)
                 .replace('{{convidados}}', this.convidados)
                 .replace('{{totalProposta}}', this.totalProposta)
+                .replace('{{dataCriacao}}', this.dataCriação)
                 .replace('{{dataEnvio}}', this.dataEnvio)
-                .replace('{{horaEnvio}}', this.horaEnvio)
                 .replace('{{observacoes}}', this.observacoes)
                 .replace('{{diaSemana}}', this.diaSemana)
                 .replace('{{valorEspaco}}', this.valorEspaco)
@@ -251,7 +274,23 @@ export default defineComponent({
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
                 .replace('{{valorNoiva}}', this.valorNoiva)
                 .replace('{{valorCabine}}', this.valorCabine)
-                .replace('{{cardapios}}', cardapiosHTML);
+                .replace('{{cardapios}}', cardapiosHTML)
+                .replace('{{opcionais}}', opcionaisSelecionadosHTML)
+                .replace('{{cerimonia}}', this.cerimonia)
+                .replace('{{dataCriacao}}', this.dataCriação)
+
+                .replace('{{sinalAVista}}', this.sinalAVista)
+                .replace('{{valorAVista}}', this.valorAVista)
+
+                .replace('{{sinalEntrada}}', this.sinalEntrada)
+                .replace('{{parcelasEntrada}}', this.parcelasEntrada)
+                .replace('{{valorEntrada}}', this.valorEntrada)
+                .replace('{{saldoEntrada}}', this.saldoEntrada)
+                .replace('{{valorParcelasEntrada}}', this.valorParcelasEntrada)
+
+                .replace('{{sinalParcelado}}', this.sinalParcelado)
+                .replace('{{parcelasParcelado}}', this.parcelasParcelado)
+                .replace('{{valorParcelas}}', this.valorParcelas)
         },
         async gerarPDF() {
             try {
@@ -260,67 +299,12 @@ export default defineComponent({
                 let template = await response.text();
 
                 template = this.preencherTemplate(template);
-
-                const doc = new jsPDF('p', 'mm', 'a4');
-                doc.setProperties({
-                    title: this.referencia
-                });
-
-                // Cria um iframe invisível
-                const iframe = document.createElement('iframe');
-                iframe.style.position = 'absolute';
-                iframe.style.left = '-9999px';
-                document.body.appendChild(iframe);
-
-                // Verifica se o contentWindow não é null
-                if (!iframe.contentWindow) {
-                    console.error('Erro: iframe.contentWindow é nulo');
-                    return;
-                }
-
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                if (!iframeDoc) {
-                    console.error('Erro: Não foi possível acessar o documento do iframe');
-                    return;
-                }
-                iframeDoc.open();
-                iframeDoc.write(template);
-                iframeDoc.close();
-
-                iframe.onload = async () => {
-                    try {
-                        const canvas = await html2canvas(iframeDoc.body, { scale: 4 });
-                        const imgData = canvas.toDataURL('image/png');
-                        const imgWidth = 210; // Largura da página A4 em mm
-                        const pageHeight = 295; // Altura da página A4 em mm
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                        let heightLeft = imgHeight;
-
-                        let position = 0;
-
-                        while (heightLeft >= 0) {
-                            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                            heightLeft -= pageHeight;
-                            if (heightLeft >= 0) {
-                                position = heightLeft - imgHeight;
-                                doc.addPage();
-                            }
-                        }
-
-                        const pdfBlob = doc.output('blob');
-                        const pdfUrl = URL.createObjectURL(pdfBlob);
-                        window.open(pdfUrl);
-
-                        // Remove o iframe após a geração do PDF
-                        document.body.removeChild(iframe);
-                    } catch (error) {
-                        console.error('Erro ao gerar o canvas:', error);
-                    }
-                };
+                await gerarPDFDoHtml(template, this.referencia);
             } catch (error) {
-                console.error('Erro ao carregar o template:', error);
+                console.error('Erro ao gerar o PDF:', error);
             }
-        },
+        }
+
     },
 
     mounted() {

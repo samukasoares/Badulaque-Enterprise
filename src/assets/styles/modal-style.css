@@ -10,7 +10,11 @@
 }
 
 .modal-form {
-    max-width: 50%;
+    max-width: 80%;
+    min-width: 20%;
+    width: fit-content;
+    max-height: 90%;
+    height: fit-content;
     margin: 30px auto;
     padding: 20px;
     background: white;
@@ -19,8 +23,26 @@
     position: relative;
     z-index: 2;
     box-sizing: border-box;
-    max-height: 80vh; /* Limita a altura do modal a 80% da altura da viewport */
     overflow-y: auto; /* Adiciona barra de rolagem vertical se o conteúdo exceder a altura */
+}
+
+.modal-form.with-dynamic-items {
+    max-width: 800px;
+    /* Aumentar largura quando houver itens dinâmicos */
+}
+
+.form-columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-column {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.form-column:last-child {
+    margin-right: 0;
 }
 
 .modal-form label, 
@@ -77,7 +99,7 @@
 .modal-form .form-column {
     flex: 1;
     padding: 0 10px;
-    min-width: 100px;
+    min-width: 300px;
 }
 
 .modal-form .form-group {

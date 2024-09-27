@@ -78,3 +78,22 @@ interface Opcional {
     CardapioBar: CardapioBar;
     Cerveja: Cerveja;
   };
+
+  export interface OrcamentoBasico {
+    idOrcamento: number;
+    referenciaOrcamento: string;
+    createdAt: Date;
+    status: string;
+    tipoEvento: string;
+    enviadoEm: Date | null;
+    Lead: {
+        nomeLead: string;
+        celular: string;
+    };
+}
+
+export interface AllOrcamentos {
+    pendentes: OrcamentoBasico[];
+    enviados: OrcamentoBasico[];
+    descartados: OrcamentoBasico[];
+} 

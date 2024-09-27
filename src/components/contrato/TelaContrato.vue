@@ -37,14 +37,17 @@
 
     <table>
         <tr>
-            <th style="width: 10%;">Data</th>
-            <th style="width: 20%;">Cliente</th>
-            <th style="width: 20%;">Contato</th>
-            <th style="width: 10%;">Tipo</th>
-            <th style="width: 10%;">Convidados</th>
-            <th style="width: 10%;">Cardápio</th>
-            <th style="width: 10%;">Total Contrato</th>
-            <th style="width: 10%;">Definir Cardápio</th>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Contato</th>
+            <th>Tipo</th>
+            <th>Convidados</th>
+            <th>Cardápio</th>
+            <th>Total Contrato</th>
+            <th>Definir Cardápio</th>
+            <th>Lista de Compras</th>
+            <th>Pagamentos</th>
+            <th>Recebimentos</th>
         </tr>
         <tr>
             <td>29/09/2025</td>
@@ -55,6 +58,9 @@
             <td>Prata</td>
             <td>R$36.230,00</td>
             <td><i class="fa-solid fa-edit action-icon"></i></td>
+            <td><i class="fa-solid fa-cart-shopping action-icon"></i></td>
+            <td><i class="fa-solid fa-hand-holding-dollar action-icon"></i></td>
+            <td><i class="fa-solid fa-sack-dollar action-icon"></i></td>
         </tr>
     </table>
 

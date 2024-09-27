@@ -9,7 +9,11 @@
                     <label>Telefone:</label>
                     <input type="tel" v-model="telefone" required>
                     <label>Cidade:</label>
-                    <input type="text" v-model="cidade" required>
+                    <select v-model="cidade" required>
+                        <option value="">Selecione uma cidade</option>
+                        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome }}
+                        </option>
+                    </select>
                     <label>Email:</label>
                     <input type="email" v-model="email" required>
                     <label>Fonte:</label>
@@ -28,11 +32,11 @@
                     <label>Tipo de Evento:</label>
                     <select v-model="tipoEvento" required>
                         <option value="">Selecione</option>
-                        <option value="casamento">Casamento</option>
-                        <option value="aniversario">Aniversário</option>
-                        <option value="empresa">Empresa</option>
-                        <option value="bodas">Bodas</option>
-                        <option value="debutante">15 Anos</option>
+                        <option value="Casamento">Casamento</option>
+                        <option value="Aniversario">Aniversário</option>
+                        <option value="Empresa">Empresa</option>
+                        <option value="Bodas">Bodas</option>
+                        <option value="Debutante">15 Anos</option>
                     </select>
                     <label>Convidados:</label>
                     <input type="number" v-model="convidados" required>
@@ -120,6 +124,8 @@ export default defineComponent({
             opcionais: [] as Opcional[],
             cardapioSelecionado: {} as Cardapio,
             barSelecionado: {} as CardapioBar,
+
+            cidades: [] as { id: number, nome: string }[],
 
             successMessage: ''
         };
@@ -230,6 +236,18 @@ export default defineComponent({
                 console.error('Erro ao buscar cervejas:', error);
             }
         },
+        async fetchCidades() {
+            try {
+                let response = await instance.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios');
+                this.cidades = response.data
+                this.cidades = response.data.map((cidade: any) => ({
+                    id: cidade.id,
+                    nome: cidade.nome
+                }));
+            } catch (error) {
+                console.error('Erro ao buscar cervejas:', error);
+            }
+        },
 
         async fetchOpcionais() {
             try {
@@ -260,6 +278,7 @@ export default defineComponent({
         this.fetchCervejas();
         this.fetchCardapioBar();
         this.fetchOpcionais();
+        this.fetchCidades();
     }
 });
 </script>
