@@ -1,134 +1,146 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <div class="modal">
+        <form class="modal-form">
             <div class="content">
-                <div class="group">
-                    <h4>Geral</h4>
-                    <div class="formgroup">
+                <div class="form-row">
+                    <div class="form-column">
+                        <h4>Geral</h4><br>
                         <label>ID:</label>
-                        <input ref="id" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="id" disabled type="text">
                         <label>Referência:</label>
-                        <input ref="referencia" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="referencia" disabled type="text">
                         <label>Nome:</label>
-                        <input ref="nome" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="nome" disabled type="text">
+                        <label>Email:</label>
+                        <input v-model="email" disabled type="text">
                         <label>Telefone:</label>
-                        <input ref="telefone" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="telefone" disabled type="text">
+                        <label>Cidade:</label>
+                        <input v-model="cidade" disabled type="text">
                         <label>Tipo de Evento:</label>
-                        <input ref="tipoEvento" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="tipoEvento" disabled type="text">
                         <label>Data:</label>
-                        <input ref="data" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="data" disabled type="text">
                         <label>Convidados:</label>
-                        <input ref="convidados" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+                        <input v-model="convidados" disabled type="text">
                         <label>Total Proposta:</label>
-                        <input ref="totalProposta" disabled type="text">
+                        <input v-model="totalProposta" disabled type="text">
+
+
                     </div>
-                    <h4>Controle</h4>
-                    <div class="formgroup">
+
+                    <div class="form-column">
+                        <h4>Espaço</h4><br>
+                        <label>Valor:</label>
+                        <input v-model="valorEspaco" disabled type="text">
+                        <label>Cerimônia no Local:</label>
+                        <input v-model="cerimonia" disabled type="text">
+                        <h4>Buffet</h4><br>
+                        <label>Cardápio:</label>
+                        <input v-model="cardapioBuffet" disabled type="text">
+                        <label>Tipo de Cerveja:</label>
+                        <input v-model="tipoBebida" disabled type="text">
+                        <label>Valor por pessoa:</label>
+                        <input v-model="valorPorPessoaBuffet" disabled type="text">
+                        <label>Valor Total:</label>
+                        <input v-model="valorTotalBuffet" disabled type="text">
+                        <h4>BAR</h4><br>
+                        <label>Cardápio:</label>
+                        <input v-model="cardapioBar" disabled type="text">
+                        <label>Valor por pessoa:</label>
+                        <input v-model="valorPorPessoaBar" disabled type="text">
+                        <label>Valor Total:</label>
+                        <input v-model="valorTotalBar" disabled type="text">
+                    </div>
+
+                    <div class="form-column">
+                        <h4>Controle</h4><br>
+                        <label>Data Criação:</label>
+                        <input v-model="dataCriação" disabled type="text">
                         <label>Data Envio:</label>
-                        <input ref="dataEnvio" disabled type="text">
+                        <input v-model="dataEnvio" disabled type="text">
+                        <h4>Opcionais</h4>
+                        <div v-if="opcionaisSelecionados.length">
+
+                            <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
+                                <label>{{ opcional.Opcional.nomeOpcional }}:</label>
+                                <input :value="opcional.Opcional.valorAtual" disabled type="text">
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="formgroup">
-                        <label>Hora Envio:</label>
-                        <input ref="horaEnvio" disabled type="text">
-                    </div>
-                    <h4>Observações</h4>
-                    <div class="formgroup">
-                        <input ref="observacoes" disabled type="text" class="textarea">
-                    </div>
-                </div>
-                <div class="group">
-                    <h4>Espaço</h4>
-                    <div class="formgroup">
-                        <label>Dia da Semana:</label>
-                        <input ref="diaSemana" disabled type="text">
-                    </div>
-                    <div class="formgroup">
+
+                    <div class="form-column">
+                        <h4>Forma de Pagamento 1</h4><br>
+                        <label>Sinal:</label>
+                        <input v-model="sinalParcelado" disabled>
+                        <label>Parcelas:</label>
+                        <input v-model="parcelasParcelado" disabled>
                         <label>Valor:</label>
-                        <input ref="valorEspaco" disabled type="text">
-                    </div>
-                    <h4>Buffet</h4>
-                    <div class="formgroup">
-                        <label>Cardápio:</label>
-                        <input ref="cardapioBuffet" disabled type="text">
-                    </div>
-                    <div class="formgroup">
-                        <label>Tipo de Bebida:</label>
-                        <input ref="tipoBebida" disabled type="text">
-                    </div>
-                    <div class="formgroup">
-                        <label>Valor por pessoa:</label>
-                        <input ref="valorPorPessoaBuffet" disabled type="text">
-                    </div>
-                    <div class="formgroup">
-                        <label>Valor Total:</label>
-                        <input ref="valorTotalBuffet" disabled type="text">
-                    </div>
-                    <h4>BAR</h4>
-                    <div class="formgroup">
-                        <label>Cardápio:</label>
-                        <input ref="cardapioBar" disabled type="text">
-                    </div>
-                    <div class="formgroup">
-                        <label>Valor por pessoa:</label>
-                        <input ref="valorPorPessoaBar" disabled type="text">
-                    </div>
-                    <div class="formgroup">
-                        <label>Valor Total:</label>
-                        <input ref="valorTotalBar" disabled type="text">
-                    </div>
-                    <h4>Espaço da Noiva</h4>
-                    <div class="formgroup">
+                        <input v-model="valorParcelas" disabled>
+
+                        <h4>Forma de Pagamento 2</h4><br>
+                        <label>Sinal:</label>
+                        <input v-model="sinalEntrada" disabled>
+                        <label>Qtd. Parcelas Entrada:</label>
+                        <input v-model="parcelasEntrada" disabled>
                         <label>Valor:</label>
-                        <input ref="valorNoiva" disabled type="text">
-                    </div>
-                    <h4>Cabine de Fotos/Plataforma 360</h4>
-                    <div class="formgroup">
+                        <input v-model="valorEntrada" disabled>
+                        <label>Saldo:</label>
+                        <input v-model="saldoEntrada" disabled>
+
+                        <h4>Forma de Pagamento 3</h4><br>
+                        <label>Sinal:</label>
+                        <input v-model="sinalAVista" disabled>
                         <label>Valor:</label>
-                        <input ref="valorCabine" disabled type="text">
+                        <input v-model="valorAVista" disabled>
                     </div>
                 </div>
             </div>
-            <div class="formgroup">
-                <button @click="gerarPDF">Visualizar Orcamento</button>
-                <button>Visualizar Detalhado</button>
+            <h4>Observações</h4>
+            <input v-model="observacoes" disabled type="text" class="textarea">
+
+            <div class="form-group">
+                <button class="submit-button" @click="gerarPDF">Visualizar Orcamento</button>
+                <button class="submit-button">Visualizar Detalhado</button>
             </div>
-        </div>
+
+        </form>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Cardapio } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
+import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
+import { formatarCelular, formatarDataExtenso, formatarDateToString, formatarValorMonetario } from '@/common/utils/Helper';
+import { gerarPDFDoHtml } from '@/common/utils/pdfService';
+
 
 export default defineComponent({
+    props: {
+        orcamentoId: {
+            type: Number,
+            required: false,
+            default: null,
+        },
+    },
     data() {
         return {
             id: '',
             referencia: '',
             nome: '',
+            email: '',
             tipoEvento: '',
+            cidade: '',
             data: '',
             convidados: '',
+            cerimonia: '',
             totalProposta: '',
+            dataCriação: '',
+            telefone: '',
             dataEnvio: '',
-            horaEnvio: '',
             observacoes: '',
             diaSemana: '',
             valorEspaco: '',
@@ -141,13 +153,85 @@ export default defineComponent({
             valorTotalBar: '',
             valorNoiva: '',
             valorCabine: '',
+            valorOpcionais: '',
+            loading: false,
+
+            opcionaisSelecionados: [] as OrcamentoOpcional[],
+            sinal1: '',
+
+            sinalEntrada: '',
+            parcelasEntrada: '',
+            valorEntrada: '',
+            valorParcelasEntrada: '',
+            saldoEntrada: '',
+
+            sinalAVista: '',
+            valorAVista: '',
+
+            sinalParcelado: '',
+            parcelasParcelado: '',
+            valorParcelas: '',
 
             cardapios: [] as Cardapio[],
         };
     },
+
     methods: {
         close() {
             this.$emit('close');
+        },
+        async fetchOrcamentoDetails(id: number) {
+            this.loading = true;
+            try {
+                const response = await instance.get<Orcamento>('/orcamento/get/' + id);
+                const orcamento = response.data;
+
+                this.id = orcamento.idOrcamento.toString();
+                this.nome = orcamento.Lead.nomeLead;
+                this.email = orcamento.Lead.email;
+                this.referencia = orcamento.referenciaOrcamento;
+                this.data = formatarDataExtenso(orcamento.dataEvento);
+                this.tipoEvento = orcamento.tipoEvento;
+                this.cidade = orcamento.Lead.cidade;
+                this.telefone = formatarCelular(orcamento.Lead.celular);
+                this.convidados = orcamento.numConvidados.toString();
+                this.valorEspaco = formatarValorMonetario(orcamento.valorEspacoFinal);
+                this.cardapioBuffet = orcamento.Cardapio.nomeCardapio;
+                this.tipoBebida = orcamento.Cerveja.nome;
+                this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio)
+                this.valorTotalBuffet = formatarValorMonetario(orcamento.valorPPCardapio * orcamento.numConvidados)
+                this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
+                this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
+                this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
+                this.totalProposta = formatarValorMonetario(orcamento.FormaPagamento[2].valorTotal);
+                this.observacoes = orcamento.observacoesOrcamento;
+                this.dataCriação = formatarDateToString(orcamento.createdAt);
+                this.dataEnvio = orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-';
+                this.cerimonia = orcamento.cerimoniaLocal === 1 ? 'Sim' : 'Não';
+
+                this.opcionaisSelecionados = orcamento.Orcamento_Opcional;
+
+                //Forma Pagamento à vista
+                this.sinalAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorSinal);
+                this.valorAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorTotal);
+
+                //Forma Pagamento Entrada
+                this.sinalEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorSinal);
+                this.parcelasEntrada = (orcamento.FormaPagamento[1].numeroParcelasEntrada).toString();
+                this.valorEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela);
+                this.saldoEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorTotal - orcamento.FormaPagamento[1].valorEntrada);
+                this.valorParcelasEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela / orcamento.FormaPagamento[1].numeroParcelasEntrada);
+
+                //Forma Pagamento Parcelado
+                this.sinalParcelado = formatarValorMonetario(orcamento.FormaPagamento[2].valorSinal);
+                this.parcelasParcelado = (orcamento.FormaPagamento[2].numeroParcelas).toString();
+                this.valorParcelas = formatarValorMonetario(orcamento.FormaPagamento[2].valorParcela);
+
+            } catch (error) {
+                console.error('Erro ao buscar detalhes do orçamento:', error);
+            } finally {
+                this.loading = false;
+            }
         },
         async fetchCardapios() {
             try {
@@ -162,16 +246,22 @@ export default defineComponent({
                 return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span>R$ ${cardapio.precoCardapio}</span></span>`;
             }).join('');
 
+            const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
+                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span>R$ ${opcional.Opcional.valorAtual}</span></span>`;
+            }).join('');
+
             return template
                 .replace('{{id}}', this.id)
                 .replace('{{referencia}}', this.referencia)
                 .replace('{{nome}}', this.nome)
+                .replace('{{cidade}}', this.cidade)
+                .replace('{{telefone}}', this.telefone)
                 .replace('{{tipoEvento}}', this.tipoEvento)
                 .replace('{{data}}', this.data)
                 .replace('{{convidados}}', this.convidados)
                 .replace('{{totalProposta}}', this.totalProposta)
+                .replace('{{dataCriacao}}', this.dataCriação)
                 .replace('{{dataEnvio}}', this.dataEnvio)
-                .replace('{{horaEnvio}}', this.horaEnvio)
                 .replace('{{observacoes}}', this.observacoes)
                 .replace('{{diaSemana}}', this.diaSemana)
                 .replace('{{valorEspaco}}', this.valorEspaco)
@@ -184,7 +274,23 @@ export default defineComponent({
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
                 .replace('{{valorNoiva}}', this.valorNoiva)
                 .replace('{{valorCabine}}', this.valorCabine)
-                .replace('{{cardapios}}', cardapiosHTML);
+                .replace('{{cardapios}}', cardapiosHTML)
+                .replace('{{opcionais}}', opcionaisSelecionadosHTML)
+                .replace('{{cerimonia}}', this.cerimonia)
+                .replace('{{dataCriacao}}', this.dataCriação)
+
+                .replace('{{sinalAVista}}', this.sinalAVista)
+                .replace('{{valorAVista}}', this.valorAVista)
+
+                .replace('{{sinalEntrada}}', this.sinalEntrada)
+                .replace('{{parcelasEntrada}}', this.parcelasEntrada)
+                .replace('{{valorEntrada}}', this.valorEntrada)
+                .replace('{{saldoEntrada}}', this.saldoEntrada)
+                .replace('{{valorParcelasEntrada}}', this.valorParcelasEntrada)
+
+                .replace('{{sinalParcelado}}', this.sinalParcelado)
+                .replace('{{parcelasParcelado}}', this.parcelasParcelado)
+                .replace('{{valorParcelas}}', this.valorParcelas)
         },
         async gerarPDF() {
             try {
@@ -193,186 +299,31 @@ export default defineComponent({
                 let template = await response.text();
 
                 template = this.preencherTemplate(template);
-
-                const doc = new jsPDF('p', 'mm', 'a4');
-                doc.setProperties({
-                    title: this.referencia
-                });
-
-                // Cria um iframe invisível
-                const iframe = document.createElement('iframe');
-                iframe.style.position = 'absolute';
-                iframe.style.left = '-9999px';
-                document.body.appendChild(iframe);
-
-                // Verifica se o contentWindow não é null
-                if (!iframe.contentWindow) {
-                    console.error('Erro: iframe.contentWindow é nulo');
-                    return;
-                }
-
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                if (!iframeDoc) {
-                    console.error('Erro: Não foi possível acessar o documento do iframe');
-                    return;
-                }
-                iframeDoc.open();
-                iframeDoc.write(template);
-                iframeDoc.close();
-
-                iframe.onload = async () => {
-                    try {
-                        const canvas = await html2canvas(iframeDoc.body, { scale: 4 });
-                        const imgData = canvas.toDataURL('image/png');
-                        const imgWidth = 210; // Largura da página A4 em mm
-                        const pageHeight = 295; // Altura da página A4 em mm
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                        let heightLeft = imgHeight;
-
-                        let position = 0;
-
-                        while (heightLeft >= 0) {
-                            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                            heightLeft -= pageHeight;
-                            if (heightLeft >= 0) {
-                                position = heightLeft - imgHeight;
-                                doc.addPage();
-                            }
-                        }
-
-                        const pdfBlob = doc.output('blob');
-                        const pdfUrl = URL.createObjectURL(pdfBlob);
-                        window.open(pdfUrl);
-
-                        // Remove o iframe após a geração do PDF
-                        document.body.removeChild(iframe);
-                    } catch (error) {
-                        console.error('Erro ao gerar o canvas:', error);
-                    }
-                };
+                await gerarPDFDoHtml(template, this.referencia);
             } catch (error) {
-                console.error('Erro ao carregar o template:', error);
+                console.error('Erro ao gerar o PDF:', error);
             }
+        }
+
+    },
+
+    mounted() {
+        this.fetchCardapios();
+    },
+
+    watch: {
+        orcamentoId: {
+            immediate: true,
+            handler(newId: number) {
+                if (newId) {
+                    this.fetchOrcamentoDetails(newId);
+                }
+            },
         },
     },
-    mounted() {
-
-        // Preenchendo dados para teste
-        this.id = '123';
-        this.referencia = 'Ref002';
-        this.nome = 'Evento Teste';
-        this.tipoEvento = 'Casamento';
-        this.data = '2024-12-31';
-        this.convidados = '100';
-        this.totalProposta = '5000';
-        this.dataEnvio = '2024-07-01';
-        this.horaEnvio = '15:00';
-        this.observacoes = 'Nenhuma';
-        this.diaSemana = 'Sábado';
-        this.valorEspaco = '2000';
-        this.cardapioBuffet = 'Completo';
-        this.tipoBebida = 'Alcoólica';
-        this.valorPorPessoaBuffet = '50';
-        this.valorTotalBuffet = '5000';
-        this.cardapioBar = 'Simples';
-        this.valorPorPessoaBar = '20';
-        this.valorTotalBar = '2000';
-        this.valorNoiva = '1000';
-        this.valorCabine = '800';
-
-        this.fetchCardapios();
-
-    }
 });
 </script>
 
 <style scoped>
-.modal {
-    max-width: fit-content;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2;
-}
-
-.backdrop {
-    top: 0;
-    left: 0;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    /* Ajuste o z-index para garantir que o backdrop esteja acima de outros conteúdos */
-}
-
-h4 {
-    color: black;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-input {
-    color: #aaa;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-    border: 1px solid #aaa;
-    border-radius: 5px;
-}
-
-label {
-    color: #aaa;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #425C4D;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    font-family: Montserrat;
-}
-
-button:hover {
-    background-color: #2F4036;
-}
-
-.content {
-    display: flex;
-}
-
-.group {
-    display: inline;
-    margin-right: 10px;
-
-}
-
-.formgroup {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: space-between;
-    margin-bottom: 2px;
-}
-
-.textarea {
-    width: 100%;
-    height: 60px;
-    resize: none;
-    border-radius: 5px;
-}
+@import '../../../assets/styles/modal-style.css'
 </style>

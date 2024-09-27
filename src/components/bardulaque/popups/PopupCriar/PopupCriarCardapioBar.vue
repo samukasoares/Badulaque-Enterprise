@@ -72,6 +72,8 @@ export default defineComponent({
 });
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
+
 <style scoped>
 @import '../../.././../assets/styles/modal-style.css'
 </style>

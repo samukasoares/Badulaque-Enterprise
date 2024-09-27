@@ -9,7 +9,11 @@
                     <label>Telefone:</label>
                     <input type="tel" v-model="telefone" required>
                     <label>Cidade:</label>
-                    <input type="text" v-model="cidade" required>
+                    <select v-model="cidade" required>
+                        <option value="">Selecione uma cidade</option>
+                        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome }}
+                        </option>
+                    </select>
                     <label>Email:</label>
                     <input type="email" v-model="email" required>
                     <label>Fonte:</label>
@@ -28,11 +32,11 @@
                     <label>Tipo de Evento:</label>
                     <select v-model="tipoEvento" required>
                         <option value="">Selecione</option>
-                        <option value="casamento">Casamento</option>
-                        <option value="aniversario">Aniversário</option>
-                        <option value="empresa">Empresa</option>
-                        <option value="bodas">Bodas</option>
-                        <option value="debutante">15 Anos</option>
+                        <option value="Casamento">Casamento</option>
+                        <option value="Aniversario">Aniversário</option>
+                        <option value="Empresa">Empresa</option>
+                        <option value="Bodas">Bodas</option>
+                        <option value="Debutante">15 Anos</option>
                     </select>
                     <label>Convidados:</label>
                     <input type="number" v-model="convidados" required>
@@ -41,26 +45,26 @@
                     <label>Dia da Semana:</label>
                     <input disabled type="text" v-model="diadasemana" required>
                     <label>Cardápio:</label>
-                    <select v-model="cardapio" required>
-                        <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio.idCardapio">{{
+                    <select v-model="cardapioSelecionado" required>
+                        <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cerveja" required>
-                        <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.nome">{{
+                        <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.idCerveja">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-bar-label">
                         <input type="checkbox" v-model="barEnabled"> Bar
                     </label>
-                    <select v-model="bar" :disabled="!barEnabled" required>
-                        <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar.idCardapioBar">{{
+                    <select v-model="barSelecionado" :disabled="!barEnabled" required>
+                        <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
@@ -72,7 +76,7 @@
 
                     <div v-for="opcional in opcionais" :key="opcional.idOpcional" class="checkbox-container">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="opcional.idOpcional" :value="opcional.nomeOpcional"
+                            <input type="checkbox" id="opcional.idOpcional" :value="opcional.idOpcional"
                                 v-model="selectedOpcionais" /> {{ opcional.nomeOpcional }}
                         </label>
                     </div>
@@ -85,11 +89,12 @@
             <button type="submit" class="submit-button">Enviar</button>
         </form>
     </div>
+
 </template>
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { Cardapio, CardapioBar, Cerveja, Opcional } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, RegistroOrcamento, RegistroOrcamentoData } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -104,34 +109,99 @@ export default defineComponent({
             tipoEvento: '',
             diadasemana: '',
             referencia: '',
-            convidados: '',
+            convidados: 0,
             data: '',
-            cardapio: '' as number | string,
-            cerveja: '',
-            bar: '',
+            cardapio: null,
+            cerveja: 0,
+            bar: null,
             observacoes: '',
-            cerimonia: false,
+            cerimonia: null,
             barEnabled: false,
             selectedOpcionais: [],
             cardapioBar: [] as CardapioBar[],
             cardapios: [] as Cardapio[],
             cervejas: [] as Cerveja[],
-            opcionais: [] as Opcional[]
+            opcionais: [] as Opcional[],
+            cardapioSelecionado: {} as Cardapio,
+            barSelecionado: {} as CardapioBar,
+
+            cidades: [] as { id: number, nome: string }[],
+
+            successMessage: ''
         };
     },
     methods: {
         close() {
             this.$emit('close');
         },
-        submitForm() {
-            // Lógica para submissão do formulário
-            this.close();
+        async submitForm() {
+
+            const valorDiaDaSemana = this.calcularDiaDaSemanaValor(this.data);
+
+
+            const lead: RegistroLead = {
+                nomeLead: this.nome,
+                celular: this.telefone,
+                email: this.email,
+                cidade: this.cidade
+            }
+
+            const orcamentoData: RegistroOrcamentoData = {
+                referenciaOrcamento: this.referencia,
+                cadeira: "Branca",
+                Cardapio_idCardapio: this.cardapioSelecionado.idCardapio,
+                CardapioBar_idCardapioBar: this.barSelecionado.idCardapioBar,
+                Cerveja_idCerveja: this.cerveja,
+                numConvidados: this.convidados,
+                observacoesOrcamento: this.observacoes,
+                dataEvento: this.data,
+                valorPPCardapio: this.cardapioSelecionado.precoCardapio,
+                tipoEvento: this.tipoEvento,
+                cerimoniaLocal: Number(this.cerimonia),
+                fonte: this.fonte,
+                valorPPBar: this.barSelecionado.precoCardapio,
+                ValorEspaco_idValorEspaco: valorDiaDaSemana
+            }
+
+            const orcamento: RegistroOrcamento = {
+                orcamento: orcamentoData,
+                opcional: this.selectedOpcionais,
+                lead: lead
+            }
+
+            console.log(orcamento)
+
+            try {
+                const data = await instance.post('/orcamento/create', orcamento)
+                this.$emit('success', 'Orçamento criado com sucesso!');
+                this.close(); // Fecha o modal após o sucesso
+            } catch (error) {
+                alert('Erro ao criar orçamento!')
+            }
+
         },
         calcularDiaDaSemana(dataString: string) {
             const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const data = new Date(dataString + 'T00:00:00');
             return diasDaSemana[data.getUTCDay()];
         },
+
+        calcularDiaDaSemanaValor(dataString: string) {
+            const data = new Date(dataString + 'T00:00:00');
+            const diaSemana = data.getUTCDay(); // Retorna o índice do dia da semana
+
+            // Define o valor numérico com base no dia da semana
+            if (diaSemana === 5) {
+                return 1; // Sexta-feira
+            } else if (diaSemana === 0) {
+                return 2; // Domingo
+            } else if (diaSemana === 6) {
+                return 3; // Sábado
+            } else {
+                return 4; // Qualquer outro dia
+            }
+        },
+
         gerarReferencia() {
             if (this.tipoEvento && this.data) {
                 const tipoEventoInicial = this.tipoEvento.charAt(0).toUpperCase();
@@ -166,6 +236,18 @@ export default defineComponent({
                 console.error('Erro ao buscar cervejas:', error);
             }
         },
+        async fetchCidades() {
+            try {
+                let response = await instance.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios');
+                this.cidades = response.data
+                this.cidades = response.data.map((cidade: any) => ({
+                    id: cidade.id,
+                    nome: cidade.nome
+                }));
+            } catch (error) {
+                console.error('Erro ao buscar cervejas:', error);
+            }
+        },
 
         async fetchOpcionais() {
             try {
@@ -174,7 +256,7 @@ export default defineComponent({
             } catch (error) {
                 console.error('Erro ao buscar opcionais:', error);
             }
-        }
+        },
     },
     watch: {
         data(newValue) {
@@ -196,6 +278,7 @@ export default defineComponent({
         this.fetchCervejas();
         this.fetchCardapioBar();
         this.fetchOpcionais();
+        this.fetchCidades();
     }
 });
 </script>

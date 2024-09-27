@@ -68,7 +68,7 @@
     <div class="container">
       <div class="cabecalho">
         <div class="cabecalho-texto">
-          <h3>Orçamento #{{id}} - Enviado em 22/07/2024</h3>
+          <h3>Orçamento #{{id}} - Enviado em {{dataCriacao}}</h3>
           <p>A proposta tem validade de 15 dias!</p>
           <p><strong>Evento :</strong> {{tipoEvento}}</p>
         </div>
@@ -79,13 +79,13 @@
       <div class="dados-evento">
         <div class="linha">
           <div><strong>Nome :</strong> {{nome}}</div>
-          <div><strong>Telefone :</strong> 5519989970313</div>
-          <div><strong>Cidade :</strong> Vinhedo - SP</div>
+          <div><strong>Telefone :</strong> {{telefone}}</div>
+          <div><strong>Cidade :</strong> {{cidade}}</div>
         </div>
         <div class="linha">
-          <div><strong>Convidados :</strong> 150</div>
-          <div><strong>Data :</strong> sábado, 29 de março de 2025</div>
-          <div><strong>Cerimônia no local :</strong> Sim</div>
+          <div><strong>Convidados :</strong> {{convidados}}</div>
+          <div><strong>Data :</strong> {{data}}</div>
+          <div><strong>Cerimônia no local :</strong> {{cerimonia}}</div>
         </div>
       </div>
 
@@ -136,7 +136,7 @@
         >
         <span class="flex-item-estrutura"
           ><strong>Valor por pessoa :</strong
-          ><span>{{valorPorPessoaBuffet}}</span></span
+          ><span> {{valorPorPessoaBuffet}}</span></span
         >
         <span class="flex-item-estrutura"
           ><strong>Obs :</strong><span>{{observacoes}}</span></span
@@ -147,58 +147,52 @@
       <div class="estrutura">{{cardapios}}</div>
 
       <div class="titulo">OPCIONAIS</div>
-      <div class="estrutura">
-        <span class="flex-item-estrutura"
-          ><strong>Cabine/Plataforma 360:</strong><span>R$1600</span></span
-        >
-        <span class="flex-item-estrutura"
-          ><strong>Espaço da Noiva:</strong><span>R$2000</span></span
-        >
-        <span class="flex-item-estrutura"
-          ><strong>Bartender:</strong><span>R$2000</span></span
-        >
-      </div>
+      <span class="flex-item-estrutura"
+        ><strong>Bartender:</strong><span> {{valorTotalBar}}</span></span
+      >
+      <div class="estrutura">{{opcionais}}</div>
 
       <div class="titulo">VALORES</div>
       <div class="estrutura">
         <span class="flex-item-estrutura"
-          ><strong>Espaço:</strong><span>R$1600</span></span
+          ><strong>Espaço:</strong><span> {{valorEspaco}}</span></span
         >
         <span class="flex-item-estrutura"
-          ><strong>Buffet:</strong><span>R$2000</span></span
+          ><strong>Buffet:</strong><span> {{valorTotalBuffet}}</span></span
         >
+
         <span class="flex-item-estrutura"
-          ><strong>Opcionais:</strong><span>R$2000</span></span
+          ><strong>Opcionais:</strong><span> 0</span></span
         >
         <span class="flex-item-estrutura"
           ><strong>Total da Proposta:</strong
-          ><span><strong>R$2000</strong></span></span
+          ><span><strong> {{totalProposta}}</strong></span></span
         >
       </div>
 
-      <div class="titulo">FORMA DE PAGAMENTO</div>
+      <div class="titulo">FORMAS DE PAGAMENTO</div>
       <div class="estrutura">
-        <span class="forma-pagamento"
-          >Sinal de <strong>R$2000</strong> para reserva da data.</span
-        >
         <span class="forma-pagamento"
           ><strong
             >Em caso de desistência o sinal não é devolvido !</strong
           ></span
         >
         <span class="forma-pagamento"
-          >1ª Parcelado mensalmente em <strong>5</strong> parcelas de<strong
-            >R$2500</strong
-          ></span
+          >1ª: Sinal de <strong> {{sinalParcelado}}</strong> e
+          <strong>{{parcelasParcelado}}</strong> parcelas de
+          <strong> {{valorParcelas}}</strong></span
         >
         <span class="forma-pagamento"
-          >2ª Entrada de <strong> R$4500 </strong> em <strong>3x</strong> de
-          <strong>R$2500</strong> e o saldo 15 dias antes</span
+          >2ª: Sinal de <strong> {{sinalEntrada}}</strong>, entrada de
+          <strong> {{valorEntrada}} </strong> em
+          <strong>{{parcelasEntrada}}x</strong> de
+          <strong> {{valorParcelasEntrada}}</strong> e
+          <strong> {{saldoEntrada}}</strong> 15 dias antes</span
         >
         <span class="forma-pagamento"
-          >3ª À vista: <strong>R$4500</strong> Desconto:<strong
-            >R$8,99%</strong
-          ></span
+          >3ª (À vista): Sinal de <strong> {{sinalAVista}}</strong> e 1x de
+          <strong> {{valorAVista}}</strong>. Desconto:
+          <strong> R$8,99%</strong></span
         >
       </div>
     </div>
