@@ -64,7 +64,8 @@
 
                             <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
-                                <input :value="opcional.Opcional.valorAtual" disabled type="text">
+                                <input :value="formatarValorMonetario(opcional.Opcional.valorAtual)" disabled
+                                    type="text">
                             </div>
                         </div>
 
@@ -101,8 +102,10 @@
             <input v-model="observacoes" disabled type="text" class="textarea">
 
             <div class="form-group">
-                <button class="submit-button" @click="gerarPDF">Visualizar Orcamento</button>
+                <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
                 <button class="submit-button">Visualizar Detalhado</button>
+                <button class="submit-button">Editar</button>
+                <button class="submit-button">Salvar</button>
             </div>
 
         </form>
@@ -180,6 +183,7 @@ export default defineComponent({
         close() {
             this.$emit('close');
         },
+        formatarValorMonetario,
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
             try {

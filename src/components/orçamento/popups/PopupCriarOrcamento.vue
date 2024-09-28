@@ -7,7 +7,7 @@
                     <label>Nome:</label>
                     <input type="text" v-model="nome" required>
                     <label>Telefone:</label>
-                    <input type="tel" v-model="telefone" required>
+                    <input type="tel" v-model="telefone" @input="formatTelefone" required>
                     <label>Cidade:</label>
                     <select v-model="cidade" required>
                         <option value="">Selecione uma cidade</option>
@@ -48,14 +48,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cerveja" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.idCerveja">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-bar-label">
@@ -64,7 +64,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -184,6 +184,25 @@ export default defineComponent({
             const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const data = new Date(dataString + 'T00:00:00');
             return diasDaSemana[data.getUTCDay()];
+        },
+
+        formatTelefone(event: Event) {
+            const target = event.target as HTMLInputElement;
+            let input = target.value;
+            input = input.replace(/\D/g, ''); // Remove caracteres não numéricos
+            input = input.substring(0, 11);   // Limita a 11 dígitos
+
+            if (input.length > 10) {
+                input = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (input.length > 6) {
+                input = input.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (input.length > 2) {
+                input = input.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else if (input.length > 0) {
+                input = input.replace(/^(\d*)/, '($1');
+            }
+
+            this.telefone = input;
         },
 
         calcularDiaDaSemanaValor(dataString: string) {
