@@ -20,12 +20,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/clientes',
-    name: 'clientes',
-    component: Cliente,
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/buffet',
     name: 'buffet',
     component: Buffet,

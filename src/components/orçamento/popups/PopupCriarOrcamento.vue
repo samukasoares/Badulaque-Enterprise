@@ -4,31 +4,6 @@
             <div class="form-row">
                 <div class="form-column">
                     <h4>Cliente</h4><br>
-                    <label>Nome:</label>
-                    <input type="text" v-model="nome" required>
-                    <label>Telefone:</label>
-                    <input type="tel" v-model="telefone" @input="formatTelefone" required>
-                    <label>Cidade:</label>
-                    <select v-model="cidade" required>
-                        <option value="">Selecione uma cidade</option>
-                        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome }}
-                        </option>
-                    </select>
-                    <label>Email:</label>
-                    <input type="email" v-model="email" required>
-                    <label>Fonte:</label>
-                    <select v-model="fonte" required>
-                        <option value="">Selecione</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="google">Google</option>
-                        <option value="site">Site</option>
-                        <option value="indicacao">Indicação</option>
-                    </select>
-                    <label>Referência:</label>
-                    <input type="text" v-model="referencia" disabled required>
-                </div>
-                <div class="form-column">
-                    <h4>Orçamento</h4><br>
                     <label>Tipo de Evento:</label>
                     <select v-model="tipoEvento" required>
                         <option value="">Selecione</option>
@@ -38,6 +13,31 @@
                         <option value="Bodas">Bodas</option>
                         <option value="Debutante">15 Anos</option>
                     </select>
+                    <label>Fonte:</label>
+                    <select v-model="fonte" required>
+                        <option value="">Selecione</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="google">Google</option>
+                        <option value="site">Site</option>
+                        <option value="indicacao">Indicação</option>
+                    </select>
+                    <label>Nome:</label>
+                    <input type="text" v-model="nome" required>
+                    <label>Email:</label>
+                    <input type="email" v-model="email" required>
+                    <label>Telefone:</label>
+                    <input type="tel" v-model="telefone" @input="formatTelefone" required>
+                    <label>Cidade:</label>
+                    <select v-model="cidade" required>
+                        <option value="">Selecione uma cidade</option>
+                        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome }}
+                        </option>
+                    </select>
+
+
+                </div>
+                <div class="form-column">
+                    <h4>Orçamento</h4><br>
                     <label>Convidados:</label>
                     <input type="number" v-model="convidados" required>
                     <label>Data:</label>
@@ -48,14 +48,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
-                    <select v-model="cerveja" required>
-                        <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja.idCerveja">{{
+                    <select v-model="cervejaSelecionada" required>
+                        <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-bar-label">
@@ -64,11 +64,13 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
                 <div class="form-column">
+                    <label>Referência:</label>
+                    <input type="text" v-model="referencia" disabled required>
                     <h4>Opcionais</h4><br>
                     <label class="checkbox-label">
                         <input type="checkbox" v-model="cerimonia">Cerimônia
@@ -123,6 +125,7 @@ export default defineComponent({
             cervejas: [] as Cerveja[],
             opcionais: [] as Opcional[],
             cardapioSelecionado: {} as Cardapio,
+            cervejaSelecionada: {} as Cerveja,
             barSelecionado: {} as CardapioBar,
 
             cidades: [] as { id: number, nome: string }[],
@@ -151,7 +154,7 @@ export default defineComponent({
                 cadeira: "Branca",
                 Cardapio_idCardapio: this.cardapioSelecionado.idCardapio,
                 CardapioBar_idCardapioBar: this.barSelecionado.idCardapioBar,
-                Cerveja_idCerveja: this.cerveja,
+                Cerveja_idCerveja: this.cervejaSelecionada.idCerveja,
                 numConvidados: this.convidados,
                 observacoesOrcamento: this.observacoes,
                 dataEvento: this.data,
@@ -160,7 +163,7 @@ export default defineComponent({
                 cerimoniaLocal: Number(this.cerimonia),
                 fonte: this.fonte,
                 valorPPBar: this.barSelecionado.precoCardapio,
-                ValorEspaco_idValorEspaco: valorDiaDaSemana
+                ValorEspaco_idValorEspaco: valorDiaDaSemana,
             }
 
             const orcamento: RegistroOrcamento = {

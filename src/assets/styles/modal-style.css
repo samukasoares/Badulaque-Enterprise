@@ -140,6 +140,38 @@
     margin-right: 10px;
 }
 
+
+/* Formatação para destacar Valores Totais*/
+.modal-form .valorTotal {
+    font-weight: bold;
+}
+
+
+/* Formatação para mostrar Valores no MODAL */
+.valores-container {
+    margin-bottom: 20px;
+    display:flex;
+    justify-content: space-around;
+  }
+  
+  .valor-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .valor-item label {
+    font-weight: bold;
+    color: #aaa;
+    margin: 0;
+    margin-right: 5px;
+  }
+  
+  .valor-item h4 {
+    color: black;
+    font-weight: bold;
+  }
+  
+
 /* Media Queries */
 @media (max-width: 768px) {
     .modal-form {

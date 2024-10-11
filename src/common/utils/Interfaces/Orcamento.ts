@@ -20,6 +20,7 @@ interface Opcional {
     Opcional_idOpcional: number;
     Orcamento_idOrcamento: number;
     Opcional: Opcional;
+    valorOrcamento: number;
   };
   
   interface Lead  {
@@ -77,6 +78,7 @@ interface Opcional {
     Cardapio: Cardapio;
     CardapioBar: CardapioBar;
     Cerveja: Cerveja;
+    valorPPCerveja: number;
   };
 
   export interface OrcamentoBasico {
