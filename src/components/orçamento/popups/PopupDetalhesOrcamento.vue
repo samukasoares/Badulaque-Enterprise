@@ -5,10 +5,16 @@
                 <div class="form-row">
                     <div class="form-column">
                         <h4>Geral</h4><br>
-                        <label>ID:</label>
-                        <input v-model="id" disabled type="text">
-                        <label>Referência:</label>
-                        <input v-model="referencia" disabled type="text">
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>ID:</label>
+                                <input v-model="id" disabled type="text">
+                            </div>
+                            <div class="form-item">
+                                <label>Referência:</label>
+                                <input v-model="referencia" disabled type="text">
+                            </div>
+                        </div>
                         <label>Nome:</label>
                         <input v-model="nome" disabled type="text">
                         <label>Email:</label>
@@ -20,37 +26,61 @@
                         <label>Tipo de Evento:</label>
                         <input v-model="tipoEvento" disabled type="text">
                         <label>Data:</label>
-                        <input v-model="data" disabled type="text">
+                        <input v-model="data" :disabled="!isEditing" type="text">
                         <label>Convidados:</label>
                         <input v-model="convidados" disabled type="text">
                         <label>Total Proposta:</label>
-                        <input v-model="totalProposta" disabled type="text">
+                        <input class="valorTotal" v-model="totalProposta" disabled type="text">
 
 
                     </div>
 
                     <div class="form-column">
                         <h4>Espaço</h4><br>
-                        <label>Valor:</label>
-                        <input v-model="valorEspaco" disabled type="text">
-                        <label>Cerimônia no Local:</label>
-                        <input v-model="cerimonia" disabled type="text">
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input class="valorTotal" v-model="valorEspaco" disabled type="text">
+                            </div>
+                            <div class="form-item">
+                                <label>Cerimônia no Local:</label>
+                                <input v-model="cerimonia" disabled type="text">
+                            </div>
+                        </div>
                         <h4>Buffet</h4><br>
-                        <label>Cardápio:</label>
-                        <input v-model="cardapioBuffet" disabled type="text">
-                        <label>Tipo de Cerveja:</label>
-                        <input v-model="tipoBebida" disabled type="text">
-                        <label>Valor por pessoa:</label>
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Cardápio:</label>
+                                <input v-model="cardapioBuffet" disabled type="text">
+                            </div>
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input v-model="valorCardapio" disabled type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Cerveja:</label>
+                                <input v-model="tipoBebida" disabled type="text">
+                            </div>
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input v-model="valorCerveja" disabled type="text">
+                            </div>
+                        </div>
+
+                        <label>Valor por Pessoa Total:</label>
                         <input v-model="valorPorPessoaBuffet" disabled type="text">
                         <label>Valor Total:</label>
-                        <input v-model="valorTotalBuffet" disabled type="text">
+                        <input class="valorTotal" v-model="valorTotalBuffet" disabled type="text">
                         <h4>BAR</h4><br>
                         <label>Cardápio:</label>
                         <input v-model="cardapioBar" disabled type="text">
                         <label>Valor por pessoa:</label>
                         <input v-model="valorPorPessoaBar" disabled type="text">
                         <label>Valor Total:</label>
-                        <input v-model="valorTotalBar" disabled type="text">
+                        <input class="valorTotal" v-model="valorTotalBar" disabled type="text">
                     </div>
 
                     <div class="form-column">
@@ -60,14 +90,17 @@
                         <label>Data Envio:</label>
                         <input v-model="dataEnvio" disabled type="text">
                         <h4>Opcionais</h4>
-                        <div v-if="opcionaisSelecionados.length">
 
+                        <div v-if="opcionaisSelecionados.length">
                             <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
-                                <input :value="formatarValorMonetario(opcional.Opcional.valorAtual)" disabled
-                                    type="text">
+                                <input :value="formatarValorMonetario(opcional.valorOrcamento)" disabled type="text">
                             </div>
                         </div>
+
+                        <h4>Observações</h4>
+                        <input v-model="observacoes" disabled type="text" class="textarea">
+
 
                     </div>
 
@@ -75,18 +108,31 @@
                         <h4>Forma de Pagamento 1</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalParcelado" disabled>
-                        <label>Parcelas:</label>
-                        <input v-model="parcelasParcelado" disabled>
-                        <label>Valor:</label>
-                        <input v-model="valorParcelas" disabled>
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Parcelas:</label>
+                                <input v-model="parcelasParcelado" disabled>
+                            </div>
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input v-model="valorParcelas" disabled>
+                            </div>
+                        </div>
+
 
                         <h4>Forma de Pagamento 2</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalEntrada" disabled>
-                        <label>Qtd. Parcelas Entrada:</label>
-                        <input v-model="parcelasEntrada" disabled>
-                        <label>Valor:</label>
-                        <input v-model="valorEntrada" disabled>
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Qtd. Parcelas Entrada:</label>
+                                <input v-model="parcelasEntrada" disabled>
+                            </div>
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input v-model="valorEntrada" disabled>
+                            </div>
+                        </div>
                         <label>Saldo:</label>
                         <input v-model="saldoEntrada" disabled>
 
@@ -98,13 +144,11 @@
                     </div>
                 </div>
             </div>
-            <h4>Observações</h4>
-            <input v-model="observacoes" disabled type="text" class="textarea">
 
             <div class="form-group">
                 <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
                 <button class="submit-button">Visualizar Detalhado</button>
-                <button class="submit-button">Editar</button>
+                <button class="submit-button" @click="toggleEditMode">Editar</button>
                 <button class="submit-button">Salvar</button>
             </div>
 
@@ -148,7 +192,9 @@ export default defineComponent({
             diaSemana: '',
             valorEspaco: '',
             cardapioBuffet: '',
+            valorCardapio: '',
             tipoBebida: '',
+            valorCerveja: '',
             valorPorPessoaBuffet: '',
             valorTotalBuffet: '',
             cardapioBar: '',
@@ -158,6 +204,8 @@ export default defineComponent({
             valorCabine: '',
             valorOpcionais: '',
             loading: false,
+            isEditing: false,
+
 
             opcionaisSelecionados: [] as OrcamentoOpcional[],
             sinal1: '',
@@ -184,6 +232,16 @@ export default defineComponent({
             this.$emit('close');
         },
         formatarValorMonetario,
+        toggleEditMode() {
+            if (this.isEditing) {
+                // Se estiver no modo de edição e o usuário clicar em "Salvar", salve as alterações
+                this.saveChanges();
+            }
+            this.isEditing = !this.isEditing;
+        },
+        async saveChanges() {
+            console.log("salvo!")
+        },
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
             try {
@@ -201,9 +259,11 @@ export default defineComponent({
                 this.convidados = orcamento.numConvidados.toString();
                 this.valorEspaco = formatarValorMonetario(orcamento.valorEspacoFinal);
                 this.cardapioBuffet = orcamento.Cardapio.nomeCardapio;
+                this.valorCardapio = formatarValorMonetario(orcamento.valorPPCardapio);
                 this.tipoBebida = orcamento.Cerveja.nome;
-                this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio)
-                this.valorTotalBuffet = formatarValorMonetario(orcamento.valorPPCardapio * orcamento.numConvidados)
+                this.valorCerveja = formatarValorMonetario(orcamento.Cerveja.valor);
+                this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio + orcamento.valorPPCerveja)
+                this.valorTotalBuffet = formatarValorMonetario((orcamento.valorPPCardapio + orcamento.valorPPCerveja) * orcamento.numConvidados)
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
                 this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
                 this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
@@ -251,7 +311,7 @@ export default defineComponent({
             }).join('');
 
             const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
-                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span>R$ ${opcional.Opcional.valorAtual}</span></span>`;
+                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span>R$ ${opcional.valorOrcamento}</span></span>`;
             }).join('');
 
             return template

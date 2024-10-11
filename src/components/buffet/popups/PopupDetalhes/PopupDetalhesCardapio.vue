@@ -5,6 +5,23 @@
                 <!-- Nome do Cardápio -->
                 <h4>{{ cardapio.cardapio.nome }}</h4>
 
+                <br>
+                <div class="valores-container">
+                    <div class="valor-item">
+                        <label>{{ currentYear }}:</label>
+                        <h4>{{ formatarValorMonetario(reajusteCardapio.atual) }}</h4>
+                    </div>
+                    <div class="valor-item">
+                        <label>{{ currentYear + 1 }}:</label>
+                        <h4>{{ formatarValorMonetario(reajusteCardapio.ano1) }}</h4>
+                    </div>
+                    <div class="valor-item">
+                        <label>{{ currentYear + 2 }}:</label>
+                        <h4>{{ formatarValorMonetario(reajusteCardapio.ano2) }}</h4>
+                    </div>
+                </div>
+
+
                 <!-- Exibição dos Grupos e Itens -->
                 <div v-for="(grupo, index) in cardapio.cardapio.grupos" :key="index">
                     <!-- Nome do Grupo e Quantidade de Itens -->
@@ -44,6 +61,8 @@ import instance from '@/common/utils/AuthService';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { CardapioInfo, GroupedItem, Item } from '@/common/utils/Interfaces';
+import { ReajusteCardapio } from '@/common/utils/Interfaces/Buffet';
+import { formatarValorMonetario } from '@/common/utils/Helper';
 
 export default defineComponent({
     props: {
@@ -56,9 +75,12 @@ export default defineComponent({
         return {
             cardapio: null as CardapioInfo | null,
             loading: false,
+            currentYear: new Date().getFullYear(),
+            reajusteCardapio: {} as ReajusteCardapio
         };
     },
     methods: {
+        formatarValorMonetario,
         async fetchCardapioDetails(id: number) {
             this.loading = true;
             try {
@@ -70,6 +92,18 @@ export default defineComponent({
                 this.loading = false;
             }
         },
+
+        async fetchValoresCardapio(id: number) {
+            try {
+                const response = await instance.get<ReajusteCardapio>('buffet/cardapio/reajuste/' + id);
+                this.reajusteCardapio = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar detalhes do cardápio:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
         getItensDoGrupo(nomeGrupo: string) {
             // Verifica se há cardápio e itens agrupados
             if (!this.cardapio || !Array.isArray(this.cardapio.cardapio.itensAgrupados)) {
@@ -83,12 +117,21 @@ export default defineComponent({
             return grupoEncontrado ? grupoEncontrado.itens : [];
         },
 
-
         preencherTemplate(template: string) {
             if (!this.cardapio) {
                 console.error('Cardápio não encontrado');
                 return '';
             }
+
+            // Formatar os valores monetários
+            const valorAtualFormatado = this.formatarValorMonetario(this.reajusteCardapio.atual);
+            const valorAno1Formatado = this.formatarValorMonetario(this.reajusteCardapio.ano1);
+            const valorAno2Formatado = this.formatarValorMonetario(this.reajusteCardapio.ano2);
+
+            // Obter os anos
+            const currentYear = this.currentYear;
+            const nextYear = this.currentYear + 1;
+            const yearAfterNext = this.currentYear + 2;
 
             // Construção dos itens do cardápio em HTML
             const gruposHTML = this.cardapio.cardapio.grupos.map(grupo => {
@@ -102,7 +145,16 @@ export default defineComponent({
                 return `<div class="titulo"><strong>${grupo.nomeGrupo ? grupo.nomeGrupo : 'Grupo indefinido'} - ${grupo.qtdItens ? grupo.qtdItens : 0} opção(es)</strong> <br>${itens}</div>`;
             }).join('');
 
-            return template.replace('{{nome}}', this.cardapio.cardapio.nome).replace('{{grupos}}', gruposHTML);
+            return template
+                .replace('{{nome}}', this.cardapio.cardapio.nome)
+                .replace('{{currentYear}}', currentYear.toString())
+                .replace('{{nextYear}}', nextYear.toString())
+                .replace('{{yearAfterNext}}', yearAfterNext.toString())
+                .replace('{{valorAtual}}', valorAtualFormatado)
+                .replace('{{valorAno1}}', valorAno1Formatado)
+                .replace('{{valorAno2}}', valorAno2Formatado)
+                .replace('{{grupos}}', gruposHTML);
+
         },
 
         async gerarPDF() {
@@ -185,6 +237,7 @@ export default defineComponent({
             handler(newId: number) {
                 if (newId) {
                     this.fetchCardapioDetails(newId);
+                    this.fetchValoresCardapio(newId);
                 }
             }
         }

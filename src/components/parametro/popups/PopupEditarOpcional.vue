@@ -1,53 +1,55 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <form>
-            <h4>Opcional</h4><br>
-            <label>Nome:</label>
-            <input type="text" v-model="nomeOpcional">
+        <form @submit.prevent="atualizarValor">
+            <h4>{{ Opcional.nomeOpcional }}</h4><br>
 
             <label>Valor:</label>
-            <input type="number" required v-model='valorAtual'>
+            <input type="number" required v-model.number="valorAtual">
 
-            <label>Por Pessoa?</label>
-            <input type="checkbox" required v-model='porPessoa'>
-
-            <button type="submit" class="submit-button" @click="criarOpcional()">Criar</button>
+            <button type="submit" class="submit-button">Atualizar</button>
         </form>
     </div>
-
 </template>
 
 <script lang="ts">
-import instance from '@/common/utils/AuthService';
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { Opcional } from '@/common/utils/Interfaces';
 
 export default defineComponent({
+    props: {
+        Opcional: {
+            type: Object as PropType<Opcional>,
+            required: true
+        }
+    },
     data() {
         return {
-            nomeOpcional: '',
-            valorAtual: '',
-            porPessoa: null
+            valorAtual: this.Opcional.valorAtual
         };
     },
     methods: {
         close() {
             this.$emit('close');
         },
-        async criarOpcional() {
-            try {
-                const data = await instance.post('/opcional/create', {
-                    nomeOpcional: this.nomeOpcional,
-                    valorAtual: this.valorAtual,
-                    porPessoa: Number(this.porPessoa)
-                });
-                window.location.reload()
-            } catch (error) {
-                alert('Erro ao criar opcional')
+        async atualizarValor() {
+            if (this.valorAtual !== this.Opcional.valorAtual) {
+                try {
+                    this.$emit('update', {
+                        ...this.Opcional,
+                        valorAtual: this.valorAtual
+                    });
+                    this.close();
+                    alert('Valor alterado com sucesso!')
+
+                } catch (error) {
+                    console.error('Erro ao atualizar o valor do espaço:', error);
+                }
+            } else {
+                this.close();
             }
         }
     }
-}
-);
+});
 </script>
 
 <style scoped>
@@ -60,7 +62,6 @@ form {
     border-radius: 10px;
     position: relative;
     z-index: 2;
-    /* Garanta que o formulário esteja acima do backdrop */
 }
 
 label {
@@ -92,7 +93,6 @@ select {
     width: 100%;
     height: 100%;
     z-index: 1;
-    /* Ajuste o z-index para garantir que o backdrop esteja acima de outros conteúdos */
 }
 
 button.submit-button {

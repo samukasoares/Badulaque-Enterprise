@@ -13,7 +13,6 @@
             <SidebarLink to="/" icon="fas fa-home">Home</SidebarLink>
             <SidebarLink to="/orcamentos" icon="fa-solid fa-file-invoice-dollar">Orçamentos</SidebarLink>
             <SidebarLink to="/contratos" icon="fa-solid fa-file-signature">Contratos</SidebarLink>
-            <SidebarLink to="/clientes" icon="fa-solid fa-user-group">Clientes</SidebarLink>
             <SidebarLink to="/buffet" icon="fa-solid fa-utensils">Buffet</SidebarLink>
             <SidebarLink to="/bardulaque" icon="fa-solid fa-martini-glass">Bardulaque</SidebarLink>
             <SidebarLink to="/parametros" icon="fa-solid fa-gear">Parâmetros</SidebarLink>
