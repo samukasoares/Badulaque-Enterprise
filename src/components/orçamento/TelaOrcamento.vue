@@ -48,7 +48,7 @@
     </div>
 
     <!-- Exibe a mensagem de sucesso fora do modal -->
-    <NotificationMessage :message="successMessage" />
+    <NotificationMessage :message="message" />
 
     <PopupOrcamento v-if="showModal" @close="showModal = false" @success="handleSuccessMessage" />
     <PopupDetalhes v-if="showDetailModal" @close="closeDetailModal" :orcamentoId="orcamentoSelecionado?.idOrcamento" />
@@ -61,7 +61,6 @@ import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
 import { AllOrcamentos, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
 import PopupDetalhes from './popups/PopupDetalhesOrcamento.vue';
-import { formatarCelular } from '@/common/utils/Helper';
 
 export default defineComponent({
     components: { PopupOrcamento, NotificationMessage, PopupDetalhes },
@@ -71,7 +70,7 @@ export default defineComponent({
             showDetailModal: false,
             selectedRow: null as number | null,
             searchQuery: '',
-            successMessage: '',
+            message: '',
             status: 'pendentes' as keyof AllOrcamentos,
 
             orcamentos: {} as AllOrcamentos,
@@ -146,10 +145,10 @@ export default defineComponent({
             this.selectedRow = null;
         },
         handleSuccessMessage(message: string) {
-            this.successMessage = message;
+            this.message = message;
             this.fetchOrcamentos();
             setTimeout(() => {
-                this.successMessage = '';
+                this.message = '';
             }, 3000);
         },
         formatarDateToString(date: string | Date): string {

@@ -22,7 +22,10 @@
     </div>
 
     <!--Componente Popup de Criar Cardapios, Itens ou Grupos-->
-    <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId" />
+    <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId"
+        @success="handleSuccessMessage" />
+
+    <NotificationMessage :message="message" />
 
 </template>
 
@@ -36,6 +39,8 @@ import popupItem from './popups/PopupCriar/PopupCriarItem.vue';
 import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue';
 import popupDetalhesCardapio from '../buffet/popups/PopupDetalhes/PopupDetalhesCardapio.vue'
 import popupEditarItem from '../buffet/popups/PopupEdit/PopupEditItem.vue'
+import popupEditarGrupo from '../buffet/popups/PopupEdit/PopupEditGrupo.vue'
+import NotificationMessage from '@/views/NotificationMessage.vue';
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
 import { Card, Cardapio, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
@@ -50,9 +55,10 @@ export default defineComponent({
             searchText: '',
             isViewingDetails: false,
             selectedCardId: null as number | null,
+            message: ''
         }
     },
-    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem },
+    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage },
     computed: {
         getPopupComponent() {
             if (this.isViewingDetails) {
@@ -61,8 +67,9 @@ export default defineComponent({
                     return 'popupDetalhesCardapio';
                 } else if (this.opcoes === 'Itens') {
                     return 'popupEditarItem'
-                }
-                // Adicione lógica para outros tipos se necessário
+                } else if (this.opcoes === 'Grupos')
+                    return 'popupEditarGrupo'
+
             } else {
                 // Retorna o popup de criação
                 if (this.opcoes === 'Cardápios') {
@@ -110,6 +117,15 @@ export default defineComponent({
                 console.log(String(error));
             }
         },
+
+        handleSuccessMessage(message: string) {
+            this.message = message;
+            this.fetchData();
+            setTimeout(() => {
+                this.message = '';
+            }, 3000);
+        },
+
         showCard(id: number) {
             this.isViewingDetails = true;
             this.selectedCardId = id; // Passa apenas o ID para o modal

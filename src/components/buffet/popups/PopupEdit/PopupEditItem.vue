@@ -91,11 +91,11 @@ export default defineComponent({
             }
 
             try {
-                const data = await instance.post('/item/update', itemAtualizado)
+                const data = await instance.post('buffet/item/update', itemAtualizado)
                 this.$emit('success', 'Item atualizado com sucesso!');
                 this.close(); // Fecha o modal após o sucesso
             } catch (error) {
-                alert('Erro ao editar item!')
+                this.$emit('error', 'Item atualizado com sucesso!');
             }
         }
 
