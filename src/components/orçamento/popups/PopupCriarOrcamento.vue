@@ -58,7 +58,7 @@
                         }}
                         </option>
                     </select>
-                    <label class="checkbox-bar-label">
+                    <label class="checkbox-label">
                         <input type="checkbox" v-model="barEnabled"> Bar
                     </label>
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
@@ -76,7 +76,7 @@
                         <input type="checkbox" v-model="cerimonia">Cerimônia
                     </label>
 
-                    <div v-for="opcional in opcionais" :key="opcional.idOpcional" class="checkbox-container">
+                    <div v-for="opcional in opcionais" :key="opcional.idOpcional">
                         <label class="checkbox-label">
                             <input type="checkbox" id="opcional.idOpcional" :value="opcional.idOpcional"
                                 v-model="selectedOpcionais" /> {{ opcional.nomeOpcional }}
@@ -96,6 +96,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchCidades, fetchOpcionais } from '@/common/utils/FetchMethods';
 import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, RegistroOrcamento, RegistroOrcamentoData } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
@@ -120,15 +121,20 @@ export default defineComponent({
             cerimonia: null,
             barEnabled: false,
             selectedOpcionais: [],
+
+            //Armazena todos os registros
             cardapioBar: [] as CardapioBar[],
             cardapios: [] as Cardapio[],
             cervejas: [] as Cerveja[],
             opcionais: [] as Opcional[],
+            cidades: [] as { id: number, nome: string }[],
+
+
+            //Armazena o item selecionado
             cardapioSelecionado: {} as Cardapio,
             cervejaSelecionada: {} as Cerveja,
             barSelecionado: {} as CardapioBar,
 
-            cidades: [] as { id: number, nome: string }[],
 
             successMessage: ''
         };
@@ -137,10 +143,30 @@ export default defineComponent({
         close() {
             this.$emit('close');
         },
+
+        //Formata Telefone dinamicamente no formato (##) #####-####
+        formatTelefone(event: Event) {
+            const target = event.target as HTMLInputElement;
+            let input = target.value;
+            input = input.replace(/\D/g, ''); // Remove caracteres não numéricos
+            input = input.substring(0, 11);   // Limita a 11 dígitos
+
+            if (input.length > 10) {
+                input = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (input.length > 6) {
+                input = input.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (input.length > 2) {
+                input = input.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else if (input.length > 0) {
+                input = input.replace(/^(\d*)/, '($1');
+            }
+
+            this.telefone = input;
+        },
+
+        //Envio do formulário e criação do orçamento
         async submitForm() {
-
             const valorDiaDaSemana = this.calcularDiaDaSemanaValor(this.data);
-
 
             const lead: RegistroLead = {
                 nomeLead: this.nome,
@@ -183,31 +209,16 @@ export default defineComponent({
             }
 
         },
+
+        //Recebe uma data e verifica o dia da Semana
         calcularDiaDaSemana(dataString: string) {
             const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const data = new Date(dataString + 'T00:00:00');
             return diasDaSemana[data.getUTCDay()];
         },
 
-        formatTelefone(event: Event) {
-            const target = event.target as HTMLInputElement;
-            let input = target.value;
-            input = input.replace(/\D/g, ''); // Remove caracteres não numéricos
-            input = input.substring(0, 11);   // Limita a 11 dígitos
 
-            if (input.length > 10) {
-                input = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
-            } else if (input.length > 6) {
-                input = input.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
-            } else if (input.length > 2) {
-                input = input.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-            } else if (input.length > 0) {
-                input = input.replace(/^(\d*)/, '($1');
-            }
-
-            this.telefone = input;
-        },
-
+        //Recebe uma data e verifica qual é o ID que deve ser enviado para o backend
         calcularDiaDaSemanaValor(dataString: string) {
             const data = new Date(dataString + 'T00:00:00');
             const diaSemana = data.getUTCDay(); // Retorna o índice do dia da semana
@@ -224,6 +235,7 @@ export default defineComponent({
             }
         },
 
+        //Gera referência no formato CAAMMDD
         gerarReferencia() {
             if (this.tipoEvento && this.data) {
                 const tipoEventoInicial = this.tipoEvento.charAt(0).toUpperCase();
@@ -232,51 +244,6 @@ export default defineComponent({
                 const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
                 const dia = String(data.getUTCDate()).padStart(2, '0');
                 this.referencia = `${tipoEventoInicial}${ano}${mes}${dia}`;
-            }
-        },
-        async fetchCardapios() {
-            try {
-                let response = await instance.get<Cardapio[]>('/buffet/cardapios');
-                this.cardapios = response.data
-            } catch (error) {
-                console.error('Erro ao buscar cardápios:', error);
-            }
-        },
-        async fetchCervejas() {
-            try {
-                let response = await instance.get<Cerveja[]>('/cerveja/get-all');
-                this.cervejas = response.data
-            } catch (error) {
-                console.error('Erro ao buscar cervejas:', error);
-            }
-        },
-        async fetchCardapioBar() {
-            try {
-                let response = await instance.get<CardapioBar[]>('/bar/get-all');
-                this.cardapioBar = response.data
-            } catch (error) {
-                console.error('Erro ao buscar cervejas:', error);
-            }
-        },
-        async fetchCidades() {
-            try {
-                let response = await instance.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios');
-                this.cidades = response.data
-                this.cidades = response.data.map((cidade: any) => ({
-                    id: cidade.id,
-                    nome: cidade.nome
-                }));
-            } catch (error) {
-                console.error('Erro ao buscar cervejas:', error);
-            }
-        },
-
-        async fetchOpcionais() {
-            try {
-                let response = await instance.get<Opcional[]>('/opcional/get-all')
-                this.opcionais = response.data
-            } catch (error) {
-                console.error('Erro ao buscar opcionais:', error);
             }
         },
     },
@@ -295,12 +262,12 @@ export default defineComponent({
             }
         }
     },
-    mounted() {
-        this.fetchCardapios();
-        this.fetchCervejas();
-        this.fetchCardapioBar();
-        this.fetchOpcionais();
-        this.fetchCidades();
+    async mounted() {
+        this.cardapios = await fetchCardapios();
+        this.cervejas = await fetchCervejas();
+        this.cardapioBar = await fetchCardapioBar();
+        this.opcionais = await fetchOpcionais();
+        this.cidades = await fetchCidades();
     }
 });
 </script>

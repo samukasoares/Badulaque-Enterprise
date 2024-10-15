@@ -35,6 +35,7 @@ import popupGrupo from './popups/PopupCriar/PopupCriarGrupo.vue';
 import popupItem from './popups/PopupCriar/PopupCriarItem.vue';
 import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue';
 import popupDetalhesCardapio from '../buffet/popups/PopupDetalhes/PopupDetalhesCardapio.vue'
+import popupEditarItem from '../buffet/popups/PopupEdit/PopupEditItem.vue'
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
 import { Card, Cardapio, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
@@ -51,13 +52,15 @@ export default defineComponent({
             selectedCardId: null as number | null,
         }
     },
-    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio },
+    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem },
     computed: {
         getPopupComponent() {
             if (this.isViewingDetails) {
                 // Retorna o popup de detalhes dependendo do tipo selecionado
                 if (this.opcoes === 'Cardápios') {
                     return 'popupDetalhesCardapio';
+                } else if (this.opcoes === 'Itens') {
+                    return 'popupEditarItem'
                 }
                 // Adicione lógica para outros tipos se necessário
             } else {
