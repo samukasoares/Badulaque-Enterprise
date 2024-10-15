@@ -25,10 +25,17 @@
                         <input v-model="cidade" disabled type="text">
                         <label>Tipo de Evento:</label>
                         <input v-model="tipoEvento" disabled type="text">
+
                         <label>Data:</label>
-                        <input v-model="data" :disabled="!isEditing" type="text">
+                        <template v-if="!isEditing">
+                            <input v-model="data" disabled type="text">
+                        </template>
+                        <template v-else>
+                            <input v-model="dataEventoRaw" :disabled="!isEditing" type="date">
+                        </template>
+
                         <label>Convidados:</label>
-                        <input v-model="convidados" disabled type="text">
+                        <input v-model="convidados" :disabled="!isEditing" type="text">
                         <label>Total Proposta:</label>
                         <input class="valorTotal" v-model="totalProposta" disabled type="text">
 
@@ -40,45 +47,69 @@
                         <div class="form-group">
                             <div class="form-item">
                                 <label>Valor:</label>
-                                <input class="valorTotal" v-model="valorEspaco" disabled type="text">
+                                <input class="valorTotal" v-model="valorEspaco" :disabled="!isEditing" type="text">
                             </div>
                             <div class="form-item">
                                 <label>Cerimônia no Local:</label>
-                                <input v-model="cerimonia" disabled type="text">
+                                <input v-model="cerimonia" :disabled="!isEditing" type="text">
                             </div>
                         </div>
+
                         <h4>Buffet</h4><br>
                         <div class="form-group">
+
                             <div class="form-item">
                                 <label>Cardápio:</label>
-                                <input v-model="cardapioBuffet" disabled type="text">
+                                <template v-if="!isEditing">
+                                    <input v-model="cardapioBuffet" disabled type="text">
+                                </template>
+                                <template v-else>
+                                    <select v-model="cardapioBuffetId" :disabled="!isEditing"
+                                        @change="onCardapioSelect">
+                                        <option v-for="cardapio in cardapios" :key="cardapio.idCardapio"
+                                            :value="cardapio.idCardapio">
+                                            {{ cardapio.nomeCardapio }}
+                                        </option>
+                                    </select>
+                                </template>
                             </div>
+
                             <div class="form-item">
                                 <label>Valor:</label>
-                                <input v-model="valorCardapio" disabled type="text">
+                                <input v-model="valorCardapio" :disabled="!isEditing" type="text">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="form-item">
                                 <label>Cerveja:</label>
-                                <input v-model="tipoBebida" disabled type="text">
+                                <template v-if="!isEditing">
+                                    <input v-model="tipoBebida" disabled type="text">
+                                </template>
+                                <template v-else>
+                                    <select v-model="tipoBebidaId" :disabled="!isEditing">
+                                        <option v-for="cerveja in cervejas" :key="cerveja.idCerveja"
+                                            :value="cerveja.idCerveja">
+                                            {{ cerveja.nome }}
+                                        </option>
+                                    </select>
+                                </template>
                             </div>
                             <div class="form-item">
                                 <label>Valor:</label>
-                                <input v-model="valorCerveja" disabled type="text">
+                                <input v-model="valorCerveja" :disabled="!isEditing" type="text">
                             </div>
                         </div>
 
                         <label>Valor por Pessoa Total:</label>
                         <input v-model="valorPorPessoaBuffet" disabled type="text">
-                        <label>Valor Total:</label>
+                        <label>Valor Buffet Total:</label>
                         <input class="valorTotal" v-model="valorTotalBuffet" disabled type="text">
                         <h4>BAR</h4><br>
                         <label>Cardápio:</label>
-                        <input v-model="cardapioBar" disabled type="text">
+                        <input v-model="cardapioBar" :disabled="!isEditing" type="text">
                         <label>Valor por pessoa:</label>
-                        <input v-model="valorPorPessoaBar" disabled type="text">
+                        <input v-model="valorPorPessoaBar" :disabled="!isEditing" type="text">
                         <label>Valor Total:</label>
                         <input class="valorTotal" v-model="valorTotalBar" disabled type="text">
                     </div>
@@ -94,12 +125,13 @@
                         <div v-if="opcionaisSelecionados.length">
                             <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
-                                <input :value="formatarValorMonetario(opcional.valorOrcamento)" disabled type="text">
+                                <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
+                                    type="text">
                             </div>
                         </div>
 
                         <h4>Observações</h4>
-                        <input v-model="observacoes" disabled type="text" class="textarea">
+                        <input v-model="observacoes" :disabled="!isEditing" type="text" class="textarea">
 
 
                     </div>
@@ -107,11 +139,11 @@
                     <div class="form-column">
                         <h4>Forma de Pagamento 1</h4><br>
                         <label>Sinal:</label>
-                        <input v-model="sinalParcelado" disabled>
+                        <input v-model="sinalParcelado" :disabled="!isEditing">
                         <div class="form-group">
                             <div class="form-item">
                                 <label>Parcelas:</label>
-                                <input v-model="parcelasParcelado" disabled>
+                                <input v-model="parcelasParcelado" :disabled="!isEditing">
                             </div>
                             <div class="form-item">
                                 <label>Valor:</label>
@@ -122,15 +154,15 @@
 
                         <h4>Forma de Pagamento 2</h4><br>
                         <label>Sinal:</label>
-                        <input v-model="sinalEntrada" disabled>
+                        <input v-model="sinalEntrada" :disabled="!isEditing">
                         <div class="form-group">
                             <div class="form-item">
                                 <label>Qtd. Parcelas Entrada:</label>
-                                <input v-model="parcelasEntrada" disabled>
+                                <input v-model="parcelasEntrada" :disabled="!isEditing">
                             </div>
                             <div class="form-item">
                                 <label>Valor:</label>
-                                <input v-model="valorEntrada" disabled>
+                                <input v-model="valorEntrada" :disabled="!isEditing">
                             </div>
                         </div>
                         <label>Saldo:</label>
@@ -138,9 +170,9 @@
 
                         <h4>Forma de Pagamento 3</h4><br>
                         <label>Sinal:</label>
-                        <input v-model="sinalAVista" disabled>
+                        <input v-model="sinalAVista" :disabled="!isEditing">
                         <label>Valor:</label>
-                        <input v-model="valorAVista" disabled>
+                        <input v-model="valorAVista" :disabled="!isEditing">
                     </div>
                 </div>
             </div>
@@ -149,7 +181,7 @@
                 <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
                 <button class="submit-button">Visualizar Detalhado</button>
                 <button class="submit-button" @click="toggleEditMode">Editar</button>
-                <button class="submit-button">Salvar</button>
+                <button class="submit-button" :disabled="!isEditing" @click="saveChanges">Salvar</button>
             </div>
 
         </form>
@@ -158,11 +190,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio } from '@/common/utils/Interfaces';
+import { Cardapio, Cerveja } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
-import { formatarCelular, formatarDataExtenso, formatarDateToString, formatarValorMonetario } from '@/common/utils/Helper';
+import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
+import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
+import { fetchCardapios, fetchCervejas } from '@/common/utils/FetchMethods';
 
 
 export default defineComponent({
@@ -175,25 +209,41 @@ export default defineComponent({
     },
     data() {
         return {
+            //Cliente
             id: '',
-            referencia: '',
             nome: '',
             email: '',
-            tipoEvento: '',
             cidade: '',
+            telefone: '',
+
+            //Data
             data: '',
+            dataEventoRaw: '',
+
+            //Orçamento
             convidados: '',
+            referencia: '',
             cerimonia: '',
             totalProposta: '',
             dataCriação: '',
-            telefone: '',
+            tipoEvento: '',
             dataEnvio: '',
             observacoes: '',
+
+            //Espaço
             diaSemana: '',
             valorEspaco: '',
+
+            //Cardapio
             cardapioBuffet: '',
+            cardapioBuffetId: 0,
             valorCardapio: '',
+
+            //Cerveja
             tipoBebida: '',
+            tipoBebidaId: 0,
+
+
             valorCerveja: '',
             valorPorPessoaBuffet: '',
             valorTotalBuffet: '',
@@ -223,7 +273,9 @@ export default defineComponent({
             parcelasParcelado: '',
             valorParcelas: '',
 
+            //Objetos que armazenam todas as opções
             cardapios: [] as Cardapio[],
+            cervejas: [] as Cerveja[]
         };
     },
 
@@ -233,11 +285,14 @@ export default defineComponent({
         },
         formatarValorMonetario,
         toggleEditMode() {
-            if (this.isEditing) {
-                // Se estiver no modo de edição e o usuário clicar em "Salvar", salve as alterações
-                this.saveChanges();
-            }
             this.isEditing = !this.isEditing;
+        },
+
+        onCardapioSelect() {
+            const selectedCardapio = this.cardapios.find(cardapio => cardapio.idCardapio === this.cardapioBuffetId);
+            if (selectedCardapio) {
+                this.valorCardapio = formatarValorMonetario(selectedCardapio.precoCardapio) // Preenche automaticamente o valor do cardápio
+            }
         },
         async saveChanges() {
             console.log("salvo!")
@@ -252,16 +307,24 @@ export default defineComponent({
                 this.nome = orcamento.Lead.nomeLead;
                 this.email = orcamento.Lead.email;
                 this.referencia = orcamento.referenciaOrcamento;
+
                 this.data = formatarDataExtenso(orcamento.dataEvento);
+                this.dataEventoRaw = orcamento.dataEvento.slice(0, 10);
+
                 this.tipoEvento = orcamento.tipoEvento;
                 this.cidade = orcamento.Lead.cidade;
                 this.telefone = formatarCelular(orcamento.Lead.celular);
                 this.convidados = orcamento.numConvidados.toString();
                 this.valorEspaco = formatarValorMonetario(orcamento.valorEspacoFinal);
                 this.cardapioBuffet = orcamento.Cardapio.nomeCardapio;
+
                 this.valorCardapio = formatarValorMonetario(orcamento.valorPPCardapio);
+                this.cardapioBuffetId = orcamento.Cardapio.idCardapio;
+
                 this.tipoBebida = orcamento.Cerveja.nome;
-                this.valorCerveja = formatarValorMonetario(orcamento.Cerveja.valor);
+                this.tipoBebidaId = orcamento.Cerveja.idCerveja;
+
+                this.valorCerveja = formatarValorMonetario(orcamento.valorPPCerveja);
                 this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio + orcamento.valorPPCerveja)
                 this.valorTotalBuffet = formatarValorMonetario((orcamento.valorPPCardapio + orcamento.valorPPCerveja) * orcamento.numConvidados)
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
@@ -297,14 +360,7 @@ export default defineComponent({
                 this.loading = false;
             }
         },
-        async fetchCardapios() {
-            try {
-                let response = await instance.get<Cardapio[]>('/buffet/cardapios');
-                this.cardapios = response.data
-            } catch (error) {
-                console.error('Erro ao buscar cardápios:', error);
-            }
-        },
+
         preencherTemplate(template: string) {
             const cardapiosHTML = this.cardapios.map(cardapio => {
                 return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span>R$ ${cardapio.precoCardapio}</span></span>`;
@@ -371,8 +427,9 @@ export default defineComponent({
 
     },
 
-    mounted() {
-        this.fetchCardapios();
+    async mounted() {
+        this.cardapios = await fetchCardapios()
+        this.cervejas = await fetchCervejas()
     },
 
     watch: {
