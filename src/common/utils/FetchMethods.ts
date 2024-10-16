@@ -1,5 +1,6 @@
 import instance from '@/common/utils/AuthService';
 import { Cardapio, CardapioBar, Cerveja, Grupo, Opcional } from './Interfaces';
+import { AllOrcamentos, Orcamento, OrcamentoBasico } from './Interfaces/Orcamento';
 
 export async function fetchCardapios(): Promise<Cardapio[]> {
   try {
@@ -60,6 +61,16 @@ export async function fetchGrupos(): Promise<Grupo[]> {
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar grupos:', error);
+    throw error;
+  }
+}
+
+export async function fetchOrcamentosEnviados(): Promise<OrcamentoBasico[]> {
+  try {
+    const response = await instance.get<OrcamentoBasico[]>('/orcamento/get-enviados');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar orçamentos:', error);
     throw error;
   }
 }

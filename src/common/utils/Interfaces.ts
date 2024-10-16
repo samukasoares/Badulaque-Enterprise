@@ -113,16 +113,6 @@ export interface RegistroOrcamento {
     lead: RegistroLead;
 }
 
-export interface OrcamentoTabela {
-    id: number;
-    referencia: string;
-    cliente: string;
-    contato: string;
-    tipo: string;
-    dataCriacao: string;
-    dataEnvio: string;
-    status: string;
-}
 
 //Fim Interfaces Orcamento
 export interface Card {
