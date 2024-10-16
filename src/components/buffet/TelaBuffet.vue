@@ -7,7 +7,6 @@
                 <option>Cardápios</option>
                 <option>Grupos</option>
                 <option>Itens</option>
-                <option>Produtos</option>
                 <option>Cervejas</option>
             </select>
         </div>
@@ -40,6 +39,7 @@ import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue';
 import popupDetalhesCardapio from '../buffet/popups/PopupDetalhes/PopupDetalhesCardapio.vue'
 import popupEditarItem from '../buffet/popups/PopupEdit/PopupEditItem.vue'
 import popupEditarGrupo from '../buffet/popups/PopupEdit/PopupEditGrupo.vue'
+import popupEditarCerveja from '../buffet/popups/PopupEdit/PopupEditCerveja.vue'
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
@@ -58,7 +58,7 @@ export default defineComponent({
             message: ''
         }
     },
-    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage },
+    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage, popupEditarCerveja },
     computed: {
         getPopupComponent() {
             if (this.isViewingDetails) {
@@ -66,9 +66,14 @@ export default defineComponent({
                 if (this.opcoes === 'Cardápios') {
                     return 'popupDetalhesCardapio';
                 } else if (this.opcoes === 'Itens') {
-                    return 'popupEditarItem'
-                } else if (this.opcoes === 'Grupos')
-                    return 'popupEditarGrupo'
+                    return 'popupEditarItem';
+                } else if (this.opcoes === 'Grupos') {
+                    return 'popupEditarGrupo';
+                } else if (this.opcoes === 'Cervejas') {
+                    return 'popupEditarCerveja';
+                }
+
+
 
             } else {
                 // Retorna o popup de criação

@@ -2,9 +2,10 @@
     <div class="backdrop" @click.self="close">
         <form class="modal-form" @submit.prevent="submitForm">
             <h4>Orçamento</h4>
-            <select>
-                <option>Samuel & Bruna - C250922</option>
-                <option>Nemli & Nemlerey - C250922</option>
+            <select v-model="orcamentoSelecionado" required>
+                <option v-for="orcamento in orcamentos" :key="orcamento.idOrcamento" :value="orcamento.idOrcamento">
+                    {{ orcamento.referenciaOrcamento }} - {{ orcamento.Lead.nomeLead }}
+                </option>
             </select>
             <h4>Dados Contratante</h4><br>
 
@@ -37,12 +38,14 @@
             <button class="submit-button" type="submit">Criar Contrato</button>
         </form>
     </div>
-    <NotificationMessage :message="errorMessage" type="error" />
+    <NotificationMessage :message="message" type="error" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
+import { AllOrcamentos, Orcamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
+import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
 
 export default defineComponent({
     components: {
@@ -62,7 +65,11 @@ export default defineComponent({
                     numero: ''
                 }
             ],
-            errorMessage: ''
+
+            orcamentoSelecionado: {} as OrcamentoBasico,
+            orcamentos: [] as OrcamentoBasico[],
+
+            message: ''
         };
     },
     methods: {
@@ -91,16 +98,16 @@ export default defineComponent({
                             this.contratantes[index].bairro = data.bairro;
                             this.contratantes[index].cidade = data.localidade;
                         } else {
-                            this.errorMessage = "CEP não encontrado!";
+                            this.message = "CEP não encontrado!";
                         }
                     } else {
-                        this.errorMessage = "Erro ao buscar CEP!";
+                        this.message = "Erro ao buscar CEP!";
                     }
                 } catch (error) {
-                    this.errorMessage = "Erro ao buscar CEP!";
+                    this.message = "Erro ao buscar CEP!";
                 }
             } else {
-                this.errorMessage = "CEP inválido!";
+                this.message = "CEP inválido!";
                 this.contratantes[index].cep = '';
             }
         },
@@ -114,7 +121,7 @@ export default defineComponent({
         validateCPF(index: number) {
             const cpf = this.contratantes[index].cpf.replace(/\D/g, '');
             if (cpf.length !== 11 || !this.isValidCPF(cpf)) {
-                this.errorMessage = "CPF Inválido!";
+                this.message = "CPF Inválido!";
                 this.contratantes[index].cpf = '';
             }
         },
@@ -143,7 +150,7 @@ export default defineComponent({
         validateRG(index: number) {
             const rg = this.contratantes[index].rg.replace(/\D/g, '');
             if (rg.length < 9) {
-                this.errorMessage = "RG Inválido!";
+                this.message = "RG Inválido!";
                 this.contratantes[index].rg = '';
             }
         },
@@ -154,8 +161,11 @@ export default defineComponent({
             alert('Formulário enviado com sucesso!');
         },
         showError(message: string) {
-            this.errorMessage = message;
+            this.message = message;
         },
+    },
+    async mounted() {
+        this.orcamentos = await fetchOrcamentosEnviados()
     }
 });
 </script>
