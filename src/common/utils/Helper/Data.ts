@@ -1,9 +1,9 @@
 //Recebe uma string e retorna no Formato DD/MM/AAAA
 export function formatarData(dataEvento: string): string {
     const data = new Date(dataEvento);
-    const dia = String(data.getDate()).padStart(2, '0');
-    const mes = String(data.getMonth() + 1).padStart(2, '0');
-    const ano = data.getFullYear();
+    const dia = String(data.getUTCDate()).padStart(2, '0');
+    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+    const ano = data.getUTCFullYear();
     return `${dia}/${mes}/${ano}`;
 }
 

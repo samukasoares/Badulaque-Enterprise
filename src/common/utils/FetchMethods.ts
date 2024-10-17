@@ -1,6 +1,7 @@
 import instance from '@/common/utils/AuthService';
 import { Cardapio, CardapioBar, Cerveja, Grupo, Opcional } from './Interfaces';
 import { AllOrcamentos, Orcamento, OrcamentoBasico } from './Interfaces/Orcamento';
+import { Contrato } from './Interfaces/Contrato';
 
 export async function fetchCardapios(): Promise<Cardapio[]> {
   try {
@@ -71,6 +72,16 @@ export async function fetchOrcamentosEnviados(): Promise<OrcamentoBasico[]> {
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar orçamentos:', error);
+    throw error;
+  }
+}
+
+export async function fetchContratos(): Promise<Contrato[]> {
+  try {
+    const response = await instance.get<Contrato[]>('/contrato/get-all');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar contratos:', error);
     throw error;
   }
 }

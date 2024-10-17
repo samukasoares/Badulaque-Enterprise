@@ -44,21 +44,23 @@
             <th>Convidados</th>
             <th>Cardápio</th>
             <th>Total Contrato</th>
+            <th>Assinado</th>
             <th>Definir Cardápio</th>
-            <th>Lista de Compras</th>
             <th>Pagamentos</th>
             <th>Recebimentos</th>
         </tr>
-        <tr>
-            <td>29/09/2025</td>
-            <td>Samuel & Bruna</td>
-            <td>(19)99710-4251</td>
-            <td>Casamento</td>
-            <td>150</td>
-            <td>Prata</td>
-            <td>R$36.230,00</td>
+        <tr v-for="(contrato, index) in contratos" :key="contrato.idContrato"
+            :class="{ 'selected-row': selectedRow === index }">
+            <td>{{ formatarData(contrato.Orcamento.dataEvento) }}</td>
+            <td>{{ contrato.Orcamento.Lead.nomeLead }}</td>
+            <td>{{ contrato.Orcamento.Lead.celular }}</td>
+            <td>{{ contrato.Orcamento.tipoEvento }}</td>
+            <td>{{ contrato.Orcamento.numConvidados }}</td>
+            <td>{{ contrato.Orcamento.Cardapio.nomeCardapio }}</td>
+            <td>{{ formatarValorMonetario(contrato.Orcamento.FormaPagamento[2].valorTotal) }}</td>
+            <td><input type="checkbox" class="custom-checkbox" v-model="contrato.assinado"
+                    @change="atualizarAssinado(contrato)"></td>
             <td><i class="fa-solid fa-edit action-icon"></i></td>
-            <td><i class="fa-solid fa-cart-shopping action-icon"></i></td>
             <td><i class="fa-solid fa-hand-holding-dollar action-icon"></i></td>
             <td><i class="fa-solid fa-sack-dollar action-icon"></i></td>
         </tr>
@@ -70,13 +72,42 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import PopupCriarContrato from '../contrato/popups/PopupCriarContrato.vue'
+import { Contrato } from '@/common/utils/Interfaces/Contrato';
+import { formatarData } from '@/common/utils/Helper/Data';
+import { fetchContratos } from '@/common/utils/FetchMethods';
+import { formatarValorMonetario } from '@/common/utils/Helper';
 
 export default defineComponent({
     components: { PopupCriarContrato },
     data() {
         return {
             showModal: false,
+
+            contratos: [] as Contrato[],
+            searchQuery: '',
+            showDetailModal: false,
+            selectedRow: null as number | null,
         }
+    },
+    methods: {
+        formatarData, formatarValorMonetario,
+
+        async atualizarAssinado(contrato: Contrato) {
+            try {
+                // Crie o payload com o novo valor de "assinado"
+                const payload = {
+                    idContrato: contrato.idContrato,
+                    assinado: contrato.assinado
+                };
+
+            } catch (error) {
+                console.error('Erro ao tentar atualizar o contrato:', error);
+            }
+        },
+
+    },
+    async mounted() {
+        this.contratos = await fetchContratos()
     }
 })
 </script>
