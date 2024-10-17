@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Orçamento</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0 10px;
+        font-family: Montserrat;
+        font-size: 5px;
+        color: #2f4036;
+      }
+
+      img {
+        width: 40px;
+      }
+
+      .cabecalho {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      h3 {
+        color: #2f4036;
+      }
+
+      .titulo {
+        background-color: #2f4036;
+        color: white;
+        justify-content: center; /* Centraliza o conteúdo horizontalmente */
+        align-items: center; /* Centraliza o conteúdo verticalmente */
+        text-align: center;
+        padding: 1px;
+      }
+
+      .estrutura {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 3px;
+      }
+
+      .dados-evento .linha {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1px;
+        white-space: nowrap;
+      }
+
+      .forma-pagamento {
+        margin-bottom: 2px;
+      }
+
+      .flex-item-estrutura {
+        width: 35%;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="cabecalho">
+        <div class="cabecalho-texto">
+          <h3>Orçamento #{{id}} - Enviado em {{dataCriacao}}</h3>
+          <p>A proposta tem validade de 15 dias!</p>
+          <p><strong>Evento :</strong> {{tipoEvento}}</p>
+        </div>
+        <img src="assets/MenuFullVerde.png" />
+      </div>
+
+      <div class="titulo">DADOS DO EVENTO</div>
+      <div class="dados-evento">
+        <div class="linha">
+          <div><strong>Nome :</strong> {{nome}}</div>
+          <div><strong>Telefone :</strong> {{telefone}}</div>
+          <div><strong>Cidade :</strong> {{cidade}}</div>
+        </div>
+        <div class="linha">
+          <div><strong>Convidados :</strong> {{convidados}}</div>
+          <div><strong>Data :</strong> {{data}}</div>
+          <div><strong>Cerimônia no local :</strong> {{cerimonia}}</div>
+        </div>
+      </div>
+
+      <div class="titulo">ESTRUTURA E SERVIÇOS INCLUSOS NO ORÇAMENTO</div>
+      <div class="estrutura">
+        <span
+          >• Salão com capacidade para 200 pessoas podendo variar conforme
+          projeto de montagem</span
+        >
+        <span
+          >• Espaço para cerimônia ao ar livre em frente ao lago e com deck
+          coberto</span
+        >
+        <span>• Bancos para cerimônia</span>
+        <span>• Mesas redondas e cadeiras brancas</span>
+        <span>• Estacionamento para 90 veículos</span>
+        <span>• Gerador de 50Kva sem limite de utilização</span>
+        <span>• Ar-condicionado no salão principal</span>
+        <span>• Espaço Kids com monitores</span>
+        <span
+          >• Banheiros masculinos, femininos e para deficientes físicos</span
+        >
+        <span>• Fraldário e sala de amamentação</span>
+        <span>• Iluminação estrutural interna e externa</span>
+        <span>• Taxa ECAD </span>
+      </div>
+
+      <div class="titulo">SERVIÇO DE BUFFET</div>
+      <div class="estrutura">
+        <span
+          >• 5 horas de serviço com possibilidade de horas extras com serviço de
+          bebidas</span
+        >
+        <span>• Personalização dos cardápios</span>
+        <span>• Sousplat de Inox ou Rattan</span>
+        <span>• Taças de Vidro</span>
+        <span>• Atendimento com 1 garçom para até 20 convidados</span>
+        <span
+          >• Crianças de 0-5 anos livres, 6-10 pagam 50% e 10+ anos pagam
+          100%</span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Cardápio Solicitado :</strong
+          ><span>{{cardapioBuffet}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Cerveja :</strong><span>{{tipoBebida}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Valor por pessoa :</strong
+          ><span> {{valorPorPessoaBuffet}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Obs :</strong><span>{{observacoes}}</span></span
+        >
+      </div>
+
+      <div class="titulo">OUTROS CARDÁPIOS</div>
+      <div class="estrutura">{{cardapios}}</div>
+
+      <div class="titulo">OPCIONAIS</div>
+      <span class="flex-item-estrutura"
+        ><strong>Bartender:</strong><span> {{valorTotalBar}}</span></span
+      >
+      <div class="estrutura">{{opcionais}}</div>
+
+      <div class="titulo">VALORES</div>
+      <div class="estrutura">
+        <span class="flex-item-estrutura"
+          ><strong>Espaço:</strong><span> {{valorEspaco}}</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Buffet:</strong><span> {{valorTotalBuffet}}</span></span
+        >
+
+        <span class="flex-item-estrutura"
+          ><strong>Opcionais:</strong><span> 0</span></span
+        >
+        <span class="flex-item-estrutura"
+          ><strong>Total da Proposta:</strong
+          ><span><strong> {{totalProposta}}</strong></span></span
+        >
+      </div>
+
+      <div class="titulo">FORMAS DE PAGAMENTO</div>
+      <div class="estrutura">
+        <span class="forma-pagamento"
+          ><strong
+            >Em caso de desistência o sinal não é devolvido !</strong
+          ></span
+        >
+        <span class="forma-pagamento"
+          >1ª: Sinal de <strong> {{sinalParcelado}}</strong> e
+          <strong>{{parcelasParcelado}}</strong> parcelas de
+          <strong> {{valorParcelas}}</strong></span
+        >
+        <span class="forma-pagamento"
+          >2ª: Sinal de <strong> {{sinalEntrada}}</strong>, entrada de
+          <strong> {{valorEntrada}} </strong> em
+          <strong>{{parcelasEntrada}}x</strong> de
+          <strong> {{valorParcelasEntrada}}</strong> e
+          <strong> {{saldoEntrada}}</strong> 15 dias antes</span
+        >
+        <span class="forma-pagamento"
+          >3ª (À vista): Sinal de <strong> {{sinalAVista}}</strong> e 1x de
+          <strong> {{valorAVista}}</strong>. Desconto:
+          <strong> R$8,99%</strong></span
+        >
+      </div>
+    </div>
+  </body>
+</html>

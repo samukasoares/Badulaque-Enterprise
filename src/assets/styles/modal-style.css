@@ -1,0 +1,216 @@
+/* Estilos Gerais */
+.backdrop {
+    top: 0;
+    left: 0;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.modal-form {
+    max-width: 80%;
+    min-width: 20%;
+    width: fit-content;
+    max-height: 90%;
+    height: fit-content;
+    margin: 30px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    text-align: left;
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    overflow-y: auto; /* Adiciona barra de rolagem vertical se o conteúdo exceder a altura */
+}
+
+.modal-form.with-dynamic-items {
+    max-width: 800px;
+    /* Aumentar largura quando houver itens dinâmicos */
+}
+
+.form-columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-column {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.form-column:last-child {
+    margin-right: 0;
+}
+
+.modal-form label, 
+.modal-form h4 {
+    display: inline-block;
+    font-size: 0.6em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    color: #aaa;
+}
+
+.modal-form h4 {
+    color: black; /* Cor específica para <h4> */
+}
+
+.modal-form input,
+.modal-form select {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+    width: 100%;
+    max-width: 100%;  /* Para evitar que ultrapassem a coluna */
+    box-sizing: border-box;
+}
+
+.modal-form input[type="checkbox"] {
+    width: auto;
+    background-color: #2F4036;
+}
+
+.modal-form .checkbox-label {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+
+.modal-form button.submit-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #425C4D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Montserrat;
+}
+
+.modal-form button.submit-button:disabled {
+    background-color: #ccc; /* Cor de fundo para o botão desativado */
+    color: #777; /* Cor do texto para o botão desativado */
+    cursor: not-allowed; /* Mudança do cursor para indicar que o botão está desativado */
+    opacity: 0.7; /* Deixa o botão visualmente mais claro */
+}
+
+.modal-form button.submit-button:hover {
+    background-color: #2F4036;
+}
+
+.modal-form span {
+    font-size: 12px;
+}
+
+.modal-form .form-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.modal-form .form-column {
+    flex: 1;
+    padding: 0 10px;
+    min-width: 300px;
+}
+
+.modal-form .form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.botao-add {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #2F4036;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.botao-add:hover {
+    color: #9f865D;
+}
+
+
+
+
+
+
+
+/* Formatação para destacar Valores Totais*/
+.modal-form .valorTotal {
+    font-weight: bold;
+}
+/* Final Formatação para destacar Valores Totais*/
+
+/* Formatação para mostrar Valores no MODAL */
+.valores-container {
+    margin-bottom: 20px;
+    display:flex;
+    justify-content: space-around;
+  }
+  
+  .valor-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .valor-item label {
+    font-weight: bold;
+    color: #aaa;
+    margin: 0;
+    margin-right: 5px;
+  }
+  
+  .valor-item h4 {
+    color: black;
+    font-weight: bold;
+  }
+
+  /* Final Formatação para mostrar Valores no MODAL */
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .modal-form {
+        max-width: 90%;
+        margin: 20px;
+        padding: 15px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-column {
+        padding: 0;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-form {
+        max-width: 95%;
+        padding: 10px;
+    }
+
+    .modal-form label,
+    .modal-form h4 {
+        font-size: 0.7em;
+    }
+
+    .modal-form h4 {
+        font-size: 0.8em;
+    }
+}
