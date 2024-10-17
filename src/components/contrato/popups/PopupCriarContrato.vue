@@ -3,10 +3,15 @@
         <form class="modal-form" @submit.prevent="submitForm">
             <h4>Orçamento</h4>
             <select v-model="orcamentoSelecionado" required>
-                <option v-for="orcamento in orcamentos" :key="orcamento.idOrcamento" :value="orcamento.idOrcamento">
+                <option disabled value="">Selecione um orçamento...</option>
+                <option v-for="orcamento in orcamentos" :key="orcamento.idOrcamento" :value="orcamento">
                     {{ orcamento.referenciaOrcamento }} - {{ orcamento.Lead.nomeLead }}
                 </option>
             </select>
+
+            <h4>Observações</h4>
+            <input type="text" v-model="observacoes">
+
             <h4>Dados Contratante</h4><br>
 
             <div v-for="(contratante, index) in contratantes" :key="index" class="contratante-section">
@@ -46,11 +51,14 @@ import { defineComponent } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import { AllOrcamentos, Orcamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
 import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
+import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato';
+import instance from '@/common/utils/AuthService';
 
 export default defineComponent({
     components: {
         NotificationMessage
     },
+    emits: ['close', 'success'],
     data() {
         return {
             contratantes: [
@@ -66,6 +74,7 @@ export default defineComponent({
                 }
             ],
 
+            observacoes: '',
             orcamentoSelecionado: {} as OrcamentoBasico,
             orcamentos: [] as OrcamentoBasico[],
 
@@ -157,8 +166,42 @@ export default defineComponent({
         close() {
             this.$emit('close');
         },
-        submitForm() {
-            alert('Formulário enviado com sucesso!');
+        async submitForm() {
+
+            if (!this.orcamentoSelecionado || !this.orcamentoSelecionado.idOrcamento) {
+                this.message = "Por favor, selecione um orçamento!";
+                return;
+            }
+
+            const contrato: RegistroContrato = {
+                assinado: 0,
+                Orcamento_idOrcamento: this.orcamentoSelecionado.idOrcamento,
+                observacoes: this.observacoes,
+                valorNF: 0,
+            };
+
+            const clientes: RegistroCliente[] = this.contratantes.map((contratante) => ({
+                cep: contratante.cep,
+                cidade: contratante.cidade,
+                cpf: contratante.cpf,
+                nome: contratante.nome,
+                rg: contratante.rg,
+                rua: contratante.rua,
+            }));
+
+            const contratoFullData: ContratoFullData = {
+                contrato: contrato,
+                clientes: clientes,
+            };
+
+            try {
+                const data = await instance.post('/contrato/create', contratoFullData)
+                this.$emit('success', 'Contrato criado com sucesso!');
+                this.close(); // Fecha o modal após o sucesso
+            } catch (error) {
+                alert('Erro ao criar contrato!')
+            }
+
         },
         showError(message: string) {
             this.message = message;
