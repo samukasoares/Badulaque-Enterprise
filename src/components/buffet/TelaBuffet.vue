@@ -32,10 +32,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import popupCardapio from './popups/PopupCriar/PopupCriarCardapio.vue';
-import popupGrupo from './popups/PopupCriar/PopupCriarGrupo.vue';
-import popupItem from './popups/PopupCriar/PopupCriarItem.vue';
-import popupCerveja from './popups/PopupCriar/PopupCriarCerveja.vue';
+import popupCardapio from './popups/popupCriar/popupCriarCardapio.vue';
+import popupGrupo from './popups/popupCriar/popupCriarGrupo.vue';
+import popupItem from './popups/popupCriar/popupCriarItem.vue'
+import popupCerveja from './popups/popupCriar/PopupCriarCerveja.vue';
 import popupDetalhesCardapio from '../buffet/popups/PopupDetalhes/PopupDetalhesCardapio.vue'
 import popupEditarItem from '../buffet/popups/PopupEdit/PopupEditItem.vue'
 import popupEditarGrupo from '../buffet/popups/PopupEdit/PopupEditGrupo.vue'
