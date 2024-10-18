@@ -43,6 +43,8 @@
             <button class="submit-button" type="submit">Criar Contrato</button>
         </form>
     </div>
+
+    <!--Mensagens de Erro Validacao CEP, CPF e RG-->
     <NotificationMessage :message="message" type="error" />
 </template>
 
@@ -58,7 +60,6 @@ export default defineComponent({
     components: {
         NotificationMessage
     },
-    emits: ['close', 'success'],
     data() {
         return {
             contratantes: [

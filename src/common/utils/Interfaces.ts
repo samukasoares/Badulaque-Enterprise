@@ -122,12 +122,13 @@ export interface Card {
 
 export interface ValorEspaco {
     idValorEspaco: number;
-    dia: string | null;
-    valor: number | null;
+    dia: string;
+    valor: number;
 }
 
 export interface Opcional {
     idOpcional:number,
     nomeOpcional:string,
-    valorAtual:number
+    valorAtual:number,
+    porPessoa: number
 }
