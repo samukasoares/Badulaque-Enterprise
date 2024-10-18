@@ -2,6 +2,22 @@
     <div class="backdrop" @click.self="close">
         <form class="modal-form" @submit.prevent="atualizarCerveja">
             <h4>{{ nomeCervejaAnterior }}</h4><br>
+
+            <div class="valores-container">
+                <div class="valor-item">
+                    <label>{{ currentYear }}:</label>
+                    <h4> R$ {{ reajuste.atual }},00</h4>
+                </div>
+                <div class="valor-item">
+                    <label>{{ currentYear + 1 }}:</label>
+                    <h4>R$ {{ reajuste.ano1 }},00</h4>
+                </div>
+                <div class="valor-item">
+                    <label>{{ currentYear + 2 }}:</label>
+                    <h4>R$ {{ reajuste.ano2 }},00</h4>
+                </div>
+            </div>
+
             <label>Id:</label>
             <input type="number" disabled v-model="cerveja.idCerveja">
 
@@ -21,6 +37,8 @@
 import { defineComponent } from 'vue';
 import { Cerveja } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
+import { Reajuste } from '@/common/utils/Interfaces/Helper';
+import { formatarValorMonetario } from '@/common/utils/Helper';
 
 export default defineComponent({
     props: {
@@ -34,10 +52,14 @@ export default defineComponent({
             cerveja: {} as Cerveja,
             loading: false,
 
-            nomeCervejaAnterior: ''
+            nomeCervejaAnterior: '',
+
+            currentYear: new Date().getFullYear(),
+            reajuste: {} as Reajuste
         };
     },
     methods: {
+        formatarValorMonetario,
         close() {
             this.$emit('close');
         },
@@ -56,6 +78,16 @@ export default defineComponent({
             }
         },
 
+        async fetchValoresCerveja(id: number) {
+            try {
+                const response = await instance.get<Reajuste>('cerveja/reajuste/' + id);
+                this.reajuste = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar reajustes da cerveja:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
 
         async atualizarCerveja() {
             const cervejaAtualizado: Cerveja = {
@@ -82,6 +114,7 @@ export default defineComponent({
             handler(newId: number) {
                 if (newId) {
                     this.fetchCervejaDetails(newId);
+                    this.fetchValoresCerveja(newId);
                 }
             }
         }

@@ -8,7 +8,7 @@
                 <option>Realizado</option>
             </select>
         </div>
-        <input type="text" placeholder="Pesquisar Contratos...">
+        <input type="text" v-model="searchQuery" placeholder="Pesquisar Contratos...">
         <div class="groupConsolidado">
             <label>Ativos:</label>
             <label>52</label>
@@ -49,7 +49,7 @@
             <th>Pagamentos</th>
             <th>Recebimentos</th>
         </tr>
-        <tr v-for="(contrato, index) in contratos" :key="contrato.idContrato"
+        <tr v-for="(contrato, index) in filteredContratos" :key="contrato.idContrato"
             :class="{ 'selected-row': selectedRow === index }">
             <td>{{ formatarData(contrato.Orcamento.dataEvento) }}</td>
             <td>{{ contrato.Orcamento.Lead.nomeLead }}</td>
@@ -66,7 +66,18 @@
         </tr>
     </table>
 
-    <PopupCriarContrato v-if="showModal" @close="showModal = false" />
+    <div class="pagination">
+        <!--<button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Anterior</button>-->
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1" class="paginationButton"><i
+                class="fa-solid fa-angles-left action-icon"></i></button>
+        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages" class="paginationButton"><i
+                class="fa-solid fa-angles-right action-icon"></i></button>
+    </div>
+
+    <NotificationMessage :message="message" />
+
+    <PopupCriarContrato v-if="showModal" @close="showModal = false" @success="handleMessage" />
 </template>
 
 <script lang="ts">
@@ -87,7 +98,41 @@ export default defineComponent({
             searchQuery: '',
             showDetailModal: false,
             selectedRow: null as number | null,
+
+            // Variáveis de paginação
+            currentPage: 1,
+            itemsPerPage: 20,
+
+            message: ''
         }
+    },
+    computed: {
+        filteredContratos(): Contrato[] {
+            let contratosFiltrados = this.contratos.filter(contrato => {
+                const matchesSearch = contrato.Orcamento.Lead.nomeLead
+                    .toLowerCase()
+                    .includes(this.searchQuery.toLowerCase());
+                return matchesSearch;
+            });
+
+            // Ordena os contratos em ordem crescente de data do evento
+            const sortedContratos = [...contratosFiltrados].sort((a, b) => {
+                return new Date(a.Orcamento.dataEvento).getTime() - new Date(b.Orcamento.dataEvento).getTime();
+            });
+
+            return sortedContratos;
+        },
+
+        // Dados paginados
+        paginatedContratos(): Contrato[] {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredContratos.slice(start, end);
+        },
+
+        totalPages(): number {
+            return Math.ceil(this.filteredContratos.length / this.itemsPerPage);
+        },
     },
     methods: {
         formatarData, formatarValorMonetario,
@@ -105,6 +150,20 @@ export default defineComponent({
             }
         },
 
+        changePage(page: number) {
+            if (page > 0 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
+        },
+
+        async handleMessage(message: string) {
+            this.message = message;
+            this.contratos = await fetchContratos();
+            setTimeout(() => {
+                this.message = '';
+            }, 3000);
+        },
+
     },
     async mounted() {
         this.contratos = await fetchContratos()
@@ -120,23 +179,20 @@ export default defineComponent({
     gap: 5px;
 }
 
-input,
-select {
-    border-radius: 5px;
-    padding: 10px;
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.paginationButton {
+    background-color: transparent;
     border: none;
-    font-family: MontSerrat;
-}
-
-input:focus {
-    outline: none;
-    border-color: #2F4036;
-    box-shadow: 0 0 10px #2F4036;
-}
-
-select:focus {
-    outline: none;
-    border-color: #2F4036;
-    box-shadow: 0 0 10px #2F4036;
 }
 </style>

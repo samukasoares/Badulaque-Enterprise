@@ -3,3 +3,4 @@ export interface Parametro {
     nomeParametro: string;
     valorParametro: number;
 }
+

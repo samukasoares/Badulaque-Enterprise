@@ -179,7 +179,6 @@
 
             <div class="form-group">
                 <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
-                <button class="submit-button">Visualizar Detalhado</button>
                 <button class="submit-button" @click="toggleEditMode">Editar</button>
                 <button class="submit-button" :disabled="!isEditing" @click="saveChanges">Salvar</button>
             </div>
