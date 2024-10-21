@@ -287,12 +287,59 @@ export default defineComponent({
             this.isEditing = !this.isEditing;
         },
 
-        onCardapioSelect() {
+        async onCardapioSelect() {
+            // Obtém o cardápio selecionado
             const selectedCardapio = this.cardapios.find(cardapio => cardapio.idCardapio === this.cardapioBuffetId);
+
             if (selectedCardapio) {
-                this.valorCardapio = formatarValorMonetario(selectedCardapio.precoCardapio) // Preenche automaticamente o valor do cardápio
+                try {
+                    // Fazer uma chamada para buscar o valor reajustado do cardápio selecionado
+                    const response = await instance.post('/buffet/cardapio/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw) // Ou o ano que deseja usar para o cálculo do reajuste
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const cardapioReajustado = reajustes.find((item: any) => item.cardapio === selectedCardapio.nomeCardapio);
+
+                    if (cardapioReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorCardapio = formatarValorMonetario(cardapioReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorCardapio = formatarValorMonetario(selectedCardapio.precoCardapio);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorCardapio = formatarValorMonetario(selectedCardapio.precoCardapio);
+                }
             }
         },
+
+        calcularDiferencaAnos(data: string) {
+            // Verificar se a data está no formato `yyyy-MM-dd`
+            const [ano, mes, dia] = data.split('-').map(Number);
+
+            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {
+                console.error("Erro: Uma ou mais partes da data não são números.");
+                return 0; // Retorna 0 como padrão se a data estiver inválida
+            }
+
+            // Criar um objeto Date com base na data fornecida
+            const dataEvento = new Date(ano, mes - 1, dia); // Meses são indexados a partir de 0 em JavaScript
+
+            // Obter o ano atual
+            const anoAtual = new Date().getFullYear();
+
+            // Calcular a diferença de anos
+            const diferenca = dataEvento.getFullYear() - anoAtual;
+
+            return diferenca;
+        },
+
+
         async saveChanges() {
             console.log("salvo!")
         },
