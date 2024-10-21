@@ -51,9 +51,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
-import { AllOrcamentos, Orcamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
+import { OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
 import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
-import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato';
+import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato/RegistroContrato';
 import instance from '@/common/utils/AuthService';
 
 export default defineComponent({

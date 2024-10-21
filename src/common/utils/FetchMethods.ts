@@ -1,7 +1,7 @@
 import instance from '@/common/utils/AuthService';
 import { Cardapio, CardapioBar, Cerveja, Grupo, Opcional } from './Interfaces';
 import { AllOrcamentos, Orcamento, OrcamentoBasico } from './Interfaces/Orcamento';
-import { Contrato } from './Interfaces/Contrato';
+import { Contrato } from './Interfaces/Contrato/ContratoTabela';
 
 export async function fetchCardapios(): Promise<Cardapio[]> {
   try {

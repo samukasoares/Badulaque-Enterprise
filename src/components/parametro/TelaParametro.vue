@@ -23,6 +23,8 @@
     <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId"
         @success="handleSuccessMessage" />
 
+    <NotificationMessage :message="message" />
+
 </template>
 
 <script lang="ts">
@@ -31,20 +33,22 @@ import PopupCriarOpcional from './popups/PopupCriarOpcional.vue';
 import PopupEditarValorEspaco from './popups/PopupEditarValorEspaco.vue';
 import PopupEditarOpcional from './popups/PopupEditarOpcional.vue';
 import PopupEditarParametro from './popups/PopupEditParametro.vue';
+import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
 import { ValorEspaco, Opcional, Card } from '@/common/utils/Interfaces';
 import { Parametro } from '@/common/utils/Interfaces/Parametro'
 
 export default defineComponent({
-    components: { PopupCriarOpcional, PopupEditarValorEspaco, PopupEditarOpcional, PopupEditarParametro },
+    components: { PopupCriarOpcional, PopupEditarValorEspaco, PopupEditarOpcional, PopupEditarParametro, NotificationMessage },
     data() {
         return {
-            opcoes: 'Espaço',
+            opcoes: 'Opcionais',
             showModal: false,
             cards: [] as { name: string, id: number }[],
             searchText: '',
             selectedCardId: null as number | null,
             isViewingDetails: false,
+            message: '',
         };
     },
     computed: {
@@ -103,9 +107,10 @@ export default defineComponent({
             this.selectedCardId = null;
         },
         handleSuccessMessage(message: string) {
+            this.message = message;
             this.fetchData();
             setTimeout(() => {
-                console.log(message);
+                this.message = '';
             }, 3000);
         }
     },
