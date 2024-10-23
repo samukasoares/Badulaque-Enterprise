@@ -50,7 +50,7 @@
             <th>Recebimentos</th>
         </tr>
         <tr v-for="(contrato, index) in filteredContratos" :key="contrato.idContrato"
-            :class="{ 'selected-row': selectedRow === index }">
+            @dblclick="handleDoubleClick(contrato, index)" :class="{ 'selected-row': selectedRow === index }">
             <td>{{ formatarData(contrato.Orcamento.dataEvento) }}</td>
             <td>{{ contrato.Orcamento.Lead.nomeLead }}</td>
             <td>{{ contrato.Orcamento.Lead.celular }}</td>
@@ -78,18 +78,22 @@
     <NotificationMessage :message="message" />
 
     <PopupCriarContrato v-if="showModal" @close="showModal = false" @success="handleMessage" />
+
+    <PopupDetalhesContrato v-if="showDetailModal" @close="closeDetailModal"
+        :contratoId="contratoSelecionado?.idContrato" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import PopupCriarContrato from '../contrato/popups/PopupCriarContrato.vue'
-import { Contrato } from '@/common/utils/Interfaces/Contrato';
+import PopupDetalhesContrato from './popups/PopupDetalhesContrato.vue';
+import { Contrato } from '@/common/utils/Interfaces/Contrato/ContratoTabela';
 import { formatarData } from '@/common/utils/Helper/Data';
 import { fetchContratos } from '@/common/utils/FetchMethods';
 import { formatarValorMonetario } from '@/common/utils/Helper';
 
 export default defineComponent({
-    components: { PopupCriarContrato },
+    components: { PopupCriarContrato, PopupDetalhesContrato },
     data() {
         return {
             showModal: false,
@@ -98,6 +102,7 @@ export default defineComponent({
             searchQuery: '',
             showDetailModal: false,
             selectedRow: null as number | null,
+            contratoSelecionado: null as Contrato | null,
 
             // Variáveis de paginação
             currentPage: 1,
@@ -148,6 +153,17 @@ export default defineComponent({
             } catch (error) {
                 console.error('Erro ao tentar atualizar o contrato:', error);
             }
+        },
+
+        handleDoubleClick(contrato: Contrato, index: number) {
+            this.selectedRow = index;
+            this.contratoSelecionado = contrato;
+            this.showDetailModal = true;
+        },
+
+        closeDetailModal() {
+            this.showDetailModal = false;
+            this.selectedRow = null;
         },
 
         changePage(page: number) {

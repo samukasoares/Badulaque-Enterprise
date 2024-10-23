@@ -92,7 +92,6 @@ export interface RegistroLead {
 
 export interface RegistroOrcamentoData {
     referenciaOrcamento: string,
-    cadeira: string | null,
     Cardapio_idCardapio: number,
     Cerveja_idCerveja: number,
     numConvidados: number,
