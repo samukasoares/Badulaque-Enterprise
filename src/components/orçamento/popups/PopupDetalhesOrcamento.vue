@@ -87,7 +87,7 @@
                                     <input v-model="tipoBebida" disabled type="text">
                                 </template>
                                 <template v-else>
-                                    <select v-model="tipoBebidaId" :disabled="!isEditing">
+                                    <select v-model="tipoBebidaId" :disabled="!isEditing" @change="onCervejaSelect">
                                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja"
                                             :value="cerveja.idCerveja">
                                             {{ cerveja.nome }}
@@ -101,17 +101,38 @@
                             </div>
                         </div>
 
-                        <label>Valor por Pessoa Total:</label>
+                        <label>Total Valor Por Pessoa:</label>
                         <input v-model="valorPorPessoaBuffet" disabled type="text">
-                        <label>Valor Buffet Total:</label>
+                        <label>Total Buffet:</label>
                         <input class="valorTotal" v-model="valorTotalBuffet" disabled type="text">
+
+
+
                         <h4>BAR</h4><br>
-                        <label>Cardápio:</label>
-                        <input v-model="cardapioBar" :disabled="!isEditing" type="text">
-                        <label>Valor por pessoa:</label>
-                        <input v-model="valorPorPessoaBar" :disabled="!isEditing" type="text">
-                        <label>Valor Total:</label>
-                        <input class="valorTotal" v-model="valorTotalBar" disabled type="text">
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Cardápio:</label>
+                                <template v-if="!isEditing">
+                                    <input v-model="cardapioBar" disabled type="text">
+                                </template>
+                                <template v-else>
+                                    <select v-model="tipoBarId" :disabled="!isEditing" @change="onBarSelect">
+                                        <option v-for="bar in cardapiosBar" :key="bar.idCardapioBar"
+                                            :value="bar.idCardapioBar">
+                                            {{ bar.nomeCardapioBar }}
+                                        </option>
+                                    </select>
+                                </template>
+                            </div>
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input v-model="valorPorPessoaBar" :disabled="!isEditing" type="text">
+                            </div>
+                        </div>
+                        <label>Total Bar:</label>
+                        <input disabled class="valorTotal" v-model="valorTotalBar">
+
+
                     </div>
 
                     <div class="form-column">
@@ -193,13 +214,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, Cerveja } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
-import { fetchCardapios, fetchCervejas } from '@/common/utils/FetchMethods';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas } from '@/common/utils/FetchMethods';
 
 
 export default defineComponent({
@@ -250,9 +271,12 @@ export default defineComponent({
             valorCerveja: '',
             valorPorPessoaBuffet: '',
             valorTotalBuffet: '',
+
             cardapioBar: '',
             valorPorPessoaBar: '',
             valorTotalBar: '',
+            tipoBarId: 0,
+
             valorNoiva: '',
             valorCabine: '',
             valorOpcionais: '',
@@ -280,7 +304,8 @@ export default defineComponent({
 
             //Objetos que armazenam todas as opções
             cardapios: [] as Cardapio[],
-            cervejas: [] as Cerveja[]
+            cervejas: [] as Cerveja[],
+            cardapiosBar: [] as CardapioBar[]
         };
     },
 
@@ -323,6 +348,65 @@ export default defineComponent({
                 }
             }
         },
+
+        async onCervejaSelect() {
+            const selectedCerveja = this.cervejas.find(cerveja => cerveja.idCerveja === this.tipoBebidaId);
+
+            if (selectedCerveja) {
+                try {
+                    const response = await instance.post('/cerveja/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw) // Ou o ano que deseja usar para o cálculo do reajuste
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const cervejaReajustado = reajustes.find((item: any) => item.cerveja === selectedCerveja.nome);
+
+                    if (cervejaReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorCerveja = formatarValorMonetario(cervejaReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorCerveja = formatarValorMonetario(cervejaReajustado.atual);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorCerveja = formatarValorMonetario(selectedCerveja.valor);
+                }
+            }
+        },
+
+        async onBarSelect() {
+            const selectedBar = this.cardapiosBar.find(cardapioBar => cardapioBar.idCardapioBar === this.tipoBarId);
+
+            if (selectedBar) {
+                try {
+                    const response = await instance.post('/bar/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw) // Ou o ano que deseja usar para o cálculo do reajuste
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const barReajustado = reajustes.find((item: any) => item.cardapioBar === selectedBar.nomeCardapioBar);
+
+                    if (barReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorPorPessoaBar = formatarValorMonetario(barReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorPorPessoaBar = formatarValorMonetario(barReajustado.atual);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorPorPessoaBar = formatarValorMonetario(selectedBar.precoCardapio);
+                }
+            }
+        },
+
 
         calcularDiferencaAnos(data: string) {
             // Verificar se a data está no formato `yyyy-MM-dd`
@@ -483,6 +567,7 @@ export default defineComponent({
     async mounted() {
         this.cardapios = await fetchCardapios()
         this.cervejas = await fetchCervejas()
+        this.cardapiosBar = await fetchCardapioBar()
     },
 
     watch: {
