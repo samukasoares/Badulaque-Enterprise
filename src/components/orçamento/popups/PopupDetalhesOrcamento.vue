@@ -120,15 +120,19 @@
                         <input v-model="dataCriação" disabled type="text">
                         <label>Data Envio:</label>
                         <input v-model="dataEnvio" disabled type="text">
-                        <h4>Opcionais</h4>
+
 
                         <div v-if="opcionaisSelecionados.length">
+                            <h4>Opcionais</h4>
                             <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
                                     type="text">
                             </div>
+                            <label>Total Opcionais</label>
+                            <input disabled class="valorTotal" v-model="valorTotalOpcionais">
                         </div>
+
 
                         <h4>Observações</h4>
                         <input v-model="observacoes" :disabled="!isEditing" type="text" class="textarea">
@@ -257,6 +261,8 @@ export default defineComponent({
 
 
             opcionaisSelecionados: [] as OrcamentoOpcional[],
+            valorTotalOpcionais: '',
+
             sinal1: '',
 
             sinalEntrada: '',
@@ -376,13 +382,14 @@ export default defineComponent({
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
                 this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
                 this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
-                this.totalProposta = formatarValorMonetario(orcamento.FormaPagamento[2].valorTotal);
+                this.totalProposta = formatarValorMonetario(orcamento.valorTotalOrcamento);
                 this.observacoes = orcamento.observacoesOrcamento;
                 this.dataCriação = formatarDateToString(orcamento.createdAt);
                 this.dataEnvio = orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-';
                 this.cerimonia = orcamento.cerimoniaLocal === 1 ? 'Sim' : 'Não';
 
                 this.opcionaisSelecionados = orcamento.Orcamento_Opcional;
+                this.valorTotalOpcionais = formatarValorMonetario(orcamento.valorOpcionais);
 
                 //Forma Pagamento à vista
                 this.sinalAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorSinal);

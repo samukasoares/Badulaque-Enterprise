@@ -48,14 +48,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -64,7 +64,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -175,7 +175,6 @@ export default defineComponent({
 
             const orcamentoData: RegistroOrcamentoData = {
                 referenciaOrcamento: this.referencia,
-                cadeira: "Branca",
                 Cardapio_idCardapio: this.cardapioSelecionado.idCardapio,
                 CardapioBar_idCardapioBar: this.barSelecionado.idCardapioBar,
                 Cerveja_idCerveja: this.cervejaSelecionada.idCerveja,

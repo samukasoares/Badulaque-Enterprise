@@ -4,7 +4,8 @@ export interface RegistroContrato {
     assinado: number,
     observacoes: string,
     Orcamento_idOrcamento: number,
-    valorNF: number
+    valorNF: number,
+    FormaPagamento_idFormaPagamento: number;
 }
 
 

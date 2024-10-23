@@ -9,6 +9,15 @@
                 </option>
             </select>
 
+            <h4>Forma de Pagamento</h4>
+            <select v-model="formaDePagamentoSelecionada" required>
+                <option disabled value="">Selecione uma forma de pagamento...</option>
+                <option v-for="formaPagamento in formasDePagamento" :key="formaPagamento.idFormaPagamento"
+                    :value="formaPagamento">
+                    {{ formaPagamento.tipo }}
+                </option>
+            </select>
+
             <h4>Observações</h4>
             <input type="text" v-model="observacoes">
 
@@ -51,7 +60,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
-import { OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
+import { FormaPagamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
 import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
 import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato/RegistroContrato';
 import instance from '@/common/utils/AuthService';
@@ -77,6 +86,8 @@ export default defineComponent({
 
             observacoes: '',
             orcamentoSelecionado: {} as OrcamentoBasico,
+            formaDePagamentoSelecionada: {} as FormaPagamento,
+            formasDePagamento: [] as FormaPagamento[],
             orcamentos: [] as OrcamentoBasico[],
 
             message: ''
@@ -164,6 +175,16 @@ export default defineComponent({
                 this.contratantes[index].rg = '';
             }
         },
+        async fetchFormasDePagamento(idOrcamento: number): Promise<FormaPagamento[]> {
+            try {
+                const response = await instance.get<FormaPagamento[]>('/contrato/formasPagamento/' + idOrcamento);
+                this.formasDePagamento = response.data;
+                return response.data; // Retorna as formas de pagamento
+            } catch (error) {
+                this.message = "Erro ao buscar formas de pagamento!";
+                return []; // Retorna um array vazio em caso de erro
+            }
+        },
         close() {
             this.$emit('close');
         },
@@ -178,6 +199,7 @@ export default defineComponent({
                 assinado: 0,
                 Orcamento_idOrcamento: this.orcamentoSelecionado.idOrcamento,
                 observacoes: this.observacoes,
+                FormaPagamento_idFormaPagamento: this.formaDePagamentoSelecionada.idFormaPagamento,
                 valorNF: 0,
             };
 
@@ -210,6 +232,13 @@ export default defineComponent({
     },
     async mounted() {
         this.orcamentos = await fetchOrcamentosEnviados()
+    },
+    watch: {
+        async orcamentoSelecionado(newOrcamento) {
+            if (newOrcamento && newOrcamento.idOrcamento) {
+                this.formasDePagamento = await this.fetchFormasDePagamento(newOrcamento.idOrcamento);
+            }
+        }
     }
 });
 </script>

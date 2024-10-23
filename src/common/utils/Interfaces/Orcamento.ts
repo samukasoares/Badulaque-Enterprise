@@ -1,4 +1,4 @@
-interface FormaPagamento {
+export interface FormaPagamento {
     idFormaPagamento: number;
     valorSinal: number;
     valorEntrada: number;
@@ -7,6 +7,7 @@ interface FormaPagamento {
     valorTotal: number;
     numeroParcelasEntrada: number;
     Orcamento_idOrcamento: number;
+    tipo: number;
   };
   
 interface Opcional {
@@ -79,6 +80,8 @@ interface Opcional {
     CardapioBar: CardapioBar;
     Cerveja: Cerveja;
     valorPPCerveja: number;
+    valorOpcionais: number,
+    valorTotalOrcamento: number
   };
 
   export interface OrcamentoBasico {
