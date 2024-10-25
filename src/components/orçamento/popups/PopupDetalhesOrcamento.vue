@@ -26,6 +26,9 @@
                         <label>Tipo de Evento:</label>
                         <input v-model="tipoEvento" disabled type="text">
 
+                        <label>Fonte:</label>
+                        <input v-model="fonte" disabled type="text">
+
                         <label>Data:</label>
                         <template v-if="!isEditing">
                             <input v-model="data" disabled type="text">
@@ -143,8 +146,11 @@
                         <input v-model="dataEnvio" disabled type="text">
 
 
+
                         <div>
                             <h4>Opcionais</h4>
+                            <button type="button" @click="adicionarOpcional" :disabled="!isEditing">+</button>
+                            <br>
                             <div v-for="(opcional, index) in opcionaisSelecionados" :key="index">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
@@ -153,11 +159,11 @@
                                 <!-- Botão para remover o opcional, se necessário -->
                                 <!-- button type="button" v-if="isEditing" @click="removerOpcional(index)">Remover</button> -->
                             </div>
+                            <label>Total Opcionais</label>
+                            <input disabled class="valorTotal" v-model="valorTotalOpcionais">
 
                             <div v-if="isEditing">
-                                <button type="button" @click="adicionarOpcional">+</button>
-
-                                <!-- Renderiza um novo select e input para cada opcional adicionado -->
+                                <label>Novos Opcionais</label>
                                 <div v-for="(opcional, index) in opcionaisAdicionados" :key="index" class="form-group">
                                     <select v-model="opcional.Opcional_idOpcional"
                                         @change="onOpcionalSelected(opcional.Opcional_idOpcional, index)">
@@ -169,16 +175,11 @@
                                     </select>
 
                                     <!-- Campo de input para inserir o valor do opcional selecionado -->
-                                    <input v-model="opcional.valor" placeholder="Insira o valor do opcional"
-                                        type="text">
+                                    <input v-model="opcional.valor" type="text">
                                 </div>
 
-                                <label>Total Opcionais</label>
-                                <input disabled class="valorTotal" v-model="valorTotalOpcionais">
                             </div>
 
-                            <label>Total Opcionais</label>
-                            <input disabled class="valorTotal" v-model="valorTotalOpcionais">
                         </div>
 
 
@@ -241,14 +242,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, CardapioBar, Cerveja, Opcional } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais } from '@/common/utils/FetchMethods';
-import { OpcionaisFormatados } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
+import { OpcionaisFormatados, UpdateFormaPagamento, UpdateOrcamento } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
 
 
 export default defineComponent({
@@ -267,6 +268,8 @@ export default defineComponent({
             email: '',
             cidade: '',
             telefone: '',
+            fonte: '',
+            leadId: '',
 
             //Data
             data: '',
@@ -283,6 +286,7 @@ export default defineComponent({
             observacoes: '',
 
             //Espaço
+            valorEspacoId: 0,
             diaSemana: '',
             valorEspaco: '',
 
@@ -350,12 +354,94 @@ export default defineComponent({
 
         formatarValorMonetario,
 
+        removerFormatacaoMonetaria(valor: string): number {
+            return parseFloat(valor.replace(/[^\d,-]/g, '').replace(',', '.'));
+        },
+
         toggleEditMode() {
             this.isEditing = !this.isEditing;
         },
 
-        saveChanges() {
-            console.log("Salvo!")
+        async saveChanges() {
+            const UpdateOpcionais = [
+                // Primeiro, mapeia os opcionais já selecionados
+                ...this.opcionaisSelecionados.map((opcional) => ({
+                    Opcional_idOpcional: opcional.Opcional.idOpcional,
+                    valorOrcamento: this.removerFormatacaoMonetaria(opcional.valorOrcamento.toString()),
+                })),
+                // Depois, mapeia os opcionais recentemente adicionados
+                ...this.opcionaisAdicionados.map((opcional) => ({
+                    Opcional_idOpcional: opcional.Opcional_idOpcional,
+                    valorOrcamento: this.removerFormatacaoMonetaria(opcional.valor),
+                })),
+            ];
+
+            const lead: RegistroLead = {
+                nomeLead: this.nome,
+                celular: this.telefone,
+                email: this.email,
+                cidade: this.cidade
+            }
+
+            const formasPagamento: UpdateFormaPagamento[] = [
+                {
+                    nParcelas: parseInt(this.parcelasParcelado, 10),
+                    type: 'Parcelado',
+                    valorParcela: this.removerFormatacaoMonetaria(this.valorParcelas),
+                    valorSinal: this.removerFormatacaoMonetaria(this.sinalParcelado)
+                },
+                {
+                    nParcelas: parseInt(this.parcelasEntrada, 10),
+                    type: 'Entrada Parcelada',
+                    valorParcela: this.removerFormatacaoMonetaria(this.valorEntrada),
+                    valorSinal: this.removerFormatacaoMonetaria(this.sinalEntrada)
+                },
+                {
+                    nParcelas: 1,
+                    type: 'À Vista',
+                    valorParcela: this.removerFormatacaoMonetaria(this.valorAVista),
+                    valorSinal: this.removerFormatacaoMonetaria(this.sinalAVista)
+                }
+            ];
+
+            const formattedDate = new Date(this.dataEventoRaw).toISOString();
+
+            const orcamento = {
+                idOrcamento: parseInt(this.id),
+                referenciaOrcamento: this.referencia,
+                Cardapio_idCardapio: this.cardapioBuffetId,
+                CardapioBar_idCardapioBar: this.tipoBarId,
+                Cerveja_idCerveja: this.tipoBebidaId,
+                numConvidados: parseInt(this.convidados),
+                observacoesOrcamento: this.observacoes,
+                dataEvento: formattedDate,
+                ValorEspaco_idValorEspaco: this.valorEspacoId,
+                valorPPBar: this.removerFormatacaoMonetaria(this.valorPorPessoaBar),
+                valorPPCardapio: this.removerFormatacaoMonetaria(this.valorCardapio),
+                tipoEvento: this.tipoEvento,
+                cerimoniaLocal: this.cerimonia === 'Sim' ? 1 : 0,
+                fonte: this.fonte,
+                Lead_idLead: parseInt(this.leadId),
+                valorEspacoFinal: this.removerFormatacaoMonetaria(this.valorEspaco),  // Valor final do espaço
+                valorOpcionais: this.removerFormatacaoMonetaria(this.valorTotalOpcionais),  // Valor total dos opcionais
+                valorPPCerveja: this.removerFormatacaoMonetaria(this.valorCerveja),  // Valor por pessoa da cerveja
+            };
+
+            const updateOrcamento: UpdateOrcamento = {
+                orcamento: orcamento,
+                formasPagamento: formasPagamento,
+                lead: lead,
+                opcionais: UpdateOpcionais,
+            };
+
+            console.log(updateOrcamento)
+
+            try {
+                const data = await instance.put('/orcamento/update', updateOrcamento)
+                this.$emit('success', 'Orçamento atualizado com sucesso!');
+            } catch (error) {
+                alert('Erro ao atualizar orçamento!')
+            }
         },
 
         async onCardapioSelect() {
@@ -505,6 +591,22 @@ export default defineComponent({
             return diferenca;
         },
 
+        calcularDiaDaSemanaValor(dataString: string) {
+            const data = new Date(dataString + 'T00:00:00');
+            const diaSemana = data.getUTCDay(); // Retorna o índice do dia da semana
+
+            // Define o valor numérico com base no dia da semana
+            if (diaSemana === 5) {
+                return 1; // Sexta-feira
+            } else if (diaSemana === 0) {
+                return 2; // Domingo
+            } else if (diaSemana === 6) {
+                return 3; // Sábado
+            } else {
+                return 4; // Qualquer outro dia
+            }
+        },
+
         toggleOpcionalSelect() {
             this.showOpcionalSelect = !this.showOpcionalSelect;
             this.novoOpcionalId = 0; // Reseta o valor selecionado
@@ -518,12 +620,16 @@ export default defineComponent({
                 const orcamento = response.data;
 
                 this.id = orcamento.idOrcamento.toString();
+                this.leadId = orcamento.Lead_idLead.toString();
                 this.nome = orcamento.Lead.nomeLead;
                 this.email = orcamento.Lead.email;
                 this.referencia = orcamento.referenciaOrcamento;
+                this.fonte = orcamento.fonte;
 
                 this.data = formatarDataExtenso(orcamento.dataEvento);
                 this.dataEventoRaw = orcamento.dataEvento.slice(0, 10);
+
+                this.valorEspacoId = this.calcularDiaDaSemanaValor(this.dataEventoRaw);
 
                 this.tipoEvento = orcamento.tipoEvento;
                 this.cidade = orcamento.Lead.cidade;
@@ -650,6 +756,14 @@ export default defineComponent({
     },
 
     watch: {
+        dataEventoRaw: {
+            immediate: true,
+            handler(newDate: string) {
+                if (newDate) {
+                    this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
+                }
+            },
+        },
         orcamentoId: {
             immediate: true,
             handler(newId: number) {

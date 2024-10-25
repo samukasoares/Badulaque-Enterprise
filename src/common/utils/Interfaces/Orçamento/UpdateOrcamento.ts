@@ -23,7 +23,7 @@ interface OrcamentoFullData {
   }
   
   // Interface para UpdateFormaPagamento
-  interface UpdateFormaPagamento {
+  export interface UpdateFormaPagamento {
     nParcelas: number;
     type: string;
     valorParcela: number;
@@ -36,7 +36,6 @@ interface OrcamentoFullData {
     valorOrcamento: number;
   }
   
-
   // Interface para UpdateOrcamento
   export interface UpdateOrcamento {
     orcamento: OrcamentoFullData;
