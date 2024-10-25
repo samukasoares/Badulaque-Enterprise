@@ -14,7 +14,7 @@ interface Opcional {
     idOpcional: number;
     nomeOpcional: string;
     valorAtual: number;
-    mostrarOrcamento: number;
+    porPessoa: number;
   };
   
   export interface OrcamentoOpcional {

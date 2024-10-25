@@ -26,6 +26,9 @@
                         <label>Tipo de Evento:</label>
                         <input v-model="tipoEvento" disabled type="text">
 
+                        <label>Fonte:</label>
+                        <input v-model="fonte" disabled type="text">
+
                         <label>Data:</label>
                         <template v-if="!isEditing">
                             <input v-model="data" disabled type="text">
@@ -87,7 +90,7 @@
                                     <input v-model="tipoBebida" disabled type="text">
                                 </template>
                                 <template v-else>
-                                    <select v-model="tipoBebidaId" :disabled="!isEditing">
+                                    <select v-model="tipoBebidaId" :disabled="!isEditing" @change="onCervejaSelect">
                                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja"
                                             :value="cerveja.idCerveja">
                                             {{ cerveja.nome }}
@@ -101,17 +104,38 @@
                             </div>
                         </div>
 
-                        <label>Valor por Pessoa Total:</label>
+                        <label>Total Valor Por Pessoa:</label>
                         <input v-model="valorPorPessoaBuffet" disabled type="text">
-                        <label>Valor Buffet Total:</label>
+                        <label>Total Buffet:</label>
                         <input class="valorTotal" v-model="valorTotalBuffet" disabled type="text">
+
+
+
                         <h4>BAR</h4><br>
-                        <label>Cardápio:</label>
-                        <input v-model="cardapioBar" :disabled="!isEditing" type="text">
-                        <label>Valor por pessoa:</label>
-                        <input v-model="valorPorPessoaBar" :disabled="!isEditing" type="text">
-                        <label>Valor Total:</label>
-                        <input class="valorTotal" v-model="valorTotalBar" disabled type="text">
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Cardápio:</label>
+                                <template v-if="!isEditing">
+                                    <input v-model="cardapioBar" disabled type="text">
+                                </template>
+                                <template v-else>
+                                    <select v-model="tipoBarId" :disabled="!isEditing" @change="onBarSelect">
+                                        <option v-for="bar in cardapiosBar" :key="bar.idCardapioBar"
+                                            :value="bar.idCardapioBar">
+                                            {{ bar.nomeCardapioBar }}
+                                        </option>
+                                    </select>
+                                </template>
+                            </div>
+                            <div class="form-item">
+                                <label>Valor:</label>
+                                <input v-model="valorPorPessoaBar" :disabled="!isEditing" type="text">
+                            </div>
+                        </div>
+                        <label>Total Bar:</label>
+                        <input disabled class="valorTotal" v-model="valorTotalBar">
+
+
                     </div>
 
                     <div class="form-column">
@@ -122,15 +146,40 @@
                         <input v-model="dataEnvio" disabled type="text">
 
 
-                        <div v-if="opcionaisSelecionados.length">
+
+                        <div>
                             <h4>Opcionais</h4>
-                            <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
+                            <button type="button" @click="adicionarOpcional" :disabled="!isEditing">+</button>
+                            <br>
+                            <div v-for="(opcional, index) in opcionaisSelecionados" :key="index">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
                                     type="text">
+
+                                <!-- Botão para remover o opcional, se necessário -->
+                                <!-- button type="button" v-if="isEditing" @click="removerOpcional(index)">Remover</button> -->
                             </div>
                             <label>Total Opcionais</label>
                             <input disabled class="valorTotal" v-model="valorTotalOpcionais">
+
+                            <div v-if="isEditing">
+                                <label>Novos Opcionais</label>
+                                <div v-for="(opcional, index) in opcionaisAdicionados" :key="index" class="form-group">
+                                    <select v-model="opcional.Opcional_idOpcional"
+                                        @change="onOpcionalSelected(opcional.Opcional_idOpcional, index)">
+                                        <option disabled value="">Selecione um opcional</option>
+                                        <option v-for="opcionalItem in opcionais" :key="opcionalItem.idOpcional"
+                                            :value="opcionalItem.idOpcional">
+                                            {{ opcionalItem.nomeOpcional }}
+                                        </option>
+                                    </select>
+
+                                    <!-- Campo de input para inserir o valor do opcional selecionado -->
+                                    <input v-model="opcional.valor" type="text">
+                                </div>
+
+                            </div>
+
                         </div>
 
 
@@ -193,13 +242,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, Cerveja } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
-import { fetchCardapios, fetchCervejas } from '@/common/utils/FetchMethods';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais } from '@/common/utils/FetchMethods';
+import { OpcionaisFormatados, UpdateFormaPagamento, UpdateOrcamento } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
 
 
 export default defineComponent({
@@ -218,6 +268,8 @@ export default defineComponent({
             email: '',
             cidade: '',
             telefone: '',
+            fonte: '',
+            leadId: '',
 
             //Data
             data: '',
@@ -234,6 +286,7 @@ export default defineComponent({
             observacoes: '',
 
             //Espaço
+            valorEspacoId: 0,
             diaSemana: '',
             valorEspaco: '',
 
@@ -250,9 +303,12 @@ export default defineComponent({
             valorCerveja: '',
             valorPorPessoaBuffet: '',
             valorTotalBuffet: '',
+
             cardapioBar: '',
             valorPorPessoaBar: '',
             valorTotalBar: '',
+            tipoBarId: 0,
+
             valorNoiva: '',
             valorCabine: '',
             valorOpcionais: '',
@@ -280,7 +336,14 @@ export default defineComponent({
 
             //Objetos que armazenam todas as opções
             cardapios: [] as Cardapio[],
-            cervejas: [] as Cerveja[]
+            cervejas: [] as Cerveja[],
+            cardapiosBar: [] as CardapioBar[],
+
+            opcionais: [] as Opcional[],
+            opcionaisAdicionados: [] as OpcionaisFormatados[],
+
+            showOpcionalSelect: false,
+            novoOpcionalId: 0,
         };
     },
 
@@ -288,9 +351,97 @@ export default defineComponent({
         close() {
             this.$emit('close');
         },
+
         formatarValorMonetario,
+
+        removerFormatacaoMonetaria(valor: string): number {
+            return parseFloat(valor.replace(/[^\d,-]/g, '').replace(',', '.'));
+        },
+
         toggleEditMode() {
             this.isEditing = !this.isEditing;
+        },
+
+        async saveChanges() {
+            const UpdateOpcionais = [
+                // Primeiro, mapeia os opcionais já selecionados
+                ...this.opcionaisSelecionados.map((opcional) => ({
+                    Opcional_idOpcional: opcional.Opcional.idOpcional,
+                    valorOrcamento: this.removerFormatacaoMonetaria(opcional.valorOrcamento.toString()),
+                })),
+                // Depois, mapeia os opcionais recentemente adicionados
+                ...this.opcionaisAdicionados.map((opcional) => ({
+                    Opcional_idOpcional: opcional.Opcional_idOpcional,
+                    valorOrcamento: this.removerFormatacaoMonetaria(opcional.valor),
+                })),
+            ];
+
+            const lead: RegistroLead = {
+                nomeLead: this.nome,
+                celular: this.telefone,
+                email: this.email,
+                cidade: this.cidade
+            }
+
+            const formasPagamento: UpdateFormaPagamento[] = [
+                {
+                    nParcelas: parseInt(this.parcelasParcelado, 10),
+                    type: 'Parcelado',
+                    valorParcela: this.removerFormatacaoMonetaria(this.valorParcelas),
+                    valorSinal: this.removerFormatacaoMonetaria(this.sinalParcelado)
+                },
+                {
+                    nParcelas: parseInt(this.parcelasEntrada, 10),
+                    type: 'Entrada Parcelada',
+                    valorParcela: this.removerFormatacaoMonetaria(this.valorEntrada),
+                    valorSinal: this.removerFormatacaoMonetaria(this.sinalEntrada)
+                },
+                {
+                    nParcelas: 1,
+                    type: 'À Vista',
+                    valorParcela: this.removerFormatacaoMonetaria(this.valorAVista),
+                    valorSinal: this.removerFormatacaoMonetaria(this.sinalAVista)
+                }
+            ];
+
+            const formattedDate = new Date(this.dataEventoRaw).toISOString();
+
+            const orcamento = {
+                idOrcamento: parseInt(this.id),
+                referenciaOrcamento: this.referencia,
+                Cardapio_idCardapio: this.cardapioBuffetId,
+                CardapioBar_idCardapioBar: this.tipoBarId,
+                Cerveja_idCerveja: this.tipoBebidaId,
+                numConvidados: parseInt(this.convidados),
+                observacoesOrcamento: this.observacoes,
+                dataEvento: formattedDate,
+                ValorEspaco_idValorEspaco: this.valorEspacoId,
+                valorPPBar: this.removerFormatacaoMonetaria(this.valorPorPessoaBar),
+                valorPPCardapio: this.removerFormatacaoMonetaria(this.valorCardapio),
+                tipoEvento: this.tipoEvento,
+                cerimoniaLocal: this.cerimonia === 'Sim' ? 1 : 0,
+                fonte: this.fonte,
+                Lead_idLead: parseInt(this.leadId),
+                valorEspacoFinal: this.removerFormatacaoMonetaria(this.valorEspaco),  // Valor final do espaço
+                valorOpcionais: this.removerFormatacaoMonetaria(this.valorTotalOpcionais),  // Valor total dos opcionais
+                valorPPCerveja: this.removerFormatacaoMonetaria(this.valorCerveja),  // Valor por pessoa da cerveja
+            };
+
+            const updateOrcamento: UpdateOrcamento = {
+                orcamento: orcamento,
+                formasPagamento: formasPagamento,
+                lead: lead,
+                opcionais: UpdateOpcionais,
+            };
+
+            console.log(updateOrcamento)
+
+            try {
+                const data = await instance.put('/orcamento/update', updateOrcamento)
+                this.$emit('success', 'Orçamento atualizado com sucesso!');
+            } catch (error) {
+                alert('Erro ao atualizar orçamento!')
+            }
         },
 
         async onCardapioSelect() {
@@ -324,6 +475,101 @@ export default defineComponent({
             }
         },
 
+        async onCervejaSelect() {
+            const selectedCerveja = this.cervejas.find(cerveja => cerveja.idCerveja === this.tipoBebidaId);
+
+            if (selectedCerveja) {
+                try {
+                    const response = await instance.post('/cerveja/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw) // Ou o ano que deseja usar para o cálculo do reajuste
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const cervejaReajustado = reajustes.find((item: any) => item.cerveja === selectedCerveja.nome);
+
+                    if (cervejaReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorCerveja = formatarValorMonetario(cervejaReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorCerveja = formatarValorMonetario(cervejaReajustado.atual);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorCerveja = formatarValorMonetario(selectedCerveja.valor);
+                }
+            }
+        },
+
+        async onBarSelect() {
+            const selectedBar = this.cardapiosBar.find(cardapioBar => cardapioBar.idCardapioBar === this.tipoBarId);
+
+            if (selectedBar) {
+                try {
+                    const response = await instance.post('/bar/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw) // Ou o ano que deseja usar para o cálculo do reajuste
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const barReajustado = reajustes.find((item: any) => item.cardapioBar === selectedBar.nomeCardapioBar);
+
+                    if (barReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorPorPessoaBar = formatarValorMonetario(barReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorPorPessoaBar = formatarValorMonetario(barReajustado.atual);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorPorPessoaBar = formatarValorMonetario(selectedBar.precoCardapio);
+                }
+            }
+        },
+
+        adicionarOpcional() {
+            // Adiciona um novo objeto com campos vazios para o select e o input
+            this.opcionaisAdicionados.push({
+                Opcional_idOpcional: 0, // Valor inicial para o select
+                nomeOpcional: '',
+                valor: ''
+            });
+        },
+
+        async onOpcionalSelected(opcionalId: number, index: number) {
+            // Encontra o opcional selecionado
+            const opcionalSelecionado = this.opcionais.find(op => op.idOpcional === opcionalId);
+
+            if (opcionalSelecionado) {
+                try {
+                    const response = await instance.post('/opcional/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw)
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontra o valor correspondente ao opcional selecionado
+                    const valorReajustado = reajustes.find((item: any) => item.opcional === opcionalSelecionado.nomeOpcional);
+
+                    if (valorReajustado) {
+                        this.opcionaisAdicionados[index].valor = formatarValorMonetario(valorReajustado.reajuste);
+                    } else {
+                        this.opcionaisAdicionados[index].valor = formatarValorMonetario(opcionalSelecionado.valorAtual); // supondo que valorOpcional seja o valor original
+                    }
+
+                } catch (error) {
+                    console.error('Erro ao obter o valor do opcional:', error);
+                    this.opcionaisAdicionados[index].valor = 'Erro ao carregar valor';
+                }
+            }
+        },
+
         calcularDiferencaAnos(data: string) {
             // Verificar se a data está no formato `yyyy-MM-dd`
             const [ano, mes, dia] = data.split('-').map(Number);
@@ -345,10 +591,28 @@ export default defineComponent({
             return diferenca;
         },
 
+        calcularDiaDaSemanaValor(dataString: string) {
+            const data = new Date(dataString + 'T00:00:00');
+            const diaSemana = data.getUTCDay(); // Retorna o índice do dia da semana
 
-        async saveChanges() {
-            console.log("salvo!")
+            // Define o valor numérico com base no dia da semana
+            if (diaSemana === 5) {
+                return 1; // Sexta-feira
+            } else if (diaSemana === 0) {
+                return 2; // Domingo
+            } else if (diaSemana === 6) {
+                return 3; // Sábado
+            } else {
+                return 4; // Qualquer outro dia
+            }
         },
+
+        toggleOpcionalSelect() {
+            this.showOpcionalSelect = !this.showOpcionalSelect;
+            this.novoOpcionalId = 0; // Reseta o valor selecionado
+        },
+
+
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
             try {
@@ -356,12 +620,16 @@ export default defineComponent({
                 const orcamento = response.data;
 
                 this.id = orcamento.idOrcamento.toString();
+                this.leadId = orcamento.Lead_idLead.toString();
                 this.nome = orcamento.Lead.nomeLead;
                 this.email = orcamento.Lead.email;
                 this.referencia = orcamento.referenciaOrcamento;
+                this.fonte = orcamento.fonte;
 
                 this.data = formatarDataExtenso(orcamento.dataEvento);
                 this.dataEventoRaw = orcamento.dataEvento.slice(0, 10);
+
+                this.valorEspacoId = this.calcularDiaDaSemanaValor(this.dataEventoRaw);
 
                 this.tipoEvento = orcamento.tipoEvento;
                 this.cidade = orcamento.Lead.cidade;
@@ -483,9 +751,19 @@ export default defineComponent({
     async mounted() {
         this.cardapios = await fetchCardapios()
         this.cervejas = await fetchCervejas()
+        this.cardapiosBar = await fetchCardapioBar()
+        this.opcionais = await fetchOpcionais()
     },
 
     watch: {
+        dataEventoRaw: {
+            immediate: true,
+            handler(newDate: string) {
+                if (newDate) {
+                    this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
+                }
+            },
+        },
         orcamentoId: {
             immediate: true,
             handler(newId: number) {
@@ -495,6 +773,8 @@ export default defineComponent({
             },
         },
     },
+
+
 });
 </script>
 
