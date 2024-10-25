@@ -143,13 +143,40 @@
                         <input v-model="dataEnvio" disabled type="text">
 
 
-                        <div v-if="opcionaisSelecionados.length">
+                        <div>
                             <h4>Opcionais</h4>
-                            <div v-for="(opcional, idOpcional) in opcionaisSelecionados" :key="idOpcional">
+                            <div v-for="(opcional, index) in opcionaisSelecionados" :key="index">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
                                     type="text">
+
+                                <!-- Botão para remover o opcional, se necessário -->
+                                <!-- button type="button" v-if="isEditing" @click="removerOpcional(index)">Remover</button> -->
                             </div>
+
+                            <div v-if="isEditing">
+                                <button type="button" @click="adicionarOpcional">+</button>
+
+                                <!-- Renderiza um novo select e input para cada opcional adicionado -->
+                                <div v-for="(opcional, index) in opcionaisAdicionados" :key="index" class="form-group">
+                                    <select v-model="opcional.Opcional_idOpcional"
+                                        @change="onOpcionalSelected(opcional.Opcional_idOpcional, index)">
+                                        <option disabled value="">Selecione um opcional</option>
+                                        <option v-for="opcionalItem in opcionais" :key="opcionalItem.idOpcional"
+                                            :value="opcionalItem.idOpcional">
+                                            {{ opcionalItem.nomeOpcional }}
+                                        </option>
+                                    </select>
+
+                                    <!-- Campo de input para inserir o valor do opcional selecionado -->
+                                    <input v-model="opcional.valor" placeholder="Insira o valor do opcional"
+                                        type="text">
+                                </div>
+
+                                <label>Total Opcionais</label>
+                                <input disabled class="valorTotal" v-model="valorTotalOpcionais">
+                            </div>
+
                             <label>Total Opcionais</label>
                             <input disabled class="valorTotal" v-model="valorTotalOpcionais">
                         </div>
@@ -214,13 +241,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, CardapioBar, Cerveja } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
-import { fetchCardapioBar, fetchCardapios, fetchCervejas } from '@/common/utils/FetchMethods';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais } from '@/common/utils/FetchMethods';
+import { OpcionaisFormatados } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
 
 
 export default defineComponent({
@@ -305,7 +333,13 @@ export default defineComponent({
             //Objetos que armazenam todas as opções
             cardapios: [] as Cardapio[],
             cervejas: [] as Cerveja[],
-            cardapiosBar: [] as CardapioBar[]
+            cardapiosBar: [] as CardapioBar[],
+
+            opcionais: [] as Opcional[],
+            opcionaisAdicionados: [] as OpcionaisFormatados[],
+
+            showOpcionalSelect: false,
+            novoOpcionalId: 0,
         };
     },
 
@@ -313,9 +347,15 @@ export default defineComponent({
         close() {
             this.$emit('close');
         },
+
         formatarValorMonetario,
+
         toggleEditMode() {
             this.isEditing = !this.isEditing;
+        },
+
+        saveChanges() {
+            console.log("Salvo!")
         },
 
         async onCardapioSelect() {
@@ -407,6 +447,42 @@ export default defineComponent({
             }
         },
 
+        adicionarOpcional() {
+            // Adiciona um novo objeto com campos vazios para o select e o input
+            this.opcionaisAdicionados.push({
+                Opcional_idOpcional: 0, // Valor inicial para o select
+                nomeOpcional: '',
+                valor: ''
+            });
+        },
+
+        async onOpcionalSelected(opcionalId: number, index: number) {
+            // Encontra o opcional selecionado
+            const opcionalSelecionado = this.opcionais.find(op => op.idOpcional === opcionalId);
+
+            if (opcionalSelecionado) {
+                try {
+                    const response = await instance.post('/opcional/reajustes', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw)
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontra o valor correspondente ao opcional selecionado
+                    const valorReajustado = reajustes.find((item: any) => item.opcional === opcionalSelecionado.nomeOpcional);
+
+                    if (valorReajustado) {
+                        this.opcionaisAdicionados[index].valor = formatarValorMonetario(valorReajustado.reajuste);
+                    } else {
+                        this.opcionaisAdicionados[index].valor = formatarValorMonetario(opcionalSelecionado.valorAtual); // supondo que valorOpcional seja o valor original
+                    }
+
+                } catch (error) {
+                    console.error('Erro ao obter o valor do opcional:', error);
+                    this.opcionaisAdicionados[index].valor = 'Erro ao carregar valor';
+                }
+            }
+        },
 
         calcularDiferencaAnos(data: string) {
             // Verificar se a data está no formato `yyyy-MM-dd`
@@ -429,10 +505,12 @@ export default defineComponent({
             return diferenca;
         },
 
-
-        async saveChanges() {
-            console.log("salvo!")
+        toggleOpcionalSelect() {
+            this.showOpcionalSelect = !this.showOpcionalSelect;
+            this.novoOpcionalId = 0; // Reseta o valor selecionado
         },
+
+
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
             try {
@@ -568,6 +646,7 @@ export default defineComponent({
         this.cardapios = await fetchCardapios()
         this.cervejas = await fetchCervejas()
         this.cardapiosBar = await fetchCardapioBar()
+        this.opcionais = await fetchOpcionais()
     },
 
     watch: {
@@ -580,6 +659,8 @@ export default defineComponent({
             },
         },
     },
+
+
 });
 </script>
 
