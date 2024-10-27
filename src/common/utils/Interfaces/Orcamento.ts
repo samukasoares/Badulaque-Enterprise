@@ -7,7 +7,7 @@ export interface FormaPagamento {
     valorTotal: number;
     numeroParcelasEntrada: number;
     Orcamento_idOrcamento: number;
-    tipo: number;
+    tipo: string;
   };
   
 interface Opcional {
@@ -22,6 +22,7 @@ interface Opcional {
     Orcamento_idOrcamento: number;
     Opcional: Opcional;
     valorOrcamento: number;
+    porPessoa:number;
   };
   
   interface Lead  {

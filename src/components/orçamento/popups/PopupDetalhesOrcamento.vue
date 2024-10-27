@@ -153,11 +153,10 @@
                             <br>
                             <div v-for="(opcional, index) in opcionaisSelecionados" :key="index">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
-                                <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
-                                    type="text">
+                                <button type="button" class="botao-remover" v-if="isEditing"
+                                    @click="removerOpcional(index)">Remover</button>
+                                <input v-model="opcional.valorOrcamento" :disabled="!isEditing" type="text">
 
-                                <!-- Botão para remover o opcional, se necessário -->
-                                <!-- button type="button" v-if="isEditing" @click="removerOpcional(index)">Remover</button> -->
                             </div>
                             <label>Total Opcionais</label>
                             <input disabled class="valorTotal" v-model="valorTotalOpcionais">
@@ -167,7 +166,6 @@
                                 <div v-for="(opcional, index) in opcionaisAdicionados" :key="index" class="form-group">
                                     <select v-model="opcional.Opcional_idOpcional"
                                         @change="onOpcionalSelected(opcional.Opcional_idOpcional, index)">
-                                        <option disabled value="">Selecione um opcional</option>
                                         <option v-for="opcionalItem in opcionais" :key="opcionalItem.idOpcional"
                                             :value="opcionalItem.idOpcional">
                                             {{ opcionalItem.nomeOpcional }}
@@ -225,7 +223,7 @@
                         <label>Sinal:</label>
                         <input v-model="sinalAVista" :disabled="!isEditing">
                         <label>Valor:</label>
-                        <input v-model="valorAVista" :disabled="!isEditing">
+                        <input v-model="valorAVista" disabled>
                     </div>
                 </div>
             </div>
@@ -237,12 +235,15 @@
             </div>
 
         </form>
+
+        <NotificationMessage :message="message" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead } from '@/common/utils/Interfaces';
+import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
@@ -260,6 +261,7 @@ export default defineComponent({
             default: null,
         },
     },
+    components: { NotificationMessage },
     data() {
         return {
             //Cliente
@@ -344,6 +346,8 @@ export default defineComponent({
 
             showOpcionalSelect: false,
             novoOpcionalId: 0,
+
+            message: ''
         };
     },
 
@@ -363,16 +367,19 @@ export default defineComponent({
         },
 
         async saveChanges() {
+
             const UpdateOpcionais = [
                 // Primeiro, mapeia os opcionais já selecionados
                 ...this.opcionaisSelecionados.map((opcional) => ({
                     Opcional_idOpcional: opcional.Opcional.idOpcional,
                     valorOrcamento: this.removerFormatacaoMonetaria(opcional.valorOrcamento.toString()),
+                    porPessoa: opcional.Opcional.porPessoa
                 })),
                 // Depois, mapeia os opcionais recentemente adicionados
                 ...this.opcionaisAdicionados.map((opcional) => ({
                     Opcional_idOpcional: opcional.Opcional_idOpcional,
                     valorOrcamento: this.removerFormatacaoMonetaria(opcional.valor),
+                    porPessoa: opcional.porPessoa
                 })),
             ];
 
@@ -383,24 +390,26 @@ export default defineComponent({
                 cidade: this.cidade
             }
 
+
+
             const formasPagamento: UpdateFormaPagamento[] = [
                 {
                     nParcelas: parseInt(this.parcelasParcelado, 10),
                     type: 'Parcelado',
-                    valorParcela: this.removerFormatacaoMonetaria(this.valorParcelas),
-                    valorSinal: this.removerFormatacaoMonetaria(this.sinalParcelado)
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorParcelas)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalParcelado))
                 },
                 {
                     nParcelas: parseInt(this.parcelasEntrada, 10),
                     type: 'Entrada Parcelada',
-                    valorParcela: this.removerFormatacaoMonetaria(this.valorEntrada),
-                    valorSinal: this.removerFormatacaoMonetaria(this.sinalEntrada)
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorEntrada)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalEntrada))
                 },
                 {
                     nParcelas: 1,
                     type: 'À Vista',
-                    valorParcela: this.removerFormatacaoMonetaria(this.valorAVista),
-                    valorSinal: this.removerFormatacaoMonetaria(this.sinalAVista)
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorAVista)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalAVista))
                 }
             ];
 
@@ -436,13 +445,25 @@ export default defineComponent({
 
             console.log(updateOrcamento)
 
+
+
             try {
                 const data = await instance.put('/orcamento/update', updateOrcamento)
-                this.$emit('success', 'Orçamento atualizado com sucesso!');
+                this.message = 'Orçamento atualizado com sucesso!';
+
+                // Atualiza as informações no modal
+                if (this.orcamentoId) {
+                    await this.fetchOrcamentoDetails(this.orcamentoId);
+                }
             } catch (error) {
                 alert('Erro ao atualizar orçamento!')
             }
         },
+
+        removerOpcional(index: number) {
+            this.opcionaisSelecionados.splice(index, 1);
+        },
+
 
         async onCardapioSelect() {
             // Obtém o cardápio selecionado
@@ -538,7 +559,8 @@ export default defineComponent({
             this.opcionaisAdicionados.push({
                 Opcional_idOpcional: 0, // Valor inicial para o select
                 nomeOpcional: '',
-                valor: ''
+                valor: '',
+                porPessoa: 0,
             });
         },
 
@@ -607,6 +629,10 @@ export default defineComponent({
             }
         },
 
+        showError(message: string) {
+            this.message = message;
+        },
+
         toggleOpcionalSelect() {
             this.showOpcionalSelect = !this.showOpcionalSelect;
             this.novoOpcionalId = 0; // Reseta o valor selecionado
@@ -648,6 +674,7 @@ export default defineComponent({
                 this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio + orcamento.valorPPCerveja)
                 this.valorTotalBuffet = formatarValorMonetario((orcamento.valorPPCardapio + orcamento.valorPPCerveja) * orcamento.numConvidados)
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
+                this.tipoBarId = orcamento.CardapioBar.idCardapioBar;
                 this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
                 this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
                 this.totalProposta = formatarValorMonetario(orcamento.valorTotalOrcamento);
@@ -659,21 +686,27 @@ export default defineComponent({
                 this.opcionaisSelecionados = orcamento.Orcamento_Opcional;
                 this.valorTotalOpcionais = formatarValorMonetario(orcamento.valorOpcionais);
 
-                //Forma Pagamento à vista
-                this.sinalAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorSinal);
-                this.valorAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorTotal);
 
-                //Forma Pagamento Entrada
-                this.sinalEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorSinal);
-                this.parcelasEntrada = (orcamento.FormaPagamento[1].numeroParcelasEntrada).toString();
-                this.valorEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela);
-                this.saldoEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorTotal - orcamento.FormaPagamento[1].valorEntrada);
-                this.valorParcelasEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela / orcamento.FormaPagamento[1].numeroParcelasEntrada);
+                orcamento.FormaPagamento.forEach((forma) => {
+                    if (forma.tipo === 'À Vista') {
+                        this.sinalAVista = formatarValorMonetario(forma.valorSinal);
+                        this.valorAVista = formatarValorMonetario(forma.valorTotal);
+                    }
 
-                //Forma Pagamento Parcelado
-                this.sinalParcelado = formatarValorMonetario(orcamento.FormaPagamento[2].valorSinal);
-                this.parcelasParcelado = (orcamento.FormaPagamento[2].numeroParcelas).toString();
-                this.valorParcelas = formatarValorMonetario(orcamento.FormaPagamento[2].valorParcela);
+                    if (forma.tipo === 'Entrada Parcelada') {
+                        this.sinalEntrada = formatarValorMonetario(forma.valorSinal);
+                        this.parcelasEntrada = (forma.numeroParcelasEntrada).toString();
+                        this.valorEntrada = formatarValorMonetario(forma.valorParcela);
+                        this.saldoEntrada = formatarValorMonetario(forma.valorTotal - forma.valorEntrada);
+                        this.valorParcelasEntrada = formatarValorMonetario(forma.valorParcela / forma.numeroParcelasEntrada);
+                    }
+
+                    if (forma.tipo === 'Parcelado') {
+                        this.sinalParcelado = formatarValorMonetario(forma.valorSinal);
+                        this.parcelasParcelado = (forma.numeroParcelas).toString();
+                        this.valorParcelas = formatarValorMonetario(forma.valorParcela);
+                    }
+                })
 
             } catch (error) {
                 console.error('Erro ao buscar detalhes do orçamento:', error);
@@ -758,9 +791,16 @@ export default defineComponent({
     watch: {
         dataEventoRaw: {
             immediate: true,
-            handler(newDate: string) {
+            async handler(newDate: string) {
                 if (newDate) {
                     this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
+
+                    // Atualizar valores automaticamente com base na nova data
+                    await Promise.all([
+                        this.onCardapioSelect(),
+                        this.onCervejaSelect(),
+                        this.onBarSelect()
+                    ]);
                 }
             },
         },
@@ -773,6 +813,7 @@ export default defineComponent({
             },
         },
     },
+
 
 
 });
