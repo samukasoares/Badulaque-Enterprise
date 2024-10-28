@@ -342,6 +342,7 @@ export default defineComponent({
 
             //Objetos que armazenam todas as opções
             cardapios: [] as Cardapio[],
+            cardapiosReajustados: [] as { id: number; nome: string; precoReajustado: number }[],
             cervejas: [] as Cerveja[],
             cardapiosBar: [] as CardapioBar[],
             valoresEspaco: [] as ValorEspaco[],
@@ -653,6 +654,26 @@ export default defineComponent({
             });
         },
 
+        async fetchCardapiosReajustados() {
+            const ano = this.calcularDiferencaAnos(this.dataEventoRaw);
+            try {
+                const response = await instance.post('/buffet/cardapio/reajustes', { ano });
+                const reajustes = response.data;
+
+                // Formata os cardápios com os valores reajustados
+                this.cardapiosReajustados = this.cardapios.map(cardapio => {
+                    const reajusteEncontrado = reajustes.find((item: any) => item.cardapio === cardapio.nomeCardapio);
+                    return {
+                        id: cardapio.idCardapio,
+                        nome: cardapio.nomeCardapio,
+                        precoReajustado: reajusteEncontrado ? reajusteEncontrado.reajuste : cardapio.precoCardapio
+                    };
+                });
+            } catch (error) {
+                console.error("Erro ao obter valores reajustados dos cardápios:", error);
+            }
+        },
+
         calcularDiferencaAnos(data: string) {
             // Verificar se a data está no formato `yyyy-MM-dd`
             const [ano, mes, dia] = data.split('-').map(Number);
@@ -776,8 +797,8 @@ export default defineComponent({
         },
 
         preencherTemplate(template: string) {
-            const cardapiosHTML = this.cardapios.map(cardapio => {
-                return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span> ${this.formatarValorMonetario(cardapio.precoCardapio)}</span></span>`;
+            const cardapiosHTML = this.cardapiosReajustados.map(cardapio => {
+                return `<span class="flex-item-estrutura"><strong>${cardapio.nome}:</strong><span> ${this.formatarValorMonetario(cardapio.precoReajustado)}</span></span>`;
             }).join('');
 
             const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
@@ -855,6 +876,7 @@ export default defineComponent({
         this.cardapiosBar = await fetchCardapioBar()
         this.opcionais = await fetchOpcionais()
         this.valoresEspaco = await fetchValoresEspaco()
+        this.fetchCardapiosReajustados()
     },
 
     watch: {
@@ -870,7 +892,8 @@ export default defineComponent({
                         this.onCervejaSelect(),
                         this.onBarSelect(),
                         this.onEspacoSelect(),
-                        this.updateOpcionaisSelecionados()
+                        this.updateOpcionaisSelecionados(),
+                        this.fetchCardapiosReajustados(),
                     ]);
                 }
             },
