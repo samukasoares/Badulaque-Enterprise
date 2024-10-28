@@ -155,8 +155,9 @@
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <button type="button" class="botao-remover" v-if="isEditing"
                                     @click="removerOpcional(index)">Remover</button>
-                                <input v-model="opcionaisSelecionados[index].valorOrcamento" :disabled="!isEditing"
-                                    type="text" :value="opcional.valorOrcamentoFormatado">
+                                <input v-if="!isEditing" :value="opcional.valorOrcamentoFormatado" disabled
+                                    type="text" />
+                                <input v-else v-model="opcionaisSelecionados[index].valorOrcamento" type="text" />
                             </div>
                             <label>Total Opcionais</label>
                             <input disabled class="valorTotal" v-model="valorTotalOpcionais">
@@ -776,11 +777,11 @@ export default defineComponent({
 
         preencherTemplate(template: string) {
             const cardapiosHTML = this.cardapios.map(cardapio => {
-                return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span>R$ ${cardapio.precoCardapio}</span></span>`;
+                return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span> ${this.formatarValorMonetario(cardapio.precoCardapio)}</span></span>`;
             }).join('');
 
             const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
-                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span>R$ ${opcional.valorOrcamento}</span></span>`;
+                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span> ${this.formatarValorMonetario(opcional.valorOrcamento)}</span></span>`;
             }).join('');
 
             return template
@@ -798,10 +799,10 @@ export default defineComponent({
                 .replace('{{observacoes}}', this.observacoes)
                 .replace('{{diaSemana}}', this.diaSemana)
                 .replace('{{valorEspaco}}', this.valorEspaco)
-                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
-                .replace('{{tipoBebida}}', this.tipoBebida)
-                .replace('{{valorPorPessoaBuffet}}', this.valorPorPessoaBuffet)
-                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
+
+
+
+
                 .replace('{{cardapioBar}}', this.cardapioBar)
                 .replace('{{valorPorPessoaBar}}', this.valorPorPessoaBar)
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
@@ -809,8 +810,16 @@ export default defineComponent({
                 .replace('{{valorCabine}}', this.valorCabine)
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
+                .replace('{{totalOpcionais}}', this.valorTotalOpcionais)
                 .replace('{{cerimonia}}', this.cerimonia)
                 .replace('{{dataCriacao}}', this.dataCriação)
+
+                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
+                .replace('{{valorCardapio}}', this.valorCardapio)
+                .replace('{{tipoBebida}}', this.tipoBebida)
+                .replace('{{valorCerveja}}', this.valorCerveja)
+                .replace('{{valorPorPessoaBuffet}}', this.valorPorPessoaBuffet)
+                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
 
                 .replace('{{sinalAVista}}', this.sinalAVista)
                 .replace('{{valorAVista}}', this.valorAVista)

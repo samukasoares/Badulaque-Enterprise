@@ -57,7 +57,7 @@
       }
 
       .flex-item-estrutura {
-        width: 35%;
+        width: 50%;
         display: flex;
         justify-content: space-between;
         margin-bottom: 2px;
@@ -128,14 +128,15 @@
           100%</span
         >
         <span class="flex-item-estrutura"
-          ><strong>Cardápio Solicitado :</strong
-          ><span>{{cardapioBuffet}}</span></span
+          ><strong>Cardápio :</strong><span>{{cardapioBuffet}}</span>
+          <span>{{valorCardapio}}</span></span
         >
         <span class="flex-item-estrutura"
-          ><strong>Cerveja :</strong><span>{{tipoBebida}}</span></span
+          ><strong>Cerveja :</strong><span>{{tipoBebida}}</span>
+          <span>{{valorCerveja}}</span></span
         >
         <span class="flex-item-estrutura"
-          ><strong>Valor por pessoa :</strong
+          ><strong>Total por Pessoa :</strong
           ><span> {{valorPorPessoaBuffet}}</span></span
         >
         <span class="flex-item-estrutura"
@@ -162,7 +163,7 @@
         >
 
         <span class="flex-item-estrutura"
-          ><strong>Opcionais:</strong><span> 0</span></span
+          ><strong>Opcionais:</strong><span> {{totalOpcionais}}</span></span
         >
         <span class="flex-item-estrutura"
           ><strong>Total da Proposta:</strong
