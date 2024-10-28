@@ -47,5 +47,6 @@ interface OrcamentoFullData {
   export interface OpcionaisFormatados {
     Opcional_idOpcional: number,
     nomeOpcional: string,
-    valor: string
+    valor: string,
+    porPessoa: number
   }

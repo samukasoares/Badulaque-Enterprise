@@ -151,13 +151,13 @@
                             <h4>Opcionais</h4>
                             <button type="button" @click="adicionarOpcional" :disabled="!isEditing">+</button>
                             <br>
-                            <div v-for="(opcional, index) in opcionaisSelecionados" :key="index">
+                            <div v-for="(opcional, index) in opcionaisSelecionadosFormatados" :key="index">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
-                                <input :value="formatarValorMonetario(opcional.valorOrcamento)" :disabled="!isEditing"
-                                    type="text">
-
-                                <!-- Botão para remover o opcional, se necessário -->
-                                <!-- button type="button" v-if="isEditing" @click="removerOpcional(index)">Remover</button> -->
+                                <button type="button" class="botao-remover" v-if="isEditing"
+                                    @click="removerOpcional(index)">Remover</button>
+                                <input v-if="!isEditing" :value="opcional.valorOrcamentoFormatado" disabled
+                                    type="text" />
+                                <input v-else v-model="opcionaisSelecionados[index].valorOrcamento" type="text" />
                             </div>
                             <label>Total Opcionais</label>
                             <input disabled class="valorTotal" v-model="valorTotalOpcionais">
@@ -167,11 +167,11 @@
                                 <div v-for="(opcional, index) in opcionaisAdicionados" :key="index" class="form-group">
                                     <select v-model="opcional.Opcional_idOpcional"
                                         @change="onOpcionalSelected(opcional.Opcional_idOpcional, index)">
-                                        <option disabled value="">Selecione um opcional</option>
-                                        <option v-for="opcionalItem in opcionais" :key="opcionalItem.idOpcional"
-                                            :value="opcionalItem.idOpcional">
+                                        <option v-for="opcionalItem in opcionaisDisponiveisParaAdicionar"
+                                            :key="opcionalItem.idOpcional" :value="opcionalItem.idOpcional">
                                             {{ opcionalItem.nomeOpcional }}
                                         </option>
+
                                     </select>
 
                                     <!-- Campo de input para inserir o valor do opcional selecionado -->
@@ -190,7 +190,7 @@
                     </div>
 
                     <div class="form-column">
-                        <h4>Forma de Pagamento 1</h4><br>
+                        <h4>Forma de Pagamento 1 - Parcelado</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalParcelado" :disabled="!isEditing">
                         <div class="form-group">
@@ -205,7 +205,7 @@
                         </div>
 
 
-                        <h4>Forma de Pagamento 2</h4><br>
+                        <h4>Forma de Pagamento 2 - Entrada Parcelada</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalEntrada" :disabled="!isEditing">
                         <div class="form-group">
@@ -214,18 +214,20 @@
                                 <input v-model="parcelasEntrada" :disabled="!isEditing">
                             </div>
                             <div class="form-item">
-                                <label>Valor:</label>
-                                <input v-model="valorEntrada" :disabled="!isEditing">
+                                <label>Valor Parcelas:</label>
+                                <input v-model="valorParcelasEntrada" :disabled="!isEditing">
                             </div>
                         </div>
+                        <label>Valor Entrada:</label>
+                        <input v-model="valorEntrada" disabled>
                         <label>Saldo:</label>
                         <input v-model="saldoEntrada" disabled>
 
-                        <h4>Forma de Pagamento 3</h4><br>
+                        <h4>Forma de Pagamento 3 - À Vista</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalAVista" :disabled="!isEditing">
                         <label>Valor:</label>
-                        <input v-model="valorAVista" :disabled="!isEditing">
+                        <input v-model="valorAVista" disabled>
                     </div>
                 </div>
             </div>
@@ -233,22 +235,25 @@
             <div class="form-group">
                 <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
                 <button class="submit-button" @click="toggleEditMode">Editar</button>
-                <button class="submit-button" :disabled="!isEditing" @click="saveChanges">Salvar</button>
+                <button class="submit-button" :disabled="!isEditing" @click="updateOrcamento">Salvar</button>
             </div>
 
         </form>
+
+        <NotificationMessage :message="message" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, ValorEspaco } from '@/common/utils/Interfaces';
+import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
-import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais } from '@/common/utils/FetchMethods';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais, fetchValoresEspaco } from '@/common/utils/FetchMethods';
 import { OpcionaisFormatados, UpdateFormaPagamento, UpdateOrcamento } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
 
 
@@ -260,6 +265,7 @@ export default defineComponent({
             default: null,
         },
     },
+    components: { NotificationMessage },
     data() {
         return {
             //Cliente
@@ -336,14 +342,18 @@ export default defineComponent({
 
             //Objetos que armazenam todas as opções
             cardapios: [] as Cardapio[],
+            cardapiosReajustados: [] as { id: number; nome: string; precoReajustado: number }[],
             cervejas: [] as Cerveja[],
             cardapiosBar: [] as CardapioBar[],
+            valoresEspaco: [] as ValorEspaco[],
 
             opcionais: [] as Opcional[],
             opcionaisAdicionados: [] as OpcionaisFormatados[],
 
             showOpcionalSelect: false,
             novoOpcionalId: 0,
+
+            message: ''
         };
     },
 
@@ -362,17 +372,20 @@ export default defineComponent({
             this.isEditing = !this.isEditing;
         },
 
-        async saveChanges() {
+        async updateOrcamento() {
+
             const UpdateOpcionais = [
                 // Primeiro, mapeia os opcionais já selecionados
                 ...this.opcionaisSelecionados.map((opcional) => ({
                     Opcional_idOpcional: opcional.Opcional.idOpcional,
                     valorOrcamento: this.removerFormatacaoMonetaria(opcional.valorOrcamento.toString()),
+                    porPessoa: opcional.Opcional.porPessoa
                 })),
                 // Depois, mapeia os opcionais recentemente adicionados
                 ...this.opcionaisAdicionados.map((opcional) => ({
                     Opcional_idOpcional: opcional.Opcional_idOpcional,
                     valorOrcamento: this.removerFormatacaoMonetaria(opcional.valor),
+                    porPessoa: opcional.porPessoa
                 })),
             ];
 
@@ -383,24 +396,26 @@ export default defineComponent({
                 cidade: this.cidade
             }
 
+
+
             const formasPagamento: UpdateFormaPagamento[] = [
                 {
                     nParcelas: parseInt(this.parcelasParcelado, 10),
                     type: 'Parcelado',
-                    valorParcela: this.removerFormatacaoMonetaria(this.valorParcelas),
-                    valorSinal: this.removerFormatacaoMonetaria(this.sinalParcelado)
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorParcelas)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalParcelado))
                 },
                 {
                     nParcelas: parseInt(this.parcelasEntrada, 10),
                     type: 'Entrada Parcelada',
-                    valorParcela: this.removerFormatacaoMonetaria(this.valorEntrada),
-                    valorSinal: this.removerFormatacaoMonetaria(this.sinalEntrada)
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorParcelasEntrada)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalEntrada))
                 },
                 {
                     nParcelas: 1,
                     type: 'À Vista',
-                    valorParcela: this.removerFormatacaoMonetaria(this.valorAVista),
-                    valorSinal: this.removerFormatacaoMonetaria(this.sinalAVista)
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorAVista)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalAVista))
                 }
             ];
 
@@ -434,14 +449,22 @@ export default defineComponent({
                 opcionais: UpdateOpcionais,
             };
 
-            console.log(updateOrcamento)
-
             try {
                 const data = await instance.put('/orcamento/update', updateOrcamento)
-                this.$emit('success', 'Orçamento atualizado com sucesso!');
+                this.message = 'Orçamento atualizado com sucesso!';
+
+                // Atualiza as informações no modal
+                if (this.orcamentoId) {
+                    await this.fetchOrcamentoDetails(this.orcamentoId);
+                    this.opcionaisAdicionados = [];
+                }
             } catch (error) {
                 alert('Erro ao atualizar orçamento!')
             }
+        },
+
+        removerOpcional(index: number) {
+            this.opcionaisSelecionados.splice(index, 1);
         },
 
         async onCardapioSelect() {
@@ -533,13 +556,33 @@ export default defineComponent({
             }
         },
 
-        adicionarOpcional() {
-            // Adiciona um novo objeto com campos vazios para o select e o input
-            this.opcionaisAdicionados.push({
-                Opcional_idOpcional: 0, // Valor inicial para o select
-                nomeOpcional: '',
-                valor: ''
-            });
+        async onEspacoSelect() {
+            const selectedEspaco = this.valoresEspaco.find(valorEspaco => valorEspaco.idValorEspaco === this.valorEspacoId);
+            if (selectedEspaco) {
+                try {
+                    const response = await instance.post('/espaco/reajuste', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw),
+                        valorEspacoId: this.valorEspacoId
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const espacoReajustado = reajustes.find((item: any) => item.id === selectedEspaco.idValorEspaco);
+
+                    if (espacoReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorEspaco = formatarValorMonetario(espacoReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorEspaco = formatarValorMonetario(espacoReajustado.atual);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorPorPessoaBar = formatarValorMonetario(selectedEspaco.valor);
+                }
+            }
         },
 
         async onOpcionalSelected(opcionalId: number, index: number) {
@@ -567,6 +610,67 @@ export default defineComponent({
                     console.error('Erro ao obter o valor do opcional:', error);
                     this.opcionaisAdicionados[index].valor = 'Erro ao carregar valor';
                 }
+            }
+        },
+
+        async updateOpcionaisSelecionados() {
+            const ano = this.calcularDiferencaAnos(this.dataEventoRaw);
+
+            for (let i = 0; i < this.opcionaisSelecionados.length; i++) {
+                const opcional = this.opcionaisSelecionados[i];
+                const opcionalId = opcional.Opcional.idOpcional;
+
+                try {
+                    const response = await instance.post('/opcional/reajustes', { ano });
+                    const reajustes = response.data;
+
+                    // Encontra o valor reajustado correspondente ao opcional
+                    const valorReajustado = reajustes.find((item: any) => item.opcional === opcional.Opcional.nomeOpcional);
+
+                    if (valorReajustado) {
+                        this.opcionaisSelecionados[i] = {
+                            ...opcional,
+                            valorOrcamento: valorReajustado.reajuste,
+                        };
+                    } else {
+                        this.opcionaisSelecionados[i] = {
+                            ...opcional,
+                            valorOrcamento: opcional.Opcional.valorAtual,
+                        };
+                    }
+                } catch (error) {
+                    console.error(`Erro ao obter o valor reajustado para o opcional ${opcional.Opcional.nomeOpcional}:`, error);
+                }
+            }
+        },
+
+        adicionarOpcional() {
+            // Adiciona um novo objeto com campos vazios para o select e o input
+            this.opcionaisAdicionados.push({
+                Opcional_idOpcional: 0, // Valor inicial para o select
+                nomeOpcional: '',
+                valor: '',
+                porPessoa: 0,
+            });
+        },
+
+        async fetchCardapiosReajustados() {
+            const ano = this.calcularDiferencaAnos(this.dataEventoRaw);
+            try {
+                const response = await instance.post('/buffet/cardapio/reajustes', { ano });
+                const reajustes = response.data;
+
+                // Formata os cardápios com os valores reajustados
+                this.cardapiosReajustados = this.cardapios.map(cardapio => {
+                    const reajusteEncontrado = reajustes.find((item: any) => item.cardapio === cardapio.nomeCardapio);
+                    return {
+                        id: cardapio.idCardapio,
+                        nome: cardapio.nomeCardapio,
+                        precoReajustado: reajusteEncontrado ? reajusteEncontrado.reajuste : cardapio.precoCardapio
+                    };
+                });
+            } catch (error) {
+                console.error("Erro ao obter valores reajustados dos cardápios:", error);
             }
         },
 
@@ -607,11 +711,14 @@ export default defineComponent({
             }
         },
 
+        showError(message: string) {
+            this.message = message;
+        },
+
         toggleOpcionalSelect() {
             this.showOpcionalSelect = !this.showOpcionalSelect;
             this.novoOpcionalId = 0; // Reseta o valor selecionado
         },
-
 
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
@@ -648,6 +755,7 @@ export default defineComponent({
                 this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio + orcamento.valorPPCerveja)
                 this.valorTotalBuffet = formatarValorMonetario((orcamento.valorPPCardapio + orcamento.valorPPCerveja) * orcamento.numConvidados)
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
+                this.tipoBarId = orcamento.CardapioBar.idCardapioBar;
                 this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
                 this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
                 this.totalProposta = formatarValorMonetario(orcamento.valorTotalOrcamento);
@@ -659,21 +767,27 @@ export default defineComponent({
                 this.opcionaisSelecionados = orcamento.Orcamento_Opcional;
                 this.valorTotalOpcionais = formatarValorMonetario(orcamento.valorOpcionais);
 
-                //Forma Pagamento à vista
-                this.sinalAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorSinal);
-                this.valorAVista = formatarValorMonetario(orcamento.FormaPagamento[0].valorTotal);
 
-                //Forma Pagamento Entrada
-                this.sinalEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorSinal);
-                this.parcelasEntrada = (orcamento.FormaPagamento[1].numeroParcelasEntrada).toString();
-                this.valorEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela);
-                this.saldoEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorTotal - orcamento.FormaPagamento[1].valorEntrada);
-                this.valorParcelasEntrada = formatarValorMonetario(orcamento.FormaPagamento[1].valorParcela / orcamento.FormaPagamento[1].numeroParcelasEntrada);
+                orcamento.FormaPagamento.forEach((forma) => {
+                    if (forma.tipo === 'À Vista') {
+                        this.sinalAVista = formatarValorMonetario(forma.valorSinal);
+                        this.valorAVista = formatarValorMonetario(forma.valorTotal);
+                    }
 
-                //Forma Pagamento Parcelado
-                this.sinalParcelado = formatarValorMonetario(orcamento.FormaPagamento[2].valorSinal);
-                this.parcelasParcelado = (orcamento.FormaPagamento[2].numeroParcelas).toString();
-                this.valorParcelas = formatarValorMonetario(orcamento.FormaPagamento[2].valorParcela);
+                    if (forma.tipo === 'Entrada Parcelada') {
+                        this.sinalEntrada = formatarValorMonetario(forma.valorSinal);
+                        this.parcelasEntrada = (forma.numeroParcelasEntrada).toString();
+                        this.valorEntrada = formatarValorMonetario(forma.valorEntrada);
+                        this.saldoEntrada = formatarValorMonetario(forma.valorTotal - forma.valorEntrada);
+                        this.valorParcelasEntrada = formatarValorMonetario(forma.valorParcela);
+                    }
+
+                    if (forma.tipo === 'Parcelado') {
+                        this.sinalParcelado = formatarValorMonetario(forma.valorSinal);
+                        this.parcelasParcelado = (forma.numeroParcelas).toString();
+                        this.valorParcelas = formatarValorMonetario(forma.valorParcela);
+                    }
+                })
 
             } catch (error) {
                 console.error('Erro ao buscar detalhes do orçamento:', error);
@@ -683,12 +797,12 @@ export default defineComponent({
         },
 
         preencherTemplate(template: string) {
-            const cardapiosHTML = this.cardapios.map(cardapio => {
-                return `<span class="flex-item-estrutura"><strong>${cardapio.nomeCardapio}:</strong><span>R$ ${cardapio.precoCardapio}</span></span>`;
+            const cardapiosHTML = this.cardapiosReajustados.map(cardapio => {
+                return `<span class="flex-item-estrutura"><strong>${cardapio.nome}:</strong><span> ${this.formatarValorMonetario(cardapio.precoReajustado)}</span></span>`;
             }).join('');
 
             const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
-                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span>R$ ${opcional.valorOrcamento}</span></span>`;
+                return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span> ${this.formatarValorMonetario(opcional.valorOrcamento)}</span></span>`;
             }).join('');
 
             return template
@@ -706,10 +820,10 @@ export default defineComponent({
                 .replace('{{observacoes}}', this.observacoes)
                 .replace('{{diaSemana}}', this.diaSemana)
                 .replace('{{valorEspaco}}', this.valorEspaco)
-                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
-                .replace('{{tipoBebida}}', this.tipoBebida)
-                .replace('{{valorPorPessoaBuffet}}', this.valorPorPessoaBuffet)
-                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
+
+
+
+
                 .replace('{{cardapioBar}}', this.cardapioBar)
                 .replace('{{valorPorPessoaBar}}', this.valorPorPessoaBar)
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
@@ -717,8 +831,16 @@ export default defineComponent({
                 .replace('{{valorCabine}}', this.valorCabine)
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
+                .replace('{{totalOpcionais}}', this.valorTotalOpcionais)
                 .replace('{{cerimonia}}', this.cerimonia)
                 .replace('{{dataCriacao}}', this.dataCriação)
+
+                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
+                .replace('{{valorCardapio}}', this.valorCardapio)
+                .replace('{{tipoBebida}}', this.tipoBebida)
+                .replace('{{valorCerveja}}', this.valorCerveja)
+                .replace('{{valorPorPessoaBuffet}}', this.valorPorPessoaBuffet)
+                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
 
                 .replace('{{sinalAVista}}', this.sinalAVista)
                 .replace('{{valorAVista}}', this.valorAVista)
@@ -753,14 +875,26 @@ export default defineComponent({
         this.cervejas = await fetchCervejas()
         this.cardapiosBar = await fetchCardapioBar()
         this.opcionais = await fetchOpcionais()
+        this.valoresEspaco = await fetchValoresEspaco()
+        this.fetchCardapiosReajustados()
     },
 
     watch: {
         dataEventoRaw: {
             immediate: true,
-            handler(newDate: string) {
+            async handler(newDate: string) {
                 if (newDate) {
                     this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
+
+                    // Atualizar valores automaticamente com base na nova data
+                    await Promise.all([
+                        this.onCardapioSelect(),
+                        this.onCervejaSelect(),
+                        this.onBarSelect(),
+                        this.onEspacoSelect(),
+                        this.updateOpcionaisSelecionados(),
+                        this.fetchCardapiosReajustados(),
+                    ]);
                 }
             },
         },
@@ -773,6 +907,22 @@ export default defineComponent({
             },
         },
     },
+
+    computed: {
+        opcionaisSelecionadosFormatados(): Array<{ Opcional: any, valorOrcamento: number, valorOrcamentoFormatado: string }> {
+            return this.opcionaisSelecionados.map((opcional: any) => ({
+                ...opcional,
+                valorOrcamentoFormatado: formatarValorMonetario(opcional.valorOrcamento) // Formata o valor para exibição
+            }));
+        },
+
+
+        opcionaisDisponiveisParaAdicionar(): Opcional[] {
+            const selecionadosIds = this.opcionaisSelecionados.map((opcional) => opcional.Opcional.idOpcional);
+            return this.opcionais.filter((opcional) => !selecionadosIds.includes(opcional.idOpcional));
+        }
+    }
+
 
 
 });
