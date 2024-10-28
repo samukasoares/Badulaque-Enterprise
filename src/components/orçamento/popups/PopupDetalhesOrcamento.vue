@@ -188,7 +188,7 @@
                     </div>
 
                     <div class="form-column">
-                        <h4>Forma de Pagamento 1</h4><br>
+                        <h4>Forma de Pagamento 1 - Parcelado</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalParcelado" :disabled="!isEditing">
                         <div class="form-group">
@@ -203,7 +203,7 @@
                         </div>
 
 
-                        <h4>Forma de Pagamento 2</h4><br>
+                        <h4>Forma de Pagamento 2 - Entrada Parcelada</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalEntrada" :disabled="!isEditing">
                         <div class="form-group">
@@ -212,14 +212,16 @@
                                 <input v-model="parcelasEntrada" :disabled="!isEditing">
                             </div>
                             <div class="form-item">
-                                <label>Valor:</label>
-                                <input v-model="valorEntrada" :disabled="!isEditing">
+                                <label>Valor Parcelas:</label>
+                                <input v-model="valorParcelasEntrada" :disabled="!isEditing">
                             </div>
                         </div>
+                        <label>Valor Entrada:</label>
+                        <input v-model="valorEntrada" disabled>
                         <label>Saldo:</label>
                         <input v-model="saldoEntrada" disabled>
 
-                        <h4>Forma de Pagamento 3</h4><br>
+                        <h4>Forma de Pagamento 3 - À Vista</h4><br>
                         <label>Sinal:</label>
                         <input v-model="sinalAVista" :disabled="!isEditing">
                         <label>Valor:</label>
@@ -231,7 +233,7 @@
             <div class="form-group">
                 <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
                 <button class="submit-button" @click="toggleEditMode">Editar</button>
-                <button class="submit-button" :disabled="!isEditing" @click="saveChanges">Salvar</button>
+                <button class="submit-button" :disabled="!isEditing" @click="updateOrcamento">Salvar</button>
             </div>
 
         </form>
@@ -367,7 +369,7 @@ export default defineComponent({
             this.isEditing = !this.isEditing;
         },
 
-        async saveChanges() {
+        async updateOrcamento() {
 
             const UpdateOpcionais = [
                 // Primeiro, mapeia os opcionais já selecionados
@@ -403,7 +405,7 @@ export default defineComponent({
                 {
                     nParcelas: parseInt(this.parcelasEntrada, 10),
                     type: 'Entrada Parcelada',
-                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorEntrada)),
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorParcelasEntrada)),
                     valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalEntrada))
                 },
                 {
@@ -444,10 +446,6 @@ export default defineComponent({
                 opcionais: UpdateOpcionais,
             };
 
-            console.log(updateOrcamento)
-
-
-
             try {
                 const data = await instance.put('/orcamento/update', updateOrcamento)
                 this.message = 'Orçamento atualizado com sucesso!';
@@ -455,6 +453,7 @@ export default defineComponent({
                 // Atualiza as informações no modal
                 if (this.orcamentoId) {
                     await this.fetchOrcamentoDetails(this.orcamentoId);
+                    this.opcionaisAdicionados = [];
                 }
             } catch (error) {
                 alert('Erro ao atualizar orçamento!')
@@ -583,16 +582,6 @@ export default defineComponent({
             }
         },
 
-        adicionarOpcional() {
-            // Adiciona um novo objeto com campos vazios para o select e o input
-            this.opcionaisAdicionados.push({
-                Opcional_idOpcional: 0, // Valor inicial para o select
-                nomeOpcional: '',
-                valor: '',
-                porPessoa: 0,
-            });
-        },
-
         async onOpcionalSelected(opcionalId: number, index: number) {
             // Encontra o opcional selecionado
             const opcionalSelecionado = this.opcionais.find(op => op.idOpcional === opcionalId);
@@ -619,6 +608,47 @@ export default defineComponent({
                     this.opcionaisAdicionados[index].valor = 'Erro ao carregar valor';
                 }
             }
+        },
+
+        async updateOpcionaisSelecionados() {
+            const ano = this.calcularDiferencaAnos(this.dataEventoRaw);
+
+            for (let i = 0; i < this.opcionaisSelecionados.length; i++) {
+                const opcional = this.opcionaisSelecionados[i];
+                const opcionalId = opcional.Opcional.idOpcional;
+
+                try {
+                    const response = await instance.post('/opcional/reajustes', { ano });
+                    const reajustes = response.data;
+
+                    // Encontra o valor reajustado correspondente ao opcional
+                    const valorReajustado = reajustes.find((item: any) => item.opcional === opcional.Opcional.nomeOpcional);
+
+                    if (valorReajustado) {
+                        this.opcionaisSelecionados[i] = {
+                            ...opcional,
+                            valorOrcamento: valorReajustado.reajuste,
+                        };
+                    } else {
+                        this.opcionaisSelecionados[i] = {
+                            ...opcional,
+                            valorOrcamento: opcional.Opcional.valorAtual,
+                        };
+                    }
+                } catch (error) {
+                    console.error(`Erro ao obter o valor reajustado para o opcional ${opcional.Opcional.nomeOpcional}:`, error);
+                }
+            }
+        },
+
+        adicionarOpcional() {
+            // Adiciona um novo objeto com campos vazios para o select e o input
+            this.opcionaisAdicionados.push({
+                Opcional_idOpcional: 0, // Valor inicial para o select
+                nomeOpcional: '',
+                valor: '',
+                porPessoa: 0,
+            });
         },
 
         calcularDiferencaAnos(data: string) {
@@ -666,7 +696,6 @@ export default defineComponent({
             this.showOpcionalSelect = !this.showOpcionalSelect;
             this.novoOpcionalId = 0; // Reseta o valor selecionado
         },
-
 
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
@@ -725,9 +754,9 @@ export default defineComponent({
                     if (forma.tipo === 'Entrada Parcelada') {
                         this.sinalEntrada = formatarValorMonetario(forma.valorSinal);
                         this.parcelasEntrada = (forma.numeroParcelasEntrada).toString();
-                        this.valorEntrada = formatarValorMonetario(forma.valorParcela);
+                        this.valorEntrada = formatarValorMonetario(forma.valorEntrada);
                         this.saldoEntrada = formatarValorMonetario(forma.valorTotal - forma.valorEntrada);
-                        this.valorParcelasEntrada = formatarValorMonetario(forma.valorParcela / forma.numeroParcelasEntrada);
+                        this.valorParcelasEntrada = formatarValorMonetario(forma.valorParcela);
                     }
 
                     if (forma.tipo === 'Parcelado') {
@@ -831,6 +860,7 @@ export default defineComponent({
                         this.onCervejaSelect(),
                         this.onBarSelect(),
                         this.onEspacoSelect(),
+                        this.updateOpcionaisSelecionados()
                     ]);
                 }
             },
