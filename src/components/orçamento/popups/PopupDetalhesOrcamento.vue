@@ -166,10 +166,11 @@
                                 <div v-for="(opcional, index) in opcionaisAdicionados" :key="index" class="form-group">
                                     <select v-model="opcional.Opcional_idOpcional"
                                         @change="onOpcionalSelected(opcional.Opcional_idOpcional, index)">
-                                        <option v-for="opcionalItem in opcionais" :key="opcionalItem.idOpcional"
-                                            :value="opcionalItem.idOpcional">
+                                        <option v-for="opcionalItem in opcionaisDisponiveisParaAdicionar"
+                                            :key="opcionalItem.idOpcional" :value="opcionalItem.idOpcional">
                                             {{ opcionalItem.nomeOpcional }}
                                         </option>
+
                                     </select>
 
                                     <!-- Campo de input para inserir o valor do opcional selecionado -->
@@ -881,6 +882,12 @@ export default defineComponent({
                 ...opcional,
                 valorOrcamentoFormatado: formatarValorMonetario(opcional.valorOrcamento) // Formata o valor para exibição
             }));
+        },
+
+
+        opcionaisDisponiveisParaAdicionar(): Opcional[] {
+            const selecionadosIds = this.opcionaisSelecionados.map((opcional) => opcional.Opcional.idOpcional);
+            return this.opcionais.filter((opcional) => !selecionadosIds.includes(opcional.idOpcional));
         }
     }
 
