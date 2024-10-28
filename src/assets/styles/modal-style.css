@@ -181,35 +181,7 @@
 
   /* Final Formatação para mostrar Valores no MODAL */
 
-/* Botão Adicionar (+) */
-.modal-form .botao-add {
-    padding: 4px 8px;
-    font-size: 0.9em;
-    background-color: transparent;
-    color: #2F4036;
-    border: 1px solid #2F4036;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    width: auto; /* Garante que o botão não ocupe toda a largura */
-    height: auto;
-    line-height: 1;
-}
 
-.modal-form .botao-add:hover {
-    background-color: #9f865D;
-    color: white;
-}
-.modal-form .opcionais-header {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Espaçamento entre o título e o botão */
-    margin-bottom: 8px;
-}
-
-.modal-form .botao-add:hover {
-    background-color: #9f865D;
-}
 
 /* Botão Remover */
 .modal-form .botao-remover {

@@ -242,14 +242,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead } from '@/common/utils/Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, ValorEspaco } from '@/common/utils/Interfaces';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
-import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais } from '@/common/utils/FetchMethods';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais, fetchValoresEspaco } from '@/common/utils/FetchMethods';
 import { OpcionaisFormatados, UpdateFormaPagamento, UpdateOrcamento } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
 
 
@@ -340,6 +340,7 @@ export default defineComponent({
             cardapios: [] as Cardapio[],
             cervejas: [] as Cerveja[],
             cardapiosBar: [] as CardapioBar[],
+            valoresEspaco: [] as ValorEspaco[],
 
             opcionais: [] as Opcional[],
             opcionaisAdicionados: [] as OpcionaisFormatados[],
@@ -464,7 +465,6 @@ export default defineComponent({
             this.opcionaisSelecionados.splice(index, 1);
         },
 
-
         async onCardapioSelect() {
             // Obtém o cardápio selecionado
             const selectedCardapio = this.cardapios.find(cardapio => cardapio.idCardapio === this.cardapioBuffetId);
@@ -550,6 +550,35 @@ export default defineComponent({
                     console.error('Erro ao obter valor reajustado:', error);
                     // Em caso de erro, manter o valor original
                     this.valorPorPessoaBar = formatarValorMonetario(selectedBar.precoCardapio);
+                }
+            }
+        },
+
+        async onEspacoSelect() {
+            const selectedEspaco = this.valoresEspaco.find(valorEspaco => valorEspaco.idValorEspaco === this.valorEspacoId);
+            if (selectedEspaco) {
+                try {
+                    const response = await instance.post('/espaco/reajuste', {
+                        ano: this.calcularDiferencaAnos(this.dataEventoRaw),
+                        valorEspacoId: this.valorEspacoId
+                    });
+
+                    const reajustes = response.data;
+
+                    // Encontrar o cardápio reajustado com base no ID selecionado
+                    const espacoReajustado = reajustes.find((item: any) => item.id === selectedEspaco.idValorEspaco);
+
+                    if (espacoReajustado) {
+                        // Atualizar o valor do cardápio com o valor reajustado
+                        this.valorEspaco = formatarValorMonetario(espacoReajustado.reajuste);
+                    } else {
+                        // Se o cardápio não foi encontrado na resposta, usa o valor original
+                        this.valorEspaco = formatarValorMonetario(espacoReajustado.atual);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter valor reajustado:', error);
+                    // Em caso de erro, manter o valor original
+                    this.valorPorPessoaBar = formatarValorMonetario(selectedEspaco.valor);
                 }
             }
         },
@@ -786,6 +815,7 @@ export default defineComponent({
         this.cervejas = await fetchCervejas()
         this.cardapiosBar = await fetchCardapioBar()
         this.opcionais = await fetchOpcionais()
+        this.valoresEspaco = await fetchValoresEspaco()
     },
 
     watch: {
@@ -799,7 +829,8 @@ export default defineComponent({
                     await Promise.all([
                         this.onCardapioSelect(),
                         this.onCervejaSelect(),
-                        this.onBarSelect()
+                        this.onBarSelect(),
+                        this.onEspacoSelect(),
                     ]);
                 }
             },
