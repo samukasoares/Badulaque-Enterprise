@@ -151,12 +151,12 @@
                             <h4>Opcionais</h4>
                             <button type="button" @click="adicionarOpcional" :disabled="!isEditing">+</button>
                             <br>
-                            <div v-for="(opcional, index) in opcionaisSelecionados" :key="index">
+                            <div v-for="(opcional, index) in opcionaisSelecionadosFormatados" :key="index">
                                 <label>{{ opcional.Opcional.nomeOpcional }}:</label>
                                 <button type="button" class="botao-remover" v-if="isEditing"
                                     @click="removerOpcional(index)">Remover</button>
-                                <input v-model="opcional.valorOrcamento" :disabled="!isEditing" type="text">
-
+                                <input v-model="opcionaisSelecionados[index].valorOrcamento" :disabled="!isEditing"
+                                    type="text" :value="opcional.valorOrcamentoFormatado">
                             </div>
                             <label>Total Opcionais</label>
                             <input disabled class="valorTotal" v-model="valorTotalOpcionais">
@@ -874,6 +874,15 @@ export default defineComponent({
             },
         },
     },
+
+    computed: {
+        opcionaisSelecionadosFormatados(): Array<{ Opcional: any, valorOrcamento: number, valorOrcamentoFormatado: string }> {
+            return this.opcionaisSelecionados.map((opcional: any) => ({
+                ...opcional,
+                valorOrcamentoFormatado: formatarValorMonetario(opcional.valorOrcamento) // Formata o valor para exibição
+            }));
+        }
+    }
 
 
 
