@@ -827,8 +827,6 @@ export default defineComponent({
                 .replace('{{cardapioBar}}', this.cardapioBar)
                 .replace('{{valorPorPessoaBar}}', this.valorPorPessoaBar)
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
-                .replace('{{valorNoiva}}', this.valorNoiva)
-                .replace('{{valorCabine}}', this.valorCabine)
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
                 .replace('{{totalOpcionais}}', this.valorTotalOpcionais)

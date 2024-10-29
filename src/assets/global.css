@@ -252,6 +252,17 @@ td:last-child {
 
 /* Final Barra Opções*/
 
+.action-button{
+    background-color: transparent;
+    border: none;
+    color: #425C4D;
+}
+
+.action-button:hover{
+color: #2F4036;
+cursor: pointer;
+}
+
 .action-icon {
     color: #425C4D;
     cursor: pointer;
