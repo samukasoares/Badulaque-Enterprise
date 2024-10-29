@@ -32,7 +32,7 @@
                 <td>{{ orcamento.tipoEvento }}</td>
                 <td>{{ formatarDateToString(orcamento.createdAt) }}</td>
                 <td>{{ orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-' }}</td>
-                <td><i class="fa-solid fa-share action-icon"></i></td>
+                <td><button @click="enviarPDF(orcamento.idOrcamento)">Enviar PDF</button></td>
             </tr>
         </tbody>
     </table>
@@ -59,8 +59,10 @@ import { defineComponent, computed, ref } from 'vue';
 import PopupOrcamento from '@/components/orçamento/popups/PopupCriarOrcamento.vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
-import { AllOrcamentos, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
+import { AllOrcamentos, Orcamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
 import PopupDetalhes from './popups/PopupDetalhesOrcamento.vue';
+import { gerarPDFDoHtml, gerarPDFDoHtmlWhatsapp } from '@/common/utils/pdfService';
+import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
 
 export default defineComponent({
     components: { PopupOrcamento, NotificationMessage, PopupDetalhes },
@@ -170,6 +172,90 @@ export default defineComponent({
             return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
         },
 
+        async enviarPDF(idOrcamento: number) {
+            try {
+                console.log('Iniciando o processo de envio de PDF...');
+                // Busca o orçamento com base no ID
+                const response = await instance.get(`/orcamento/get/${idOrcamento}`);
+                const orcamento = response.data;
+
+                // Carrega o template HTML e o preenche com os dados do orçamento
+                const templatePath = '/template-orcamento.html';
+                const templateResponse = await fetch(templatePath);
+                let template = await templateResponse.text();
+
+                // Preenche o template com os dados do orçamento
+                template = this.preencherTemplate(template, orcamento);
+
+                // Gera o PDF em Blob usando a função gerarPDFDoHtmlWhatsapp
+                const pdfContent = await gerarPDFDoHtmlWhatsapp(template, orcamento.referencia);
+
+                // Verifica se pdfContent é um Blob e cria o FormData
+                if (pdfContent instanceof Blob) {
+                    const formData = new FormData();
+                    formData.append("file", pdfContent, `Orcamento.pdf`);
+
+                    // Envia o FormData para o backend, incluindo o idContrato na URL
+                    await instance.post(`/orcamento/post-pdf/${idOrcamento}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    this.message = 'PDF enviado com sucesso!';
+                } else {
+                    console.error("Erro: O conteúdo do PDF não é um Blob.");
+                }
+            } catch (error) {
+                console.error('Erro ao enviar PDF:', error);
+                this.message = 'Erro ao enviar PDF';
+            }
+        },
+
+        preencherTemplate(template: string, orcamento: Orcamento): string {
+            return template
+                .replace('{{id}}', orcamento.idOrcamento.toString())
+                .replace('{{referencia}}', orcamento.referenciaOrcamento)
+                .replace('{{nome}}', orcamento.Lead.nomeLead)
+                .replace('{{cidade}}', orcamento.Lead.cidade)
+                .replace('{{telefone}}', orcamento.Lead.celular)
+                .replace('{{tipoEvento}}', orcamento.tipoEvento)
+                .replace('{{data}}', formatarDataExtenso(orcamento.dataEvento))
+                .replace('{{convidados}}', orcamento.numConvidados.toString())
+                .replace('{{totalProposta}}', orcamento.valorTotalOrcamento.toString())
+                .replace('{{dataCriação}}', formatarDateToString(orcamento.createdAt))
+                //.replace('{{dataEnvio}}', orcamento.referenciaOrcamento)
+                .replace('{{observacoes}}', orcamento.observacoesOrcamento)
+                //.replace('{{diaSemana}}', orcamento.dia)
+                .replace('{{valorEspaco}}', orcamento.valorEspacoFinal.toString())
+                .replace('{{cardapioBar}}', orcamento.CardapioBar.nomeCardapioBar)
+                .replace('{{valorPorPessoaBar}}', orcamento.valorPPBar.toString())
+                //.replace('{{cardapios}}', orcamento.tipoEvento)
+                //.replace('{{opcionais}}', orcamento.tipoEvento)
+                .replace('{{totalOpcionais}}', orcamento.valorOpcionais.toString())
+                .replace('{{cerimonia}}', orcamento.cerimoniaLocal.toString())
+                .replace('{{cardapioBuffet}}', orcamento.Cardapio.nomeCardapio)
+                .replace('{{valorCardapio}}', orcamento.valorPPCardapio.toString())
+                .replace('{{tipoBebida}}', orcamento.Cerveja.nome)
+                .replace('{{valorCerveja}}', orcamento.valorPPCerveja.toString())
+                .replace('{{valorPorPessoaBuffet}}', orcamento.valorPPCardapio.toString())
+
+
+            /* 
+
+            .replace('{{sinalAVista}}', this.sinalAVista)
+            .replace('{{valorAVista}}', this.valorAVista)
+
+            .replace('{{sinalEntrada}}', this.sinalEntrada)
+            .replace('{{parcelasEntrada}}', this.parcelasEntrada)
+            .replace('{{valorEntrada}}', this.valorEntrada)
+            .replace('{{saldoEntrada}}', this.saldoEntrada)
+            .replace('{{valorParcelasEntrada}}', this.valorParcelasEntrada)
+
+            .replace('{{sinalParcelado}}', this.sinalParcelado)
+            .replace('{{parcelasParcelado}}', this.parcelasParcelado)
+            .replace('{{valorParcelas}}', this.valorParcelas)*/
+        },
     },
 });
 </script>
