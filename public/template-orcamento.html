@@ -122,7 +122,7 @@
         <span>• Personalização dos cardápios</span>
         <span>• Sousplat de Inox ou Rattan</span>
         <span>• Taças de Vidro</span>
-        <span>• Atendimento com 1 garçom para até 20 convidados</span>
+        <span>• Atendimento com 1 garçom a cada 20 convidados</span>
         <span
           >• Crianças de 0-5 anos livres, 6-10 pagam 50% e 10+ anos pagam
           100%</span
@@ -149,7 +149,9 @@
 
       <div class="titulo">OPCIONAIS</div>
       <span class="flex-item-estrutura"
-        ><strong>Bartender:</strong><span> {{valorTotalBar}}</span></span
+        ><strong>Bartender:</strong
+        ><span> {{cardapioBar}} - {{valorPorPessoaBar}}</span
+        ><span> {{valorTotalBar}}</span></span
       >
       <div class="estrutura">{{opcionais}}</div>
 
@@ -192,8 +194,7 @@
         >
         <span class="forma-pagamento"
           >3ª (À vista): Sinal de <strong> {{sinalAVista}}</strong> e 1x de
-          <strong> {{valorAVista}}</strong>. Desconto:
-          <strong> R$8,99%</strong></span
+          <strong> {{valorAVista}}</strong>. Desconto: <strong> -</strong></span
         >
       </div>
     </div>
