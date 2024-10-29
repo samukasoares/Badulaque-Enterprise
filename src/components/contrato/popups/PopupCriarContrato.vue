@@ -215,7 +215,10 @@ export default defineComponent({
             const contratoFullData: ContratoFullData = {
                 contrato: contrato,
                 clientes: clientes,
+                orcamento: { referenciaOrcamento: this.orcamentoSelecionado.referenciaOrcamento }
             };
+
+            console.log(contratoFullData)
 
             try {
                 const data = await instance.post('/contrato/create', contratoFullData)

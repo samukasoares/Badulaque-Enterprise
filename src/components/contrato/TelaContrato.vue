@@ -57,7 +57,7 @@
             <td>{{ contrato.Orcamento.tipoEvento }}</td>
             <td>{{ contrato.Orcamento.numConvidados }}</td>
             <td>{{ contrato.Orcamento.Cardapio.nomeCardapio }}</td>
-            <td>{{ formatarValorMonetario(contrato.Orcamento.FormaPagamento[2].valorTotal) }}</td>
+            <td>{{ contrato.Orcamento.valorTotalOrcamento }}</td>
             <td><input type="checkbox" class="custom-checkbox" v-model="contrato.assinado"
                     @change="atualizarAssinado(contrato)"></td>
             <td><i class="fa-solid fa-edit action-icon"></i></td>

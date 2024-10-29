@@ -29,6 +29,7 @@ interface Orcamento {
     FormaPagamento: FormaPagamento[];
     Lead: Lead;
     Cardapio: Cardapio;
+    valorTotalOrcamento: number;
 };
 
 export interface Contrato {

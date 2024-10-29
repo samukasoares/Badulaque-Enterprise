@@ -389,6 +389,8 @@ export default defineComponent({
                 })),
             ];
 
+            console.log(UpdateOpcionais)
+
             const lead: RegistroLead = {
                 nomeLead: this.nome,
                 celular: this.telefone,
@@ -448,6 +450,7 @@ export default defineComponent({
                 lead: lead,
                 opcionais: UpdateOpcionais,
             };
+
 
             try {
                 const data = await instance.put('/orcamento/update', updateOrcamento)
@@ -596,7 +599,6 @@ export default defineComponent({
                     });
 
                     const reajustes = response.data;
-
                     // Encontra o valor correspondente ao opcional selecionado
                     const valorReajustado = reajustes.find((item: any) => item.opcional === opcionalSelecionado.nomeOpcional);
 

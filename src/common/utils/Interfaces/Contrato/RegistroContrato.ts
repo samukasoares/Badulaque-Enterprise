@@ -21,6 +21,7 @@ export interface RegistroCliente {
 export type ContratoFullData = {
     contrato: RegistroContrato,
     clientes: RegistroCliente[];
+    orcamento: {referenciaOrcamento:string}
 };
 
 //Fim Registro Contrato
