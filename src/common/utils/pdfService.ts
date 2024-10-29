@@ -20,7 +20,7 @@ export async function gerarPDFDoHtml(template: string, referencia: string) {
   return new Promise<void>((resolve, reject) => {
     iframe.onload = async () => {
       try {
-        const canvas = await html2canvas(iframeDoc.body, { scale: 6 });
+        const canvas = await html2canvas(iframeDoc.body, { scale: 4 });
         const imgData = canvas.toDataURL('image/png');
         const imgWidth = 210;
         const pageHeight = 295;
@@ -72,7 +72,7 @@ export function gerarPDFDoHtmlWhatsapp(html: string, referencia: string): Promis
       iframe.onload = async () => {
           try {
               // Usa uma escala alta para melhorar a qualidade e manter as dimensões do PDF
-              const canvas = await html2canvas(iframeDoc.body, { scale: 6 });
+              const canvas = await html2canvas(iframeDoc.body, { scale: 4 });
               const imgData = canvas.toDataURL('image/png');
 
               // Define o documento PDF e dimensões

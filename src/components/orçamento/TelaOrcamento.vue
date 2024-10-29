@@ -67,6 +67,7 @@ import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper
 import { Cardapio } from '@/common/utils/Interfaces';
 import { formatarValorMonetario } from '@/common/utils/Helper';
 import { fetchCardapios } from '@/common/utils/FetchMethods';
+import { gerarMensagemWhatsApp } from '@/common/utils/Helper/Whatsapp';
 
 export default defineComponent({
     components: { PopupOrcamento, NotificationMessage, PopupDetalhes },
@@ -85,6 +86,7 @@ export default defineComponent({
             cardapios: [] as Cardapio[],
             cardapiosReajustados: [] as { id: number; nome: string; precoReajustado: number }[],
             opcionaisSelecionados: [] as OrcamentoOpcional[],
+            links: [] as string[],
 
             sinalAVista: '',
             valorAVista: '',
@@ -104,7 +106,8 @@ export default defineComponent({
     },
     async mounted() {
         this.fetchOrcamentos();
-        this.cardapios = await fetchCardapios()
+        this.cardapios = await fetchCardapios();
+        await this.loadLinks();
     },
     computed: {
         // Filtra os orçamentos com base no status selecionado
@@ -193,6 +196,17 @@ export default defineComponent({
             return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
         },
 
+        async loadLinks() {
+            try {
+                const response = await fetch("/links-orcamentos.json");
+                if (!response.ok) throw new Error("Falha ao carregar o arquivo de links");
+                this.links = await response.json();
+            } catch (error) {
+                console.error("Erro ao carregar links:", error);
+                this.links = []; // Define como um array vazio caso o carregamento falhe
+            }
+        },
+
         calcularDiferencaAnos(data: string) {
             // Verificar se a data está no formato `yyyy-MM-dd`
             const [ano, mes, dia] = data.split('-').map(Number);
@@ -239,6 +253,10 @@ export default defineComponent({
                 const response = await instance.get(`/orcamento/get/${idOrcamento}`);
                 const orcamento = response.data;
 
+                // Define o índice do link com base no id do orçamento
+                const linkIndex = idOrcamento % this.links.length;
+                const linkOrcamento = this.links[linkIndex];
+
                 const dataEvento = orcamento.dataEvento.slice(0, 10); // Supondo que dataEvento seja uma string no formato 'YYYY-MM-DD'
                 const ano = this.calcularDiferencaAnos(dataEvento);
 
@@ -273,6 +291,18 @@ export default defineComponent({
                 } else {
                     console.error("Erro: O conteúdo do PDF não é um Blob.");
                 }
+
+                // Montando a mensagem de WhatsApp
+                const mensagemWhatsApp = gerarMensagemWhatsApp(orcamento, linkOrcamento);
+
+                // Formata o número de telefone removendo caracteres especiais
+                const numeroTelefone = orcamento.Lead.celular.replace(/[^\d]/g, '');
+
+                // Cria o link para o WhatsApp com a mensagem formatada
+                const whatsappUrl = `https://web.whatsapp.com/send?phone=55${numeroTelefone}&text=${encodeURIComponent(mensagemWhatsApp)}`;
+
+                // Abre o link em uma nova aba
+                window.open(whatsappUrl, '_blank');
             } catch (error) {
                 console.error('Erro ao enviar PDF:', error);
                 this.message = 'Erro ao enviar PDF';
@@ -325,7 +355,7 @@ export default defineComponent({
                 .replace('{{observacoes}}', orcamento.observacoesOrcamento)
                 .replace('{{valorEspaco}}', formatarValorMonetario(orcamento.valorEspacoFinal))
                 .replace('{{cardapioBar}}', orcamento.CardapioBar.nomeCardapioBar)
-                .replace('{{valorPorPessoaBar}}', orcamento.valorPPBar.toString())
+                .replace('{{valorPorPessoaBar}}', formatarValorMonetario(orcamento.valorPPBar))
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
                 .replace('{{totalOpcionais}}', formatarValorMonetario(orcamento.valorOpcionais))
