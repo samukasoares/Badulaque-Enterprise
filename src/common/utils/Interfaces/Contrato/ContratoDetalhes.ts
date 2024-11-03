@@ -1,4 +1,4 @@
-interface Cliente {
+export interface Cliente {
     idCliente: number;
     nome: string;
     rg: string;
@@ -11,6 +11,14 @@ interface Cliente {
 
 interface Cardapio {
     nomeCardapio: string;
+}
+
+interface Cerveja {
+    nome: string;
+}
+
+interface Bar {
+    nomeCardapioBar: string
 }
 
 interface FormaPagamento {
@@ -33,6 +41,15 @@ interface OrcamentoOpcional {
     Orcamento_idOrcamento: number;
     valorOrcamento: number;
     Opcional: Opcional;
+    porPessoa: number
+}
+
+interface Lead {
+    idLead: number,
+    nomeLead: string,
+    celular: string,
+    email: string,
+    cidade: string
 }
 
 interface Orcamento {
@@ -46,6 +63,9 @@ interface Orcamento {
     Cardapio_idCardapio: number;
     Cerveja_idCerveja: number;
     CardapioBar_idCardapioBar: number;
+    Lead: Lead;
+    Cerveja: Cerveja,
+    CardapioBar: Bar,
     Lead_idLead: number;
     cerimoniaLocal: number;
     cadeira: string;
@@ -61,6 +81,7 @@ interface Orcamento {
     Cardapio: Cardapio;
     FormaPagamento: FormaPagamento[];
     Orcamento_Opcional: OrcamentoOpcional[];
+    valorTotalOrcamento: number;
 }
 
 export interface Contrato {
@@ -71,4 +92,5 @@ export interface Contrato {
     assinado: number;
     Cliente: Cliente[];
     Orcamento: Orcamento;
+    FormaPagamento_idFormaPagamento:number
 }

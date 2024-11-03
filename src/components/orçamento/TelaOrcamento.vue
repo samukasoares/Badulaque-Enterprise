@@ -78,7 +78,7 @@ export default defineComponent({
             selectedRow: null as number | null,
             searchQuery: '',
             message: '',
-            status: 'pendentes' as keyof AllOrcamentos,
+            status: 'enviados' as keyof AllOrcamentos,
 
             orcamentos: {} as AllOrcamentos,
             orcamentoSelecionado: null as OrcamentoBasico | null,
@@ -303,6 +303,11 @@ export default defineComponent({
 
                 // Abre o link em uma nova aba
                 window.open(whatsappUrl, '_blank');
+
+                const enviado = await instance.put(`/orcamento/atualizar-enviado/${idOrcamento}`);
+
+                await this.fetchOrcamentos();
+
             } catch (error) {
                 console.error('Erro ao enviar PDF:', error);
                 this.message = 'Erro ao enviar PDF';
@@ -351,7 +356,7 @@ export default defineComponent({
                 .replace('{{convidados}}', orcamento.numConvidados.toString())
                 .replace('{{totalProposta}}', formatarValorMonetario(orcamento.valorTotalOrcamento))
                 .replace('{{dataCriação}}', formatarDateToString(orcamento.createdAt))
-                //.replace('{{dataEnvio}}', orcamento.referenciaOrcamento)
+                .replace('{{dataEnvio}}', orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-')
                 .replace('{{observacoes}}', orcamento.observacoesOrcamento)
                 .replace('{{valorEspaco}}', formatarValorMonetario(orcamento.valorEspacoFinal))
                 .replace('{{cardapioBar}}', orcamento.CardapioBar.nomeCardapioBar)
