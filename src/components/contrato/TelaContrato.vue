@@ -43,7 +43,6 @@
             <th>Tipo</th>
             <th>Convidados</th>
             <th>Cardápio</th>
-            <th>Total Contrato</th>
             <th>Assinado</th>
             <th>Definir Cardápio</th>
             <th>Pagamentos</th>
@@ -57,7 +56,6 @@
             <td>{{ contrato.Orcamento.tipoEvento }}</td>
             <td>{{ contrato.Orcamento.numConvidados }}</td>
             <td>{{ contrato.Orcamento.Cardapio.nomeCardapio }}</td>
-            <td>{{ contrato.Orcamento.valorTotalOrcamento }}</td>
             <td><input type="checkbox" class="custom-checkbox" v-model="contrato.assinado"
                     @change="atualizarAssinado(contrato)"></td>
             <td><i class="fa-solid fa-edit action-icon"></i></td>
@@ -149,7 +147,6 @@ export default defineComponent({
                     idContrato: contrato.idContrato,
                     assinado: contrato.assinado
                 };
-
             } catch (error) {
                 console.error('Erro ao tentar atualizar o contrato:', error);
             }
@@ -179,7 +176,6 @@ export default defineComponent({
                 this.message = '';
             }, 3000);
         },
-
     },
     async mounted() {
         this.contratos = await fetchContratos()

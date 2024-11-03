@@ -78,7 +78,7 @@ export default defineComponent({
             selectedRow: null as number | null,
             searchQuery: '',
             message: '',
-            status: 'pendentes' as keyof AllOrcamentos,
+            status: 'enviados' as keyof AllOrcamentos,
 
             orcamentos: {} as AllOrcamentos,
             orcamentoSelecionado: null as OrcamentoBasico | null,

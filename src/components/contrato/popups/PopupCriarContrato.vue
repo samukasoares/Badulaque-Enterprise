@@ -2,21 +2,37 @@
     <div class="backdrop" @click.self="close">
         <form class="modal-form" @submit.prevent="submitForm">
             <h4>Orçamento</h4>
+            <!--
             <select v-model="orcamentoSelecionado" required>
                 <option disabled value="">Selecione um orçamento...</option>
                 <option v-for="orcamento in orcamentos" :key="orcamento.idOrcamento" :value="orcamento">
                     {{ orcamento.referenciaOrcamento }} - {{ orcamento.Lead.nomeLead }}
                 </option>
             </select>
+            -->
+
+            <VueMultiselect v-model="orcamentoSelecionado" :options="orcamentos" :multiple="false"
+                :close-on-select="true" :show-labels="false" :preserve-search="true"
+                placeholder="Escolha o orçamento..." :custom-label="customLabel" track-by="idOrcamento"
+                :preselect-first="false" :max-height="250"></VueMultiselect>
+
 
             <h4>Forma de Pagamento</h4>
-            <select v-model="formaDePagamentoSelecionada" required>
+            <VueMultiselect v-model="formaDePagamentoSelecionada" :options="formasDePagamento" :multiple="false"
+                :close-on-select="true" :show-labels="false" :preserve-search="true"
+                placeholder="Escolha a forma de pagamento..." :custom-label="customLabelFormaPagamento"
+                track-by="idFormaPagamento" :preselect-first="false" :max-height="250">
+            </VueMultiselect>
+            <!--
+                <select v-model="formaDePagamentoSelecionada" required>
                 <option disabled value="">Selecione uma forma de pagamento...</option>
                 <option v-for="formaPagamento in formasDePagamento" :key="formaPagamento.idFormaPagamento"
                     :value="formaPagamento">
                     {{ formaPagamento.tipo }}
                 </option>
             </select>
+            -->
+
 
             <h4>Observações</h4>
             <input type="text" v-model="observacoes">
@@ -64,10 +80,12 @@ import { FormaPagamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcam
 import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
 import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato/RegistroContrato';
 import instance from '@/common/utils/AuthService';
+import VueMultiselect from 'vue-multiselect';
+import 'vue-multiselect/dist/vue-multiselect.css'; // Importar o estilo aqui
 
 export default defineComponent({
     components: {
-        NotificationMessage
+        NotificationMessage, VueMultiselect
     },
     data() {
         return {
@@ -105,6 +123,15 @@ export default defineComponent({
                 cidade: '',
                 numero: ''
             });
+        },
+        customLabel(option: OrcamentoBasico) {
+            return option && option.Lead && option.Lead.nomeLead
+                ? `${option.referenciaOrcamento} - ${option.Lead.nomeLead}`
+                : '';
+        },
+
+        customLabelFormaPagamento(option: FormaPagamento) {
+            return option && option.tipo ? option.tipo : '';
         },
         async fetchAddress(index: number) {
             const cep = this.contratantes[index].cep.replace(/\D/g, ''); // Remove caracteres não numéricos
@@ -217,9 +244,6 @@ export default defineComponent({
                 clientes: clientes,
                 orcamento: { referenciaOrcamento: this.orcamentoSelecionado.referenciaOrcamento }
             };
-
-            console.log(contratoFullData)
-
             try {
                 const data = await instance.post('/contrato/create', contratoFullData)
                 this.$emit('success', 'Contrato criado com sucesso!');
@@ -248,4 +272,5 @@ export default defineComponent({
 
 <style scoped>
 @import '../../../assets/styles/modal-style.css';
+@import 'vue-multiselect/dist/vue-multiselect.css';
 </style>
