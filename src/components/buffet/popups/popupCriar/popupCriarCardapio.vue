@@ -97,7 +97,7 @@ export default defineComponent({
                     grupos: this.cardapioGrupos,
                 };
 
-                const response = await instance.post('http://localhost:3001/buffet/criar-cardapio', cardapio);
+                const response = await instance.post('/buffet/criar-cardapio', cardapio);
 
 
                 window.location.reload()

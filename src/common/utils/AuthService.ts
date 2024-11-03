@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3001', // Substitua pela URL base da sua API
+  baseURL: process.env.VUE_APP_API_BASE_URL, 
 });
 // Adiciona um interceptor para incluir o token em todas as requisições
 instance.interceptors.request.use((config) => {

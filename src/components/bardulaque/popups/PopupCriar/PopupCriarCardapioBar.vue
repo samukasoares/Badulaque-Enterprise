@@ -53,7 +53,7 @@ export default defineComponent({
                     precoCardapio: this.precoCardapio,
                     drinks: this.selectedDrinksIds,
                 };
-                const response = await instance.post('http://localhost:3001/bar/create', cardapioBar);
+                const response = await instance.post('/bar/create', cardapioBar);
 
                 window.location.reload()
             } catch (error) {
