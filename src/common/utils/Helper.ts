@@ -14,6 +14,9 @@ export function formatarCelular(numero: string): string {
 }
 
 
-export function formatarValorMonetario(valor: number): string {
+export function formatarValorMonetario(valor: number | undefined) {
+    if (typeof valor !== 'number') {
+        return 'N/A'; // Retorna 'N/A' ou algum texto padrão se o valor for indefinido
+    }
     return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }

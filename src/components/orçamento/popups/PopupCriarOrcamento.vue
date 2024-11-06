@@ -27,7 +27,7 @@
                         <input type="checkbox" v-model="patrocinado">Patrocinado
                     </label>
                     <label>Nome:</label>
-                    <input type="text" v-model="nome" required>
+                    <input type="text" v-model="nome" @input="formatNome" required>
                     <label>Email:</label>
                     <input type="email" v-model="email" required>
                     <label>Telefone:</label>
@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -190,6 +190,13 @@ export default defineComponent({
             }
 
             this.telefone = input;
+        },
+
+        formatNome() {
+            this.nome = this.nome
+                .split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(" ");
         },
 
         //Envio do formulário e criação do orçamento
