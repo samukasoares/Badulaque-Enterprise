@@ -80,7 +80,6 @@
     margin: 10px 0;
 }
 
-
 .modal-form button.submit-button {
     display: block;
     width: 100%;
@@ -128,6 +127,11 @@
     justify-content: space-between;
     margin-bottom: 2px;
 }
+
+.modal-form .form-item {
+    width: 100%;
+}
+
 
 .botao-add {
     display: block;

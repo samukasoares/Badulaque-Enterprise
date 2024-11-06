@@ -6,13 +6,15 @@
                     <h4>Cliente</h4><br>
                     <label>Tipo de Evento:</label>
                     <select v-model="tipoEvento" required>
-                        <option value="" disabled>Selecione</option>
                         <option value="Casamento">Casamento</option>
                         <option value="Aniversario">Aniversário</option>
                         <option value="Empresa">Empresa</option>
                         <option value="Bodas">Bodas</option>
                         <option value="Debutante">15 Anos</option>
                     </select>
+                    <label class="checkbox-label">
+                        <input type="checkbox" v-model="cerimonia">Cerimônia
+                    </label>
                     <label>Fonte:</label>
                     <select v-model="fonte" required>
                         <option value="" disabled>Selecione</option>
@@ -21,18 +23,37 @@
                         <option value="site">Site</option>
                         <option value="indicacao">Indicação</option>
                     </select>
+                    <label class="checkbox-label">
+                        <input type="checkbox" v-model="patrocinado">Patrocinado
+                    </label>
                     <label>Nome:</label>
                     <input type="text" v-model="nome" required>
                     <label>Email:</label>
                     <input type="email" v-model="email" required>
                     <label>Telefone:</label>
                     <input type="tel" v-model="telefone" @input="formatTelefone" required>
-                    <label>Cidade:</label>
-                    <select v-model="cidade" required>
-                        <option value="" disabled>Selecione uma cidade</option>
-                        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome }}
-                        </option>
-                    </select>
+
+                    <div class="form-group">
+                        <div class="form-item">
+                            <label>Estado:</label>
+                            <select v-model="estado" required>
+                                <option value="" disabled>Estado</option>
+                                <option v-for="estado in estados" :key="estado.id" :value="estado.sigla">{{ estado.nome
+                                    }} - {{ estado.sigla }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label>Cidade:</label>
+                            <select v-model="cidade" required>
+                                <option value="" disabled>Selecione uma cidade...</option>
+                                <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome
+                                    }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
 
 
                 </div>
@@ -41,21 +62,21 @@
                     <label>Convidados:</label>
                     <input type="number" v-model="convidados" required>
                     <label>Data:</label>
-                    <input type="date" v-model="data" required>
+                    <input type="date" v-model="data" required :min="dataMinima">
                     <label>Dia da Semana:</label>
                     <input disabled type="text" v-model="diadasemana" required>
                     <label>Cardápio:</label>
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -64,17 +85,15 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
                 <div class="form-column">
                     <label>Referência:</label>
                     <input type="text" v-model="referencia" disabled required>
+
                     <h4>Opcionais</h4><br>
-                    <label class="checkbox-label">
-                        <input type="checkbox" v-model="cerimonia">Cerimônia
-                    </label>
 
                     <div v-for="opcional in opcionais" :key="opcional.idOpcional">
                         <label class="checkbox-label">
@@ -88,7 +107,7 @@
             </div>
             <label>Observações</label>
             <input type="text" v-model="observacoes">
-            <button type="submit" class="submit-button">Enviar</button>
+            <button type="submit" class="submit-button">Gravar</button>
         </form>
     </div>
 
@@ -96,24 +115,33 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchCidades, fetchOpcionais } from '@/common/utils/FetchMethods';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchCidades, fetchEstados, fetchOpcionais } from '@/common/utils/FetchMethods';
 import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, RegistroOrcamento, RegistroOrcamentoData } from '@/common/utils/Interfaces';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'PopupOrcamento',
     data() {
+
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Mês é 0-indexado, então adicionamos 1
+        const dia = String(hoje.getDate()).padStart(2, '0');
+
         return {
             nome: '',
             telefone: '',
             cidade: '',
+            estado: 'SP',
             email: '',
             fonte: '',
-            tipoEvento: '',
+            tipoEvento: 'Casamento',
+            patrocinado: '',
             diadasemana: '',
             referencia: '',
             convidados: 0,
             data: '',
+            dataMinima: `${ano}-${mes}-${dia}`,
             cardapio: null,
             cerveja: 0,
             bar: null,
@@ -128,16 +156,18 @@ export default defineComponent({
             cervejas: [] as Cerveja[],
             opcionais: [] as Opcional[],
             cidades: [] as { id: number, nome: string }[],
+            estados: [] as { id: number, nome: string, sigla: string }[],
 
 
             //Armazena o item selecionado
             cardapioSelecionado: {} as Cardapio,
             cervejaSelecionada: {} as Cerveja,
-            barSelecionado: {} as CardapioBar,
+            barSelecionado: null as CardapioBar | null,
 
         };
     },
     methods: {
+        fetchCidades,
         close() {
             this.$emit('close');
         },
@@ -166,17 +196,19 @@ export default defineComponent({
         async submitForm() {
             const valorDiaDaSemana = this.calcularDiaDaSemanaValor(this.data);
 
+            const cidadeEstado = (this.cidade + " - " + this.estado)
+            console.log(cidadeEstado)
             const lead: RegistroLead = {
                 nomeLead: this.nome,
                 celular: this.telefone,
                 email: this.email,
-                cidade: this.cidade
+                cidade: cidadeEstado
             }
 
             const orcamentoData: RegistroOrcamentoData = {
                 referenciaOrcamento: this.referencia,
                 Cardapio_idCardapio: this.cardapioSelecionado.idCardapio,
-                CardapioBar_idCardapioBar: this.barSelecionado.idCardapioBar,
+                CardapioBar_idCardapioBar: this.barSelecionado ? this.barSelecionado.idCardapioBar : null,
                 Cerveja_idCerveja: this.cervejaSelecionada.idCerveja,
                 numConvidados: this.convidados,
                 observacoesOrcamento: this.observacoes,
@@ -185,7 +217,7 @@ export default defineComponent({
                 tipoEvento: this.tipoEvento,
                 cerimoniaLocal: Number(this.cerimonia),
                 fonte: this.fonte,
-                valorPPBar: this.barSelecionado.precoCardapio,
+                valorPPBar: this.barSelecionado ? this.barSelecionado.precoCardapio : 0,
                 ValorEspaco_idValorEspaco: valorDiaDaSemana,
             }
 
@@ -211,7 +243,6 @@ export default defineComponent({
             const data = new Date(dataString + 'T00:00:00');
             return diasDaSemana[data.getUTCDay()];
         },
-
 
         //Recebe uma data e verifica qual é o ID que deve ser enviado para o backend
         calcularDiaDaSemanaValor(dataString: string) {
@@ -255,6 +286,21 @@ export default defineComponent({
             if (newValue) {
                 this.gerarReferencia();
             }
+        },
+        barEnabled(newValue) {
+            if (!newValue) {
+                this.barSelecionado = null; // Limpa o campo de seleção quando o checkbox é desmarcado
+            }
+        },
+        async estado(newValue) {
+            const estadoSelecionado = this.estados.find(e => e.sigla === newValue);
+            if (estadoSelecionado) {
+                // Carregar cidades com o id do estado selecionado
+                this.cidades = await this.fetchCidades(estadoSelecionado.id);
+            } else {
+                // Limpar cidades se nenhum estado estiver selecionado
+                this.cidades = [];
+            }
         }
     },
     async mounted() {
@@ -262,7 +308,8 @@ export default defineComponent({
         this.cervejas = await fetchCervejas();
         this.cardapioBar = await fetchCardapioBar();
         this.opcionais = await fetchOpcionais();
-        this.cidades = await fetchCidades();
+        this.estados = await fetchEstados();
+        this.cidades = await this.fetchCidades(35);
     }
 });
 </script>

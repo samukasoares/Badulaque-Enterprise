@@ -324,6 +324,7 @@ export default defineComponent({
 
             opcionaisSelecionados: [] as OrcamentoOpcional[],
             valorTotalOpcionais: '',
+            valorTotalOpcionaisOrcamento: '',
 
             sinal1: '',
 
@@ -456,11 +457,18 @@ export default defineComponent({
                 const data = await instance.put('/orcamento/update', updateOrcamento)
                 this.message = 'Orçamento atualizado com sucesso!';
 
+                const enviado = await instance.put(`/orcamento/atualizar-pendente/${updateOrcamento.orcamento.idOrcamento}`);
+
+                this.$emit('orcamentoAtualizado');
                 // Atualiza as informações no modal
                 if (this.orcamentoId) {
                     await this.fetchOrcamentoDetails(this.orcamentoId);
                     this.opcionaisAdicionados = [];
                 }
+
+                this.isEditing = false;
+
+
             } catch (error) {
                 alert('Erro ao atualizar orçamento!')
             }
@@ -602,11 +610,14 @@ export default defineComponent({
                     // Encontra o valor correspondente ao opcional selecionado
                     const valorReajustado = reajustes.find((item: any) => item.opcional === opcionalSelecionado.nomeOpcional);
 
-                    if (valorReajustado) {
-                        this.opcionaisAdicionados[index].valor = formatarValorMonetario(valorReajustado.reajuste);
-                    } else {
-                        this.opcionaisAdicionados[index].valor = formatarValorMonetario(opcionalSelecionado.valorAtual); // supondo que valorOpcional seja o valor original
+                    let valor = valorReajustado ? valorReajustado.reajuste : opcionalSelecionado.valorAtual;
+
+                    // Se o opcional é por pessoa, multiplica pelo número de convidados
+                    if (opcionalSelecionado.porPessoa) {
+                        valor *= parseInt(this.convidados, 10);
                     }
+
+                    this.opcionaisAdicionados[index].valor = formatarValorMonetario(valor);
 
                 } catch (error) {
                     console.error('Erro ao obter o valor do opcional:', error);
@@ -721,7 +732,6 @@ export default defineComponent({
             this.showOpcionalSelect = !this.showOpcionalSelect;
             this.novoOpcionalId = 0; // Reseta o valor selecionado
         },
-
         async fetchOrcamentoDetails(id: number) {
             this.loading = true;
             try {
@@ -768,6 +778,7 @@ export default defineComponent({
 
                 this.opcionaisSelecionados = orcamento.Orcamento_Opcional;
                 this.valorTotalOpcionais = formatarValorMonetario(orcamento.valorOpcionais);
+                this.valorTotalOpcionaisOrcamento = formatarValorMonetario(orcamento.valorOpcionais + (orcamento.valorPPBar * orcamento.numConvidados))
 
 
                 orcamento.FormaPagamento.forEach((forma) => {
@@ -831,7 +842,7 @@ export default defineComponent({
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
-                .replace('{{totalOpcionais}}', this.valorTotalOpcionais)
+                .replace('{{totalOpcionais}}', this.valorTotalOpcionaisOrcamento)
                 .replace('{{cerimonia}}', this.cerimonia)
                 .replace('{{dataCriacao}}', this.dataCriação)
 

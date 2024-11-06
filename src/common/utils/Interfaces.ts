@@ -103,7 +103,7 @@ export interface RegistroOrcamentoData {
     tipoEvento: string,
     cerimoniaLocal: number,
     fonte: string,
-    CardapioBar_idCardapioBar: number
+    CardapioBar_idCardapioBar: number | null
 } 
 
 export interface RegistroOrcamento {
