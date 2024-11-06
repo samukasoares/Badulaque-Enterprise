@@ -52,7 +52,8 @@
     <NotificationMessage :message="message" />
 
     <PopupOrcamento v-if="showModal" @close="showModal = false" @success="handleSuccessMessage" />
-    <PopupDetalhes v-if="showDetailModal" @close="closeDetailModal" :orcamentoId="orcamentoSelecionado?.idOrcamento" />
+    <PopupDetalhes v-if="showDetailModal" @close="closeDetailModal" :orcamentoId="orcamentoSelecionado?.idOrcamento"
+        @orcamentoAtualizado="fetchOrcamentos" />
 </template>
 
 <script lang="ts">
@@ -78,7 +79,7 @@ export default defineComponent({
             selectedRow: null as number | null,
             searchQuery: '',
             message: '',
-            status: 'enviados' as keyof AllOrcamentos,
+            status: 'pendentes' as keyof AllOrcamentos,
 
             orcamentos: {} as AllOrcamentos,
             orcamentoSelecionado: null as OrcamentoBasico | null,
@@ -363,7 +364,7 @@ export default defineComponent({
                 .replace('{{valorPorPessoaBar}}', formatarValorMonetario(orcamento.valorPPBar))
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
-                .replace('{{totalOpcionais}}', formatarValorMonetario(orcamento.valorOpcionais))
+                .replace('{{totalOpcionais}}', formatarValorMonetario(orcamento.valorOpcionais + (orcamento.valorPPBar * orcamento.numConvidados)))
                 .replace('{{cerimonia}}', orcamento.cerimoniaLocal === 1 ? 'Sim' : 'Não')
                 .replace('{{cardapioBuffet}}', orcamento.Cardapio.nomeCardapio)
                 .replace('{{valorCardapio}}', formatarValorMonetario(orcamento.valorPPCardapio))
