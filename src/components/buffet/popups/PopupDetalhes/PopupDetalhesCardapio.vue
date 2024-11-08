@@ -44,7 +44,7 @@
                     <button class="submit-button" @click="gerarPDF()">Imprimir</button>
                 </div>
                 <div class="form-column">
-                    <button class="submit-button">Editar </button>
+                    <button class="submit-button" @click.prevent="emitEditEvent">Editar </button>
                 </div>
             </div>
 
@@ -81,6 +81,9 @@ export default defineComponent({
     },
     methods: {
         formatarValorMonetario,
+        emitEditEvent() {
+            this.$emit('edit-cardapio', this.cardapio);
+        },
         async fetchCardapioDetails(id: number) {
             this.loading = true;
             try {

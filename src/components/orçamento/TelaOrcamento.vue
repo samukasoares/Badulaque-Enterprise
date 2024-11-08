@@ -233,7 +233,6 @@ export default defineComponent({
             try {
                 const response = await instance.post('/buffet/cardapio/reajustes', { ano });
                 const reajustes = response.data;
-                console.log(reajustes)
                 // Formata os cardápios com os valores reajustados
                 this.cardapiosReajustados = this.cardapios.map(cardapio => {
                     const reajusteEncontrado = reajustes.find((item: any) => item.cardapio === cardapio.nomeCardapio);
@@ -356,7 +355,6 @@ export default defineComponent({
                 .replace('{{data}}', formatarDataExtenso(orcamento.dataEvento))
                 .replace('{{convidados}}', orcamento.numConvidados.toString())
                 .replace('{{totalProposta}}', formatarValorMonetario(orcamento.valorTotalOrcamento))
-                .replace('{{dataCriação}}', formatarDateToString(orcamento.createdAt))
                 .replace('{{dataEnvio}}', orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-')
                 .replace('{{observacoes}}', orcamento.observacoesOrcamento)
                 .replace('{{valorEspaco}}', formatarValorMonetario(orcamento.valorEspacoFinal))

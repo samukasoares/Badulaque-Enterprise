@@ -27,7 +27,7 @@
                         <input type="checkbox" v-model="patrocinado">Patrocinado
                     </label>
                     <label>Nome:</label>
-                    <input type="text" v-model="nome" required>
+                    <input type="text" v-model="nome" @input="formatNome" required>
                     <label>Email:</label>
                     <input type="email" v-model="email" required>
                     <label>Telefone:</label>
@@ -136,7 +136,7 @@ export default defineComponent({
             email: '',
             fonte: '',
             tipoEvento: 'Casamento',
-            patrocinado: '',
+            patrocinado: 0,
             diadasemana: '',
             referencia: '',
             convidados: 0,
@@ -192,12 +192,18 @@ export default defineComponent({
             this.telefone = input;
         },
 
+        formatNome() {
+            this.nome = this.nome
+                .split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(" ");
+        },
+
         //Envio do formulário e criação do orçamento
         async submitForm() {
             const valorDiaDaSemana = this.calcularDiaDaSemanaValor(this.data);
 
             const cidadeEstado = (this.cidade + " - " + this.estado)
-            console.log(cidadeEstado)
             const lead: RegistroLead = {
                 nomeLead: this.nome,
                 celular: this.telefone,
@@ -219,6 +225,7 @@ export default defineComponent({
                 fonte: this.fonte,
                 valorPPBar: this.barSelecionado ? this.barSelecionado.precoCardapio : 0,
                 ValorEspaco_idValorEspaco: valorDiaDaSemana,
+                patrocinado: this.patrocinado ? 1 : 0
             }
 
             const orcamento: RegistroOrcamento = {

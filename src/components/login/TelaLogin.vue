@@ -38,7 +38,6 @@ export default defineComponent({
                 localStorage.setItem('token', token);   // Armazena o token no localStorage
                 localStorage.setItem('username', username)
                 this.$router.push('/orcamentos');       // Redireciona para a rota após o login
-                console.log(token);
             } catch (error) {
                 console.error('Erro ao fazer login:', error);
             }

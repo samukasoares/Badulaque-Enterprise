@@ -4,14 +4,18 @@ import { formatarDataExtenso } from "./Data";
 
 export function gerarMensagemWhatsApp(orcamento: Orcamento, linkOrcamento: string): string {
     const detalhesOpcionais = orcamento.Orcamento_Opcional && orcamento.Orcamento_Opcional.length > 0
-    ? `Opcionais: *${orcamento.Orcamento_Opcional.map(opcional => 
-        `${opcional.Opcional.nomeOpcional}*, `
-    ).join('\n')}`
+    ? `Opcionais: ${orcamento.Orcamento_Opcional.map((opcional, index) => 
+        `*${opcional.Opcional.nomeOpcional}*${index < orcamento.Orcamento_Opcional.length - 1 ? ',' : ''}`
+    ).join(' ')}`
     : '';
 
     const detalhesBar = orcamento.CardapioBar && orcamento.CardapioBar.nomeCardapioBar
     ? `Bar: *${orcamento.CardapioBar.nomeCardapioBar}*`
     : '';
+
+    const linkCardapioText = orcamento.Cardapio.linkCardapio 
+    ? ` Link: ${orcamento.Cardapio.linkCardapio}` 
+    : ''; 
 
     return `*${orcamento.Lead.nomeLead}*
 Me chamo ${localStorage.getItem('username')} e sejam bem-vindos à Badulaque Eventos✨!
@@ -19,7 +23,7 @@ Me chamo ${localStorage.getItem('username')} e sejam bem-vindos à Badulaque Eve
 Conforme solicitado, segue prévia do orçamento abaixo referente ao evento *${orcamento.tipoEvento}*, para *${formatarDataExtenso(orcamento.dataEvento)}* considerando *${orcamento.numConvidados}* convidados. 👇🏻
 
 Detalhes do Orçamento Solicitado
-Cardápio: *${orcamento.Cardapio.nomeCardapio}*
+Cardápio: *${orcamento.Cardapio.nomeCardapio}*  ${linkCardapioText}
 Cerveja: *${orcamento.Cerveja.nome}*
 ${detalhesBar}
 ${detalhesOpcionais}
