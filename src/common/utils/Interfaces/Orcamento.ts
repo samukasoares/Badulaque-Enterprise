@@ -37,6 +37,7 @@ interface Opcional {
     idCardapio: number;
     nomeCardapio: string;
     precoCardapio: number;
+    linkCardapio: string;
     tipo: string;
   };
   

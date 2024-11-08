@@ -83,7 +83,6 @@ export default defineComponent({
         formatarValorMonetario,
         emitEditEvent() {
             this.$emit('edit-cardapio', this.cardapio);
-            console.log(this.cardapio);
         },
         async fetchCardapioDetails(id: number) {
             this.loading = true;
