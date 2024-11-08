@@ -19,6 +19,7 @@ export interface Cardapio {
     idCardapio: number,
     nomeCardapio: string,
     precoCardapio: number,
+    linkCardapio: string,
     tipo: string,
 }
 
@@ -37,6 +38,7 @@ export type CardapioInfo = {
     cardapio: {
         nome: string,
         preco: number,
+        link:string,
         itensAgrupados: GroupedItem,
         grupos: Array<{ nomeGrupo: string, qtdItens: number; }>;
     };
