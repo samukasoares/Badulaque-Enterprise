@@ -233,7 +233,6 @@ export default defineComponent({
             try {
                 const response = await instance.post('/buffet/cardapio/reajustes', { ano });
                 const reajustes = response.data;
-                console.log(reajustes)
                 // Formata os cardápios com os valores reajustados
                 this.cardapiosReajustados = this.cardapios.map(cardapio => {
                     const reajusteEncontrado = reajustes.find((item: any) => item.cardapio === cardapio.nomeCardapio);

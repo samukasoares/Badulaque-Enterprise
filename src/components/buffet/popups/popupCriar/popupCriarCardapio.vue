@@ -13,6 +13,9 @@
                     <VueMultiselect v-model="tipoCardapio" :options="opcTipoCardapio" :multiple="false"
                         :close-on-select="true" :show-labels="false" :preselect-first="true"></VueMultiselect>
 
+                    <label>Link:</label>
+                    <input type="text" required class="especial" v-model="link">
+
                     <label>Itens:</label>
                     <VueMultiselect v-model="items" :options="itensAgrupados" :multiple="true" :close-on-select="false"
                         group-values='itens' group-label='grupo' :group-select="true" :show-labels="false"
@@ -50,6 +53,7 @@ export default defineComponent({
             precoCardapio: 0,
             tipoCardapio: '',
             opcTipoCardapio: ['Padrão', 'Personalizado'],
+            link: '',
 
             cardapioGrupos: [] as CardapioGrupos[],
             selectedItemsIds: [] as number[],
@@ -92,6 +96,7 @@ export default defineComponent({
                 const cardapio: RegistroCardapio = {
                     nomeCardapio: this.nomeCardapio,
                     precoCardapio: this.precoCardapio,
+                    linkCardapio: this.link,
                     tipo: this.tipoCardapio,
                     items: this.selectedItemsIds,
                     grupos: this.cardapioGrupos,

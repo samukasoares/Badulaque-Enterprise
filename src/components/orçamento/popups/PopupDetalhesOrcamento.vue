@@ -390,7 +390,6 @@ export default defineComponent({
                 })),
             ];
 
-            console.log(UpdateOpcionais)
 
             const lead: RegistroLead = {
                 nomeLead: this.nome,
@@ -591,7 +590,7 @@ export default defineComponent({
                 } catch (error) {
                     console.error('Erro ao obter valor reajustado:', error);
                     // Em caso de erro, manter o valor original
-                    this.valorPorPessoaBar = formatarValorMonetario(selectedEspaco.valor);
+                    this.valorEspaco = formatarValorMonetario(selectedEspaco.valor);
                 }
             }
         },
@@ -618,6 +617,7 @@ export default defineComponent({
                     }
 
                     this.opcionaisAdicionados[index].valor = formatarValorMonetario(valor);
+                    console.log(this.opcionaisAdicionados)
 
                 } catch (error) {
                     console.error('Erro ao obter o valor do opcional:', error);
@@ -762,8 +762,8 @@ export default defineComponent({
 
                 this.tipoBebida = orcamento.Cerveja.nome;
                 this.tipoBebidaId = orcamento.Cerveja.idCerveja;
-
                 this.valorCerveja = formatarValorMonetario(orcamento.valorPPCerveja);
+
                 this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio + orcamento.valorPPCerveja)
                 this.valorTotalBuffet = formatarValorMonetario((orcamento.valorPPCardapio + orcamento.valorPPCerveja) * orcamento.numConvidados)
                 this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;

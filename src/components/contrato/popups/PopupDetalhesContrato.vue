@@ -31,14 +31,21 @@
                                     <input type="text" disabled :value="contratante.cidade">
                                 </div>
                                 <div class="form-item">
+                                    <label>CEP:</label>
+                                    <input type="text" disabled :value="contratante.cep">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-item">
                                     <label>Rua:</label>
                                     <input type="text" disabled :value="contratante.rua">
                                 </div>
+                                <div class="form-item">
+                                    <label>Número:</label>
+                                    <input type="text" disabled :value="contratante.numero">
+                                </div>
                             </div>
-                            <div class="form-item">
-                                <label>CEP:</label>
-                                <input type="text" disabled :value="contratante.cep">
-                            </div>
+
                         </div>
                     </div>
                     <div class="form-column">
@@ -166,6 +173,7 @@ export default defineComponent({
             email: '',
             cidade: '',
             telefone: '',
+            numero: '',
             contratantes: [] as Cliente[],
             //Data
             data: '',

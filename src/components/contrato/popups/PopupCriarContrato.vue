@@ -237,6 +237,7 @@ export default defineComponent({
                 nome: contratante.nome,
                 rg: contratante.rg,
                 rua: contratante.rua,
+                numero: contratante.numero
             }));
 
             const contratoFullData: ContratoFullData = {

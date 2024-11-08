@@ -8,7 +8,7 @@ interface OrcamentoFullData {
     CardapioBar_idCardapioBar: number;
     Cerveja_idCerveja: number;
     numConvidados: number;
-    observacoesOrcamento?: string;
+    observacoesOrcamento: string | null;
     dataEvento: string;
     ValorEspaco_idValorEspaco: number;
     valorPPBar: number;

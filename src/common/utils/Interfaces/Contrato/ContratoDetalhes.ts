@@ -5,6 +5,7 @@ export interface Cliente {
     cpf: string;
     rua: string;
     cidade: string;
+    numero: string;
     cep: string;
     Contrato_idContrato: number;
 }

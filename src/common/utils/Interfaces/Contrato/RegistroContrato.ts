@@ -16,6 +16,7 @@ export interface RegistroCliente {
     nome: string,
     rg: string
     rua: string,
+    numero: string
 }
 
 export type ContratoFullData = {

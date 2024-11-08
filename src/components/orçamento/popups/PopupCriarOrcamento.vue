@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
@@ -136,7 +136,7 @@ export default defineComponent({
             email: '',
             fonte: '',
             tipoEvento: 'Casamento',
-            patrocinado: '',
+            patrocinado: 0,
             diadasemana: '',
             referencia: '',
             convidados: 0,
@@ -204,7 +204,6 @@ export default defineComponent({
             const valorDiaDaSemana = this.calcularDiaDaSemanaValor(this.data);
 
             const cidadeEstado = (this.cidade + " - " + this.estado)
-            console.log(cidadeEstado)
             const lead: RegistroLead = {
                 nomeLead: this.nome,
                 celular: this.telefone,
@@ -226,6 +225,7 @@ export default defineComponent({
                 fonte: this.fonte,
                 valorPPBar: this.barSelecionado ? this.barSelecionado.precoCardapio : 0,
                 ValorEspaco_idValorEspaco: valorDiaDaSemana,
+                patrocinado: this.patrocinado ? 1 : 0
             }
 
             const orcamento: RegistroOrcamento = {

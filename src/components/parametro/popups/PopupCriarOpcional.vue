@@ -9,7 +9,7 @@
             <input type="number" required v-model='valorAtual'>
 
             <label>Por Pessoa?</label>
-            <input type="checkbox" required v-model='porPessoa'>
+            <input type="checkbox" v-model='porPessoa'>
 
             <button type="submit" class="submit-button" @click="criarOpcional()">Criar</button>
         </form>
