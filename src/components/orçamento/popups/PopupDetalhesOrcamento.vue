@@ -724,6 +724,25 @@ export default defineComponent({
             }
         },
 
+        gerarReferencia() {
+            if (this.tipoEvento && this.dataEventoRaw) {
+                const tipoEventoInicial = this.tipoEvento.charAt(0).toUpperCase();
+
+                // Verifica se a data está no formato esperado
+                const data = new Date(this.dataEventoRaw + 'T00:00:00');
+
+                if (!isNaN(data.getTime())) { // Verifica se a data é válida
+                    const ano = String(data.getUTCFullYear()).slice(-2);
+                    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+                    const dia = String(data.getUTCDate()).padStart(2, '0');
+                    this.referencia = `${tipoEventoInicial}${ano}${mes}${dia}`;
+                } else {
+                    console.error("Data inválida ao tentar gerar a referência");
+                    this.referencia = ''; // Define a referência como vazia ou alguma mensagem padrão
+                }
+            }
+        },
+
         showError(message: string) {
             this.message = message;
         },
@@ -902,7 +921,9 @@ export default defineComponent({
                     this.onEspacoSelect();
                     this.updateOpcionaisSelecionados();
                     this.fetchCardapiosReajustados();
+                    this.gerarReferencia();
                 }
+
             },
             immediate: false
         },

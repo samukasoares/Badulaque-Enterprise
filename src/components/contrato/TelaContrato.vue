@@ -6,6 +6,7 @@
             <select>
                 <option>Ativo</option>
                 <option>Realizado</option>
+                <option>Descartado</option>
             </select>
         </div>
         <input type="text" v-model="searchQuery" placeholder="Pesquisar Contratos...">
@@ -56,8 +57,8 @@
             <td>{{ contrato.Orcamento.tipoEvento }}</td>
             <td>{{ contrato.Orcamento.numConvidados }}</td>
             <td>{{ contrato.Orcamento.Cardapio.nomeCardapio }}</td>
-            <td><input type="checkbox" class="custom-checkbox" v-model="contrato.assinado"
-                    @change="atualizarAssinado(contrato)"></td>
+            <td><input type="checkbox" class="custom-checkbox" v-model="contrato.assinado" :true-value="1"
+                    :false-value="0" @change="atualizarAssinado(contrato)"></td>
             <td><i class="fa-solid fa-edit action-icon"></i></td>
             <td><i class="fa-solid fa-hand-holding-dollar action-icon"></i></td>
             <td><i class="fa-solid fa-sack-dollar action-icon"></i></td>
@@ -89,6 +90,7 @@ import { Contrato } from '@/common/utils/Interfaces/Contrato/ContratoTabela';
 import { formatarData } from '@/common/utils/Helper/Data';
 import { fetchContratos } from '@/common/utils/FetchMethods';
 import { formatarValorMonetario } from '@/common/utils/Helper';
+import instance from '@/common/utils/AuthService';
 
 export default defineComponent({
     components: { PopupCriarContrato, PopupDetalhesContrato },
@@ -145,8 +147,12 @@ export default defineComponent({
                 // Crie o payload com o novo valor de "assinado"
                 const payload = {
                     idContrato: contrato.idContrato,
-                    assinado: contrato.assinado
+                    assinado: contrato.assinado,
+                    observacoes: contrato.observacoes,
+                    Orcamento_idOrcamento: contrato.Orcamento_idOrcamento,
+                    valorNF: 0
                 };
+                const response = await instance.put('/contrato/update', payload);
             } catch (error) {
                 console.error('Erro ao tentar atualizar o contrato:', error);
             }

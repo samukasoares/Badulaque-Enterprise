@@ -7,6 +7,7 @@
                 <option value="pendentes">Pendentes</option>
                 <option value="enviados">Enviados</option>
                 <option value="descartados">Descartados</option>
+                <option value="descartados">Contratos</option>
             </select>
         </div>
 
