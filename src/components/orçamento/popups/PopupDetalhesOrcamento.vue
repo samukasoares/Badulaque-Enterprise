@@ -617,7 +617,6 @@ export default defineComponent({
                     }
 
                     this.opcionaisAdicionados[index].valor = formatarValorMonetario(valor);
-                    console.log(this.opcionaisAdicionados)
 
                 } catch (error) {
                     console.error('Erro ao obter o valor do opcional:', error);
@@ -640,17 +639,18 @@ export default defineComponent({
                     // Encontra o valor reajustado correspondente ao opcional
                     const valorReajustado = reajustes.find((item: any) => item.opcional === opcional.Opcional.nomeOpcional);
 
-                    if (valorReajustado) {
-                        this.opcionaisSelecionados[i] = {
-                            ...opcional,
-                            valorOrcamento: valorReajustado.reajuste,
-                        };
-                    } else {
-                        this.opcionaisSelecionados[i] = {
-                            ...opcional,
-                            valorOrcamento: opcional.Opcional.valorAtual,
-                        };
+                    let valor = valorReajustado ? valorReajustado.reajuste : opcional.Opcional.valorAtual;
+
+                    // Se o opcional é por pessoa, multiplica pelo número de convidados
+
+                    if (opcional.Opcional.porPessoa) {
+                        valor *= parseInt(this.convidados, 10);
                     }
+
+                    this.opcionaisSelecionados[i] = {
+                        ...opcional,
+                        valorOrcamento: valor,
+                    };
                 } catch (error) {
                     console.error(`Erro ao obter o valor reajustado para o opcional ${opcional.Opcional.nomeOpcional}:`, error);
                 }
@@ -892,22 +892,19 @@ export default defineComponent({
 
     watch: {
         dataEventoRaw: {
-            immediate: true,
-            async handler(newDate: string) {
-                if (newDate) {
-                    this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
-
-                    // Atualizar valores automaticamente com base na nova data
-                    await Promise.all([
-                        this.onCardapioSelect(),
-                        this.onCervejaSelect(),
-                        this.onBarSelect(),
-                        this.onEspacoSelect(),
-                        this.updateOpcionaisSelecionados(),
-                        this.fetchCardapiosReajustados(),
-                    ]);
+            handler(newDate) {
+                this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
+                if (this.isEditing) {
+                    // Chama as funções de atualização quando a data é alterada em modo de edição
+                    this.onCardapioSelect();
+                    this.onCervejaSelect();
+                    this.onBarSelect();
+                    this.onEspacoSelect();
+                    this.updateOpcionaisSelecionados();
+                    this.fetchCardapiosReajustados();
                 }
             },
+            immediate: false
         },
         orcamentoId: {
             immediate: true,
