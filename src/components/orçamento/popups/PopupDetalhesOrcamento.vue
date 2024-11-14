@@ -240,7 +240,7 @@
 
         </form>
 
-        <NotificationMessage :message="message" />
+        <NotificationMessage :message="message" :type="messageType" />
     </div>
 </template>
 
@@ -354,7 +354,8 @@ export default defineComponent({
             showOpcionalSelect: false,
             novoOpcionalId: 0,
 
-            message: ''
+            message: '',
+            messageType: 'success' as 'success' | 'error',
         };
     },
 
@@ -454,7 +455,7 @@ export default defineComponent({
 
             try {
                 const data = await instance.put('/orcamento/update', updateOrcamento)
-                this.message = 'Orçamento atualizado com sucesso!';
+                this.showSuccess('Orçamento atualizado com sucesso!')
 
                 const enviado = await instance.put(`/orcamento/atualizar-pendente/${updateOrcamento.orcamento.idOrcamento}`);
 
@@ -469,7 +470,18 @@ export default defineComponent({
 
 
             } catch (error) {
-                alert('Erro ao atualizar orçamento!')
+                let errorMessage = 'Erro ao atualizar orçamento!';
+
+                if (error && typeof error === 'object' && 'response' in error) {
+                    const axiosError = error as { response: { data: { message?: string } } };
+
+                    // Captura a mensagem de erro personalizada do backend
+                    if (axiosError.response?.data?.message) {
+                        errorMessage = axiosError.response.data.message;
+                    }
+                }
+
+                this.showError(errorMessage)
             }
         },
 
@@ -617,7 +629,6 @@ export default defineComponent({
                     }
 
                     this.opcionaisAdicionados[index].valor = formatarValorMonetario(valor);
-                    console.log(this.opcionaisAdicionados)
 
                 } catch (error) {
                     console.error('Erro ao obter o valor do opcional:', error);
@@ -640,17 +651,18 @@ export default defineComponent({
                     // Encontra o valor reajustado correspondente ao opcional
                     const valorReajustado = reajustes.find((item: any) => item.opcional === opcional.Opcional.nomeOpcional);
 
-                    if (valorReajustado) {
-                        this.opcionaisSelecionados[i] = {
-                            ...opcional,
-                            valorOrcamento: valorReajustado.reajuste,
-                        };
-                    } else {
-                        this.opcionaisSelecionados[i] = {
-                            ...opcional,
-                            valorOrcamento: opcional.Opcional.valorAtual,
-                        };
+                    let valor = valorReajustado ? valorReajustado.reajuste : opcional.Opcional.valorAtual;
+
+                    // Se o opcional é por pessoa, multiplica pelo número de convidados
+
+                    if (opcional.Opcional.porPessoa) {
+                        valor *= parseInt(this.convidados, 10);
                     }
+
+                    this.opcionaisSelecionados[i] = {
+                        ...opcional,
+                        valorOrcamento: valor,
+                    };
                 } catch (error) {
                     console.error(`Erro ao obter o valor reajustado para o opcional ${opcional.Opcional.nomeOpcional}:`, error);
                 }
@@ -724,8 +736,33 @@ export default defineComponent({
             }
         },
 
+        gerarReferencia() {
+            if (this.tipoEvento && this.dataEventoRaw) {
+                const tipoEventoInicial = this.tipoEvento.charAt(0).toUpperCase();
+
+                // Verifica se a data está no formato esperado
+                const data = new Date(this.dataEventoRaw + 'T00:00:00');
+
+                if (!isNaN(data.getTime())) { // Verifica se a data é válida
+                    const ano = String(data.getUTCFullYear()).slice(-2);
+                    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+                    const dia = String(data.getUTCDate()).padStart(2, '0');
+                    this.referencia = `${tipoEventoInicial}${ano}${mes}${dia}`;
+                } else {
+                    console.error("Data inválida ao tentar gerar a referência");
+                    this.referencia = ''; // Define a referência como vazia ou alguma mensagem padrão
+                }
+            }
+        },
+
         showError(message: string) {
             this.message = message;
+            this.messageType = 'error';
+        },
+
+        showSuccess(message: string) {
+            this.message = message;
+            this.messageType = 'success';
         },
 
         toggleOpcionalSelect() {
@@ -892,22 +929,21 @@ export default defineComponent({
 
     watch: {
         dataEventoRaw: {
-            immediate: true,
-            async handler(newDate: string) {
-                if (newDate) {
-                    this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
-
-                    // Atualizar valores automaticamente com base na nova data
-                    await Promise.all([
-                        this.onCardapioSelect(),
-                        this.onCervejaSelect(),
-                        this.onBarSelect(),
-                        this.onEspacoSelect(),
-                        this.updateOpcionaisSelecionados(),
-                        this.fetchCardapiosReajustados(),
-                    ]);
+            handler(newDate) {
+                this.valorEspacoId = this.calcularDiaDaSemanaValor(newDate);
+                if (this.isEditing) {
+                    // Chama as funções de atualização quando a data é alterada em modo de edição
+                    this.onCardapioSelect();
+                    this.onCervejaSelect();
+                    this.onBarSelect();
+                    this.onEspacoSelect();
+                    this.updateOpcionaisSelecionados();
+                    this.fetchCardapiosReajustados();
+                    this.gerarReferencia();
                 }
+
             },
+            immediate: false
         },
         orcamentoId: {
             immediate: true,

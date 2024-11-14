@@ -5,12 +5,38 @@
                 <div class="form-row">
                     <div class="form-column">
                         <h4>Cliente</h4><br>
-                        <label>Nome:</label>
-                        <input type="text" disabled v-model="nome">
-                        <label>Contato</label>
-                        <input type="text" disabled v-model="telefone">
-                        <label>Cidade</label>
-                        <input type="text" disabled v-model="cidade">
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Id Orçamento</label>
+                                <input type="text" disabled v-model="idOrcamento">
+                            </div>
+                            <div class="form-item">
+                                <label>Id Contrato</label>
+                                <input type="text" disabled v-model="idContrato">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Nome</label>
+                                <input type="text" disabled v-model="nome">
+                            </div>
+                            <div class="form-item">
+                                <label>Contato</label>
+                                <input type="text" disabled v-model="telefone">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-item">
+                                <label>Cidade</label>
+                                <input type="text" disabled v-model="cidade">
+                            </div>
+                            <div class="form-item">
+                                <label>Patrocinado</label>
+                                <input type="text" disabled v-model="patrocinado">
+                            </div>
+                        </div>
+
                         <h4>Contratante(s)</h4>
                         <div v-for="(contratante, index) in contratantes" :key="index" class="contratante-item">
                             <label>Nome:</label>
@@ -63,7 +89,7 @@
                         <label>Data</label>
                         <input type="text" v-model="data" disabled>
                         <label>Valor Espaço</label>
-                        <input type="text" v-model="valorEspaco" disabled>
+                        <input type="text" v-model="valorEspaco" disabled class="valorTotal">
                         <div class="form-group">
                             <div class="form-item">
                                 <label>Convidados</label>
@@ -115,6 +141,8 @@
                     </div>
                     <div class="form-column">
                         <h4>Opcionais</h4><br>
+
+
                         <h4>Pagamento</h4><br>
                         <label>Tipo</label>
                         <input type="text" v-model="formaPagamento.tipo" disabled>
@@ -122,7 +150,7 @@
                         <input type="text" v-model="valorSinal" disabled v-if="formaPagamento.valorSinal !== 0">
                         <label v-if="formaPagamento.numeroParcelas !== 0">Número Parcelas</label>
                         <input type="text" v-model="numeroParcelas" disabled v-if="formaPagamento.numeroParcelas !== 0">
-                        <label>Numero Parcelas</label>
+                        <label v-if="formaPagamento.numeroParcelasEntrada !== 0">Numero Parcelas</label>
                         <input type="text" v-model="numeroParcelasEntrada" disabled
                             v-if="formaPagamento.numeroParcelasEntrada !== 0">
                         <label>Valor Parcelas</label>
@@ -174,6 +202,10 @@ export default defineComponent({
             cidade: '',
             telefone: '',
             numero: '',
+            patrocinado: '',
+            idOrcamento: 0,
+            idContrato: 0,
+
             contratantes: [] as Cliente[],
             //Data
             data: '',
@@ -243,7 +275,10 @@ export default defineComponent({
                 this.nome = contrato.Orcamento.Lead.nomeLead
                 this.telefone = contrato.Orcamento.Lead.celular
                 this.cidade = contrato.Orcamento.Lead.cidade
+                this.patrocinado = contrato.Orcamento.patrocinado ? "Sim" : "Não"
                 this.contratantes = contrato.Cliente
+                this.idContrato = contrato.idContrato
+                this.idOrcamento = contrato.Orcamento.idOrcamento
 
                 this.referencia = contrato.Orcamento.referenciaOrcamento
                 this.data = formatarDataExtenso(contrato.Orcamento.dataEvento)

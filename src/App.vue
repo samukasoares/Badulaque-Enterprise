@@ -12,11 +12,12 @@ import { defineComponent, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import SidebarMenu from './components/sidebar/SidebarMenu.vue';
 import { sidebarWidth } from '@/components/sidebar/state';
+import notificationMixin from './mixins/notificationMixin';
 
 export default defineComponent({
   name: 'App',
   components: { SidebarMenu },
-
+  mixins: [notificationMixin],
   setup() {
     const route = useRoute();
     const showSidebar = computed(() => route.name !== 'login');

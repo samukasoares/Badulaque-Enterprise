@@ -249,6 +249,8 @@ export default defineComponent({
 
         async enviarPDF(idOrcamento: number) {
             try {
+                const enviado = await instance.put(`/orcamento/atualizar-enviado/${idOrcamento}`);
+
                 // Busca o orçamento com base no ID
                 const response = await instance.get(`/orcamento/get/${idOrcamento}`);
                 const orcamento = response.data;
@@ -303,8 +305,6 @@ export default defineComponent({
 
                 // Abre o link em uma nova aba
                 window.open(whatsappUrl, '_blank');
-
-                const enviado = await instance.put(`/orcamento/atualizar-enviado/${idOrcamento}`);
 
                 await this.fetchOrcamentos();
 
