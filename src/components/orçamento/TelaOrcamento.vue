@@ -249,7 +249,7 @@ export default defineComponent({
 
         async enviarPDF(idOrcamento: number) {
             try {
-                const enviado = await instance.put(`/orcamento/atualizar-enviado/${idOrcamento}`);
+                await instance.put(`/orcamento/atualizar-enviado/${idOrcamento}`);
 
                 // Busca o orçamento com base no ID
                 const response = await instance.get(`/orcamento/get/${idOrcamento}`);
@@ -323,6 +323,8 @@ export default defineComponent({
                 return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span> ${this.formatarValorMonetario(opcional.valorOrcamento)}</span></span>`;
             }).join('');
 
+            let dataEnvio = orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-';
+
             orcamento.FormaPagamento.forEach((forma) => {
                 if (forma.tipo === 'À Vista') {
                     this.sinalAVista = formatarValorMonetario(forma.valorSinal);
@@ -355,7 +357,7 @@ export default defineComponent({
                 .replace('{{data}}', formatarDataExtenso(orcamento.dataEvento))
                 .replace('{{convidados}}', orcamento.numConvidados.toString())
                 .replace('{{totalProposta}}', formatarValorMonetario(orcamento.valorTotalOrcamento))
-                .replace('{{dataEnvio}}', orcamento.enviadoEm ? formatarDateToString(orcamento.enviadoEm) : '-')
+                .replace('{{dataEnvio}}', dataEnvio)
                 .replace('{{observacoes}}', orcamento.observacoesOrcamento)
                 .replace('{{valorEspaco}}', formatarValorMonetario(orcamento.valorEspacoFinal))
                 .replace('{{cardapioBar}}', orcamento.CardapioBar.nomeCardapioBar)
