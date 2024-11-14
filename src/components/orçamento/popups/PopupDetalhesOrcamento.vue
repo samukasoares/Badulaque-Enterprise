@@ -847,8 +847,12 @@ export default defineComponent({
         },
 
         preencherTemplate(template: string) {
+            const valorCerveja = this.removerFormatacaoMonetaria(this.valorCerveja);
+
             const cardapiosHTML = this.cardapiosReajustados.map(cardapio => {
-                return `<span class="flex-item-estrutura"><strong>${cardapio.nome}:</strong><span> ${this.formatarValorMonetario(cardapio.precoReajustado)}</span></span>`;
+                // Soma o valor do cardápio reajustado com o valor da cerveja
+                const valorTotal = cardapio.precoReajustado + valorCerveja;
+                return `<span class="flex-item-estrutura"><strong>${cardapio.nome}:</strong><span> ${this.formatarValorMonetario(valorTotal)}</span></span>`;
             }).join('');
 
             const opcionaisSelecionadosHTML = this.opcionaisSelecionados.map(opcional => {
