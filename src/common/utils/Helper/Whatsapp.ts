@@ -14,13 +14,13 @@ export function gerarMensagemWhatsApp(orcamento: Orcamento, linkOrcamento: strin
     : '';
 
     const linkCardapioText = orcamento.Cardapio.linkCardapio 
-    ? ` Link para o cardápio solicitado: ${orcamento.Cardapio.linkCardapio}` 
+    ? `Link para Cardápio solicitado: ${orcamento.Cardapio.linkCardapio}` 
     : ''; 
 
     return `*${orcamento.Lead.nomeLead}*
 Me chamo ${localStorage.getItem('username')} e sejam bem-vindos à Badulaque Eventos✨!
 
-Conforme solicitado, segue prévia do orçamento abaixo referente ao evento *${orcamento.tipoEvento}*, para *${formatarDataExtenso(orcamento.dataEvento)}* considerando *${orcamento.numConvidados}* convidados. 👇🏻
+Conforme solicitado, segue prévia do orçamento abaixo referente ao evento *${orcamento.tipoEvento}*, para *${formatarDataExtenso(orcamento.dataEvento)}* considerando *${orcamento.numConvidados}* convidados e os seguintes detalhes 👇🏻
 
 Cardápio: *${orcamento.Cardapio.nomeCardapio}*  
 Cerveja: *${orcamento.Cerveja.nome}*
@@ -32,8 +32,8 @@ ${linkCardapioText}
 
 Caso deseje visualizar os detalhes de cada cardápio, envie "cardápios" no chat que todos os cardápios são enviados!
                         
-Gostaríamos de convidá-los para conhecer nossa infraestrutura para que possamos entregar a primeira experiência de como é realizar este sonho em nosso espaço. 
-Além de conversamos melhor sobre suas expectativas para oferecermos um evento personalizado e único, tornando esse dia ainda mais especial e inesquecível.
+Gostaríamos de convidá-los para uma visita ao nosso espaço, onde terão a oportunidade de vivenciar a primeira experiência de como é realizar este sonho conosco. 
+Durante a visita, poderemos conversar mais detalhadamente sobre suas expectativas e planejar um evento personalizado e único, tornando esse dia ainda mais especial e inesquecível.
 
 Veja os sonhos realizados na Badulaque através do nosso Instagram
 https://www.instagram.com/badulaque_eventos/
