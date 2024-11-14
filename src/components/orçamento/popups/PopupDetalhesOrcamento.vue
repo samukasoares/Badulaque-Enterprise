@@ -240,7 +240,7 @@
 
         </form>
 
-        <NotificationMessage :message="message" />
+        <NotificationMessage :message="message" :type="messageType" />
     </div>
 </template>
 
@@ -354,7 +354,8 @@ export default defineComponent({
             showOpcionalSelect: false,
             novoOpcionalId: 0,
 
-            message: ''
+            message: '',
+            messageType: 'success' as 'success' | 'error',
         };
     },
 
@@ -454,7 +455,7 @@ export default defineComponent({
 
             try {
                 const data = await instance.put('/orcamento/update', updateOrcamento)
-                this.message = 'Orçamento atualizado com sucesso!';
+                this.showSuccess('Orçamento atualizado com sucesso!')
 
                 const enviado = await instance.put(`/orcamento/atualizar-pendente/${updateOrcamento.orcamento.idOrcamento}`);
 
@@ -469,7 +470,18 @@ export default defineComponent({
 
 
             } catch (error) {
-                alert('Erro ao atualizar orçamento!')
+                let errorMessage = 'Erro ao atualizar orçamento!';
+
+                if (error && typeof error === 'object' && 'response' in error) {
+                    const axiosError = error as { response: { data: { message?: string } } };
+
+                    // Captura a mensagem de erro personalizada do backend
+                    if (axiosError.response?.data?.message) {
+                        errorMessage = axiosError.response.data.message;
+                    }
+                }
+
+                this.showError(errorMessage)
             }
         },
 
@@ -745,6 +757,12 @@ export default defineComponent({
 
         showError(message: string) {
             this.message = message;
+            this.messageType = 'error';
+        },
+
+        showSuccess(message: string) {
+            this.message = message;
+            this.messageType = 'success';
         },
 
         toggleOpcionalSelect() {

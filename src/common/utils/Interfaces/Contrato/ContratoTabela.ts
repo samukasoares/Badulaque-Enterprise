@@ -39,4 +39,5 @@ export interface Contrato {
     valorNF: number;
     assinado: number;
     Orcamento: Orcamento;
+    status: string
 };

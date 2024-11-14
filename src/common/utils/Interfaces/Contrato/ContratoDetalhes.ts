@@ -83,6 +83,7 @@ interface Orcamento {
     FormaPagamento: FormaPagamento[];
     Orcamento_Opcional: OrcamentoOpcional[];
     valorTotalOrcamento: number;
+    patrocinado: number;
 }
 
 export interface Contrato {

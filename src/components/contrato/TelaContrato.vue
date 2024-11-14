@@ -3,10 +3,12 @@
         <button @click="showModal = true">Novo Contrato</button>
         <div class="group">
             <label>Status:</label>
-            <select>
-                <option>Ativo</option>
-                <option>Realizado</option>
-                <option>Descartado</option>
+            <select v-model="status">
+                <option value="Pendente">Pendentes</option>
+                <option value="Ativo">Ativos</option>
+                <option value="Realizado">Realizados</option>
+                <option value="Descartado">Descartados</option>
+
             </select>
         </div>
         <input type="text" v-model="searchQuery" placeholder="Pesquisar Contratos...">
@@ -103,6 +105,7 @@ export default defineComponent({
             showDetailModal: false,
             selectedRow: null as number | null,
             contratoSelecionado: null as Contrato | null,
+            status: 'Ativo',
 
             // Variáveis de paginação
             currentPage: 1,
@@ -117,10 +120,10 @@ export default defineComponent({
                 const matchesSearch = contrato.Orcamento.Lead.nomeLead
                     .toLowerCase()
                     .includes(this.searchQuery.toLowerCase());
-                return matchesSearch;
+                const matchesStatus = contrato.status === this.status; // Filtro de status
+                return matchesSearch && matchesStatus;
             });
 
-            // Ordena os contratos em ordem crescente de data do evento
             const sortedContratos = [...contratosFiltrados].sort((a, b) => {
                 return new Date(a.Orcamento.dataEvento).getTime() - new Date(b.Orcamento.dataEvento).getTime();
             });
@@ -153,6 +156,8 @@ export default defineComponent({
                     valorNF: 0
                 };
                 const response = await instance.put('/contrato/update', payload);
+
+                this.contratos = await fetchContratos();
             } catch (error) {
                 console.error('Erro ao tentar atualizar o contrato:', error);
             }

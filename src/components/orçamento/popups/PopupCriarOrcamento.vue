@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -111,16 +111,22 @@
         </form>
     </div>
 
+    <NotificationMessage :message="message" type="error" />
+
 </template>
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
 import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchCidades, fetchEstados, fetchOpcionais } from '@/common/utils/FetchMethods';
 import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, RegistroOrcamento, RegistroOrcamentoData } from '@/common/utils/Interfaces';
+import notificationMixin from '@/mixins/notificationMixin';
+import NotificationMessage from '@/views/NotificationMessage.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'PopupOrcamento',
+    components: { NotificationMessage },
+    mixins: [notificationMixin],
     data() {
 
         const hoje = new Date();
@@ -149,6 +155,7 @@ export default defineComponent({
             cerimonia: null,
             barEnabled: false,
             selectedOpcionais: [],
+            message: '',
 
             //Armazena todos os registros
             cardapioBar: [] as CardapioBar[],
@@ -239,7 +246,18 @@ export default defineComponent({
                 this.$emit('success', 'Orçamento criado com sucesso!');
                 this.close(); // Fecha o modal após o sucesso
             } catch (error) {
-                alert('Erro ao criar orçamento!')
+                let errorMessage = 'Erro ao atualizar orçamento!';
+
+                if (error && typeof error === 'object' && 'response' in error) {
+                    const axiosError = error as { response: { data: { message?: string } } };
+
+                    // Captura a mensagem de erro personalizada do backend
+                    if (axiosError.response?.data?.message) {
+                        errorMessage = axiosError.response.data.message;
+                    }
+                }
+
+                this.showError(errorMessage)
             }
 
         },
