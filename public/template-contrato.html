@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contrato</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: Montserrat, sans-serif;
+        font-size: 8px;
+        line-height: 1.6;
+        color: #000000;
+        margin: 0;
+        padding: 10px;
+        text-align: justify;
+      }
+
+      .container {
+        height: auto;
+        overflow: hidden;
+      }
+
+      .grifado {
+        color: #000000;
+        font-weight: bold;
+      }
+
+      .secao-assinatura {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .linha-assinatura {
+        border-top: 1px solid #333;
+        width: 40%;
+        text-align: center;
+        padding-top: 10px;
+        font-style: italic;
+      }
+
+      .termos {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 20px;
+      }
+
+      .title {
+        justify-content: center;
+        display: flex;
+        font-size: 7px;
+      }
+
+      .page-break {
+        page-break-after: always;
+        break-after: page;
+      }
+
+      p {
+        font-size: 5px;
+        margin: 2px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class="title"
+        >{{referencia}} {{nomeLead}} - Contrato de Prestação de Serviços</span
+      >
+
+      <p>
+        <span class="grifado">Contratante:</span> Matheus Felipe Oliveira
+        Santos, portador do RG 48.851.927-5 e CPF 470.546.858-90, residente em
+        Av. Antônio Pincinato, 3388, Jundiaí - SP.
+      </p>
+      <p>
+        <span class="grifado">Contratado:</span> BSS Serviços Elétricos e
+        Locações LTDA – Badulaque Festas e Eventos, CNPJ 01.757.991/0001-14,
+        representado por Sérgio Corrêa Soares, RG 7.974.536-2 e CPF
+        003.476.458-52.
+      </p>
+      <p><span class="grifado">Cláusula 1ª: Dados do Evento</span></p>
+      <p>• Evento: {{tipoEvento}}</p>
+      <p>• Data: {{dataEvento}}</p>
+      <p>• Cerimônia no local: {{cerimoniaLocal}}</p>
+      <p>
+        • Número de Convidados: {{numConvidados}} conforme
+        <strong>Cláusula 4ª</strong>
+      </p>
+      <p>• Cardápio Buffet: {{cardapioBuffet}}</p>
+      <p>• Valor por pessoa buffet: {{valorPPBuffet}}</p>
+      <p>• Cerveja: {{tipoCerveja}}</p>
+      <p>• Valor Espaço: {{valorEspaco}}</p>
+      <p>• Valor Contrato: {{valorContrato}}</p>
+      <p>
+        <span class="grifado">Cláusula 2ª:</span> O presente contrato tem por
+        objeto a prestação de serviços de Buffet e cessão de Espaço pelo
+        <strong>CONTRATADO</strong>, com a infraestrutura descrita no
+        <strong>Parágrafo 1º</strong> e o cardápio anexado no final desse
+        contrato, fazendo parte integrante do presente instrumento, para a
+        realização de evento abaixo descrito:
+      </p>
+
+      <div class="page-break"></div>
+      <!-- Adicionado para dividir as páginas -->
+
+      <p class="grifado">Parágrafo 1º: Infraestrutura</p>
+      <p>
+        • Espaço para realização de cerimônia ao ar livre, incluindo até 50
+        bancos de madeira
+      </p>
+      <p>
+        • Salão para até 200 pessoas, com deck panorâmico, piscina, quiosque bar
+        e vários ambientes.
+      </p>
+      <p>• Lago natural com chafariz e iluminação, cercado de vegetação.</p>
+      <p>• Estacionamento para 90 vagas em local plano.</p>
+      <p>• Salinha para uso do cerimonial.</p>
+      <p>
+        • Mesas em tamanhos diversos, cadeiras de ferro estofadas na cor branca.
+      </p>
+      <p>• Gerador de energia 50 Kva à diesel sem limite de utilização.</p>
+      <p>
+        • Ar-condicionado no salão principal (Em caso de falta de energia os
+        mesmos permanecerão desligados durante a operação do gerador)
+      </p>
+      <p>
+        • 5 banheiros, incluindo banheiro adaptado a pessoas com necessidades
+        especiais, incluindo todo material de higiene e limpeza.
+      </p>
+      <p>
+        • Espaço kids com castelinho inflável, cama elástica e um monitor
+        durante o período do evento.
+      </p>
+      <p>
+        • Monitores de patrimônio na parte externa do Espaço, uma auxiliar de
+        limpeza durante o evento.
+      </p>
+      <p>
+        • Taxa ECAD de direitos autorais para a execução de músicas no evento
+        paga.
+      </p>
+
+      <div class="page-break"></div>
+      <!-- Adicionado para outra divisão -->
+
+      <p class="grifado">Parágrafo 2º: Serviço de Buffet</p>
+      <p>• Souplast de Inox ou Ratan.</p>
+      <p>• Guardanapos de tecido branco</p>
+      <p>• Louças de porcelana, 2 dois pratos na mesa.</p>
+      <p>• Taças na mesa</p>
+      <p>• 1 garçom para servir até 20 convidados ou 2 a 3 mesas em média.</p>
+      <p>• Cardápio em anexo.</p>
+      <p>
+        <strong>Parágrafo 3º:</strong> O objeto do presente Contrato se
+        restringe ao previsto nas Cláusulas 1a e 2a e anexos de serviços
+        adicionais, devendo ocorrer por conta do CONTRATANTE todas as demais
+        despesas para a realização do evento, tais como seguranças, sonorização,
+        tendas, valet parking (caso o número de veículos venha exceder a
+        capacidade de 90 vagas), etc.
+      </p>
+    </div>
+  </body>
+</html>

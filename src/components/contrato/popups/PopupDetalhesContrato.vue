@@ -166,7 +166,7 @@
             </div>
 
             <div class="form-group">
-                <button class="submit-button">Visualizar PDF</button>
+                <button class="submit-button" @click="gerarPDF">Visualizar PDF</button>
             </div>
 
         </form>
@@ -183,6 +183,7 @@ import { Cliente, Contrato } from '@/common/utils/Interfaces/Contrato/ContratoDe
 import { formatarDataExtenso } from '@/common/utils/Helper/Data';
 import { FormaPagamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { Opcional } from '@/common/utils/Interfaces';
+import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 
 
 export default defineComponent({
@@ -311,6 +312,26 @@ export default defineComponent({
             } finally {
                 this.loading = false;
             }
+        },
+
+        async gerarPDF() {
+            try {
+                const templatePath = '/template-contrato.html';
+                const response = await fetch(templatePath);
+                let template = await response.text();
+
+                template = this.preencherTemplate(template);
+                await gerarPDFDoHtml(template, this.referencia);
+            } catch (error) {
+                console.error('Erro ao gerar o PDF:', error);
+            }
+        },
+
+        preencherTemplate(template: string) {
+            return template
+                .replace('{{id}}', this.id)
+                .replace('{{referencia}}', this.referencia)
+                .replace('{{nomeLead}}', this.nome)
         },
     },
 
