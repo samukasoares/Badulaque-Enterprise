@@ -34,7 +34,10 @@ interface FormaPagamento {
 }
 
 interface Opcional {
+    idOpcional: number;
     nomeOpcional: string;
+    valorAtual: number;
+    porPessoa: number;
 }
 
 interface OrcamentoOpcional {
@@ -79,6 +82,7 @@ interface Orcamento {
     valorPPBar: number;
     valorEspacoFinal: number;
     valorPPCerveja: number;
+    valorOpcionais: number;
     Cardapio: Cardapio;
     FormaPagamento: FormaPagamento[];
     Orcamento_Opcional: OrcamentoOpcional[];

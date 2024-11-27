@@ -140,7 +140,15 @@
 
                     </div>
                     <div class="form-column">
-                        <h4>Opcionais</h4><br>
+                        <div v-if="opcionaisSelecionados.length > 0">
+                            <h4>Opcionais</h4><br>
+                            <div v-for="(opcional, index) in opcionaisSelecionados" :key="index" class="opcional-item">
+                                <label>{{ opcional.Opcional.nomeOpcional }}</label>
+                                <input type="text" :value="formatarValorMonetario(opcional.valorOrcamento)" disabled>
+                            </div>
+                        </div>
+                        <label>Total Opcionais</label>
+                        <input type="text" v-model="valorOpcionais">
 
 
                         <h4>Pagamento</h4><br>
@@ -206,6 +214,8 @@ export default defineComponent({
             patrocinado: '',
             idOrcamento: 0,
             idContrato: 0,
+            idFormaPagamento: 0,
+            formaPagamentoEscolhida: {} as FormaPagamento,
 
             contratantes: [] as Cliente[],
             //Data
@@ -280,6 +290,7 @@ export default defineComponent({
                 this.contratantes = contrato.Cliente
                 this.idContrato = contrato.idContrato
                 this.idOrcamento = contrato.Orcamento.idOrcamento
+                this.idFormaPagamento = contrato.FormaPagamento_idFormaPagamento
 
                 this.referencia = contrato.Orcamento.referenciaOrcamento
                 this.data = formatarDataExtenso(contrato.Orcamento.dataEvento)
@@ -293,7 +304,11 @@ export default defineComponent({
                 this.valorCardapio = formatarValorMonetario(contrato.Orcamento.valorPPCardapio)
                 this.tipoBebida = contrato.Orcamento.Cerveja.nome
                 this.valorCerveja = formatarValorMonetario(contrato.Orcamento.valorPPCerveja)
+                this.valorPorPessoaBuffet = formatarValorMonetario(contrato.Orcamento.valorPPCardapio + contrato.Orcamento.valorPPCerveja)
                 this.valorTotalBuffet = formatarValorMonetario((contrato.Orcamento.valorPPCardapio + contrato.Orcamento.valorPPCerveja) * contrato.Orcamento.numConvidados)
+
+                this.opcionaisSelecionados = contrato.Orcamento.Orcamento_Opcional
+                this.valorOpcionais = formatarValorMonetario(contrato.Orcamento.valorOpcionais)
 
                 this.cardapioBar = contrato.Orcamento.CardapioBar.nomeCardapioBar
                 this.valorPorPessoaBar = formatarValorMonetario(contrato.Orcamento.valorPPBar)
@@ -306,6 +321,8 @@ export default defineComponent({
                     this.numeroParcelasEntrada = this.formaPagamento.numeroParcelasEntrada.toString(),
                     this.valorParcela = formatarValorMonetario(this.formaPagamento.valorParcela),
                     this.saldo = formatarValorMonetario(this.formaPagamento.valorTotal - this.formaPagamento.valorEntrada)
+
+                this.valorTotal = formatarValorMonetario(this.formaPagamento.valorTotal)
 
             } catch (error) {
                 console.error('Erro ao buscar detalhes do contrato:', error);
@@ -328,11 +345,61 @@ export default defineComponent({
         },
 
         preencherTemplate(template: string) {
+
+            const opcionaisHtml = this.opcionaisSelecionados.map(opcional =>
+                `• ${opcional.Opcional.nomeOpcional}: <strong>${formatarValorMonetario(opcional.valorOrcamento)}</strong>`
+            ).join('<br>');
+
+            const barHtml = this.cardapioBar
+                ? `<p>• Cardápio Bar: ${this.cardapioBar}, Valor por Pessoa: ${this.valorPorPessoaBar}</p>
+                   <p>• Valor Total Bar: <strong>${this.valorTotalBar}</strong></p>`
+                : '';
+
+            const contratantesHtml = this.contratantes.map(contratante =>
+                `${contratante.nome}, portador do RG ${contratante.rg} e CPF ${contratante.cpf}, residente em ${contratante.rua}, ${contratante.numero}, ${contratante.cidade} - CEP ${contratante.cep}`
+            );
+
+            const contratantesFormatados = contratantesHtml.length > 1
+                ? contratantesHtml.slice(0, -1).join(', ') + ' e ' + contratantesHtml.slice(-1)
+                : contratantesHtml[0] || '';
+
+            const assinaturasHtml = `
+        <div class="assinaturas">
+            ${this.contratantes.map(contratante => `
+                <div class="assinatura">
+                    <div class="linha"></div>
+                    <p>${contratante.nome}</p>
+                    <p>RG: ${contratante.rg}</p>
+                </div>
+            `).join('')}
+            <div class="assinatura">
+                <div class="linha"></div>
+                <p>BSS SERVIÇOS ELÉTRICOS E LOCAÇÕES LTDA BADULAQUE ESPAÇO E BUFFET</p>
+                <p>CNPJ: 01.757.991/0001-14</p>
+            </div>
+        </div>
+    `;
+
             return template
                 .replace('{{id}}', this.id)
+                .replace('{{contratantes}}', contratantesFormatados)
                 .replace('{{referencia}}', this.referencia)
                 .replace('{{nomeLead}}', this.nome)
+                .replace('{{tipoEvento}}', this.tipoEvento)
+                .replace('{{dataEvento}}', this.data)
+                .replace('{{cerimoniaLocal}}', this.cerimonia)
+                .replace('{{numConvidados}}', this.convidados)
+                .replace('{{cardapioBuffet}}', this.cardapioBuffet)
+                .replace('{{valorPPBuffet}}', this.valorPorPessoaBuffet)
+                .replace('{{tipoCerveja}}', this.tipoBebida)
+                .replace('{{valorEspaco}}', this.valorEspaco)
+                .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
+                .replace('{{valorContrato}}', this.valorTotal)
+                .replace('{{opcionaisSelecionados}}', opcionaisHtml)
+                .replace('{{bardulaque}}', barHtml)
+                .replace('{{assinaturas}}', assinaturasHtml)
         },
+
     },
 
     watch: {
@@ -345,7 +412,6 @@ export default defineComponent({
             },
         },
     },
-
 
 });
 </script>
