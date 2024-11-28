@@ -53,16 +53,25 @@
         font-size: 7px;
       }
 
+      .title2 {
+        justify-content: center;
+        display: flex;
+        font-size: 5px;
+      }
+
       .page-break {
         page-break-after: always;
         margin-bottom: 10mm; /* Espaçamento após quebra de página */
       }
 
-      @media print {
-        .page-break-force {
-          page-break-before: always !important;
-          -webkit-page-break-before: always !important;
-        }
+      .page-break-grande {
+        page-break-after: always;
+        margin-bottom: 40mm; /* Espaçamento após quebra de página */
+      }
+
+      .page-break-meia-pagina {
+        page-break-after: always;
+        margin-bottom: 75mm; /* Espaçamento após quebra de página */
       }
 
       p {
@@ -124,8 +133,9 @@
         <strong>Cláusula 4ª</strong>
       </p>
       <p>
-        • Cardápio Buffet: {{cardapioBuffet}}, Valor Por Pessoa:
-        {{valorPPBuffet}}
+        • Cardápio Buffet: {{cardapioBuffet}}, {{valorPPBuffet}} por pessoa até
+        {{numConvidadosReaj}} convidados acima, excedente {{valorPPBuffetReaj}}
+        por pessoa.
       </p>
       <p>• Cerveja: {{tipoCerveja}}</p>
       <p>• Valor Espaço: <strong>{{valorEspaco}}</strong></p>
@@ -303,7 +313,7 @@
       </p>
       <p>
         <strong>Cláusula 12ª</strong> O valor total do contrato é de
-        {{valorTotalContrato}}.
+        {{valorContratoClausula12}}.
       </p>
       <p class="paragrafo">
         <strong>Parágrafo 1º</strong> O pagamento será efetuado da seguinte
@@ -738,14 +748,245 @@
       </p>
       {{assinaturas}}
 
-      <div class="page-break-force"></div>
+      <div class="page-break-grande"></div>
 
-      <p>
+      <p class="title2">
         <strong
           >ANEXO – REGULAMENTO GERAL PARA HORÁRIOS E UTILIZAÇÂO DO
           ESPAÇO</strong
         >
       </p>
+
+      <p>
+        Os horários de montagem e desmontagem de todos os itens relacionados ao
+        evento deverão ser repassados para todos os profissionais contratados
+        que forem trabalhar e deverão ser rigorosamente cumpridos. A montagem
+        poderá ser feita a partir das 07h00 do dia do evento e a desmontagem
+        deverá ser feita em até <strong>03 horas</strong> após a realização do
+        evento. Não será permitida a permanência de nenhum prestador de serviço
+        após os horários estabelecidos. Poderá haver excepcionalidades mediante
+        prévio acordo entre <strong>CONTRATADO</strong> e
+        <strong>CONTRATANTE</strong>.
+      </p>
+
+      <p>
+        OS ITENS ASSINADADOS COM <strong>(*)</strong> SÃO CONSIDERADOS SEM
+        EFEITO CASO O SERVIÇO SEJA PRESTADO PELO CONTRATADO
+      </p>
+
+      <br />
+
+      <p>
+        <strong>CERIMONIAL</strong>
+      </p>
+      <p>
+        O profissional CONTRATADO será intermediário entre o
+        <strong>CONTRATANTE</strong> e o <strong>CONTRATADO</strong> no
+        tratamento para a organização do evento, deverá certificar-se que todos
+        os prestadores de serviço contratados estejam cientes dos procedimentos
+        e regras descritos a seguir:
+      </p>
+      <p>
+        <strong>1.</strong> Na falta do profissional fica o CONTRATANTE
+        responsável pelas atribuições.
+      </p>
+      <p>
+        <strong>2.</strong> Enviar com até 07 (sete) dias de antecedência ao
+        evento, o nome e o telefone para contato de todos os responsáveis
+        prestadores de serviço do evento, o número de mesas e cadeiras a serem
+        utilizadas no evento e o mapeamento das mesas no espaço (se tiver).
+      </p>
+      <p>
+        <strong>3.</strong> Caso a relação dos prestadores de serviço contratado
+        pelo CONTRATANTE não seja fornecida no prazo e forma prevista no item
+        anterior o CONTRATADO poderá não permitir a entrada para a execução do
+        serviço.
+      </p>
+      <p>
+        <strong>4.</strong> Os profissionais prestadores de serviço no dia do
+        evento não poderão consumir qualquer tipo de bebida alcoólica durante a
+        presença no Espaço.
+      </p>
+      <p><strong>DECORAÇÃO</strong></p>
+      <p>
+        A empresa contratada deverá providenciar e trazer toda sua estrutura já
+        pronta ou semipronta. É expressamente proibida a utilização de pregos,
+        grampos, fitas adesivas, fitas dupla-face ou qualquer outro material que
+        possa danificar a pintura das paredes e do forro, pisos e estruturas em
+        geral.
+      </p>
+      <p>
+        Caso haja constatação de danos o cheque caução ficará retido até que
+        seja estabelecido o custo do reparo.
+      </p>
+      <p>
+        <strong>1.</strong> A empresa deverá recolher as respectivas
+        flores/folhas/plantas que estiverem espalhadas pelo espaço e
+        acondicionar em sacos de lixo e para que posteriormente seja feita a
+        limpeza do salão. Caso a empresa não recolha, estará sob pena de
+        incidência de multa prevista na Cláusula 39a
+      </p>
+      <p>
+        <strong>2.</strong> É proibida a montagem de velas, diretamente no piso.
+        Quando necessário este tipo de ornamentação, deverá ser feito de forma a
+        não respingar no piso, pois sob pena de incidência de multa prevista na
+        Cláusula 39a.
+      </p>
+      <p>
+        <strong>3.</strong> A decoração não poderá interferir na visualização e
+        posicionamento dos extintores, e também nos acessos e saídas da
+        edificação, observando sempre manter ampla a circulação para os mesmos,
+        em caso de emergência.
+      </p>
+      <p>
+        <strong>4.</strong> É proibido o uso de qualquer tipo de pirotecnia,
+        fogos e artifício, ou apresentação envolvendo fogo nos espaços internos
+        e externos do espaço.
+      </p>
+      <p>
+        <strong>5.</strong>É proibida a utilização de chuva de pétalas, chuva de
+        papel, chuva de prata e afins nos gramados, jardins e dentro dos salões,
+        caso ocorra estará sob pena de incidência de multa prevista na Cláusula
+        39a.
+      </p>
+
+      <div class="page-break"></div>
+
+      <p><strong>BARTENDER (*)</strong></p>
+      <p>
+        <strong>1.</strong> A empresa contratada deverá providenciar e trazer
+        toda sua estrutura já pronta ou semipronta. É expressamente proibida a
+        utilização de pregos, grampos, fitas adesivas, fitas dupla-face ou
+        qualquer outro material que possa danificar a pintura das paredes e do
+        forro, pisos e estruturas em geral. Caso haja constatação de danos o
+        cheque caução ficará retido até que seja estabelecido o custo do reparo.
+      </p>
+      <p>
+        <strong>2.</strong> A empresa deverá recolher todo material utilizado
+        para o serviço que estiver no local utilizado e acondicioná-las em sacos
+        de lixo para que posteriormente seja feita a limpeza do salão. Caso a
+        empresa não recolha, estará sob pena de incidência de multa prevista na
+        Cláusula 39a
+      </p>
+      <p><strong>3.</strong> Todo o lixo deverá ser levado embora.</p>
+      <p>
+        <strong>4.</strong> O bar e decoração não poderão interferir na
+        visualização e posicionamento dos extintores, e também nos acessos e
+        saídas da edificação, observando sempre manter ampla a circulação para
+        os mesmos, em caso de emergência.
+      </p>
+
+      <p><strong>DJ OU BANDA</strong></p>
+      <p>
+        <strong>1.</strong> Após as 23 horas o volume máximo permitido medido
+        externamente é de 60 decibéis, que poderá ser aferido junto ao
+        cerimonial ou responsável pela festa, juntamente com o responsável
+        indicado pelo CONTRATADO no dia do evento.
+      </p>
+      <p>
+        <strong>2.</strong> Não é permitido instrumentos de percussão, tipo
+        bateria de escola de samba ou similares.
+      </p>
+      <p>
+        <strong>3.</strong> O <strong>CONTRATANTE</strong> deverá indicar o
+        local onde será instalada a aparelhagem de som, e aferir junto ao
+        <strong>CONTRATADO</strong> as tomadas e respectiva voltagem disponíveis
+        para a instalação, ficando assim o <strong>CONTRATANTE</strong>
+        desobrigado no dia do evento de qualquer tipo de adaptação ou
+        fornecimento de extensão elétrica, adaptadores e afins.
+      </p>
+      <p>
+        <strong>4.</strong> Para a montagem de estruturas metálicas deverá haver
+        uma permissão prévia juntamente com uma vistoria para certificar-se que
+        a montagem não irá danificar o piso, para tal é necessário que estrutura
+        disponha de algum tipo de proteção nas partes que irão apoiar-se no
+        piso. Caso haja constatação de danos o cheque caução ficará retido até
+        que seja estabelecido o custo do reparo.
+      </p>
+
+      <p><strong>CABINE DE FOTO LEMBRANÇA (*)</strong></p>
+      <p>
+        <strong>1.</strong> A montagem da estrutura e equipamentos deverá
+        ocorrer com no mínimo de 2 horas de antecedência do horário previsto
+        para início do evento
+      </p>
+      <p>
+        <strong>2.</strong> A desmontagem da estrutura e equipamentos deverá ser
+        feita apenas ao término completo do evento.
+      </p>
+      <p>
+        <strong>3.</strong> Todo tipo de lixo ou material deverá ser recolhido e
+        acondicionado em sacos plásticos e levado embora do Espaço.
+      </p>
+      <p>
+        <strong>4.</strong> A cabine de foto não poderá interferir na
+        visualização e posicionamento dos extintores, e também nos acessos e
+        saídas da edificação, observando sempre manter ampla a circulação para
+        os mesmos, em caso de emergência.
+      </p>
+
+      <p>GERAL</p>
+      <p>
+        <strong>1.</strong> É proibida a circulação pelas demais dependências do
+        Espaço, devendo-se utilizar somente a área reservada para o evento.
+      </p>
+      <p>
+        <strong>2.</strong> Os profissionais contratados deverão utilizar
+        somente os sanitários para funcionários, ficando vetado o uso dos
+        banheiros dos salões. Os sanitários deverão ser mantidos limpos.
+      </p>
+      <p>
+        <strong>3.</strong> Os veículos dos prestadores deverão ser estacionados
+        no local reservado para prestadores de serviço, disponibilizado para o
+        evento, uma hora antes do início do evento, sendo proibido o
+        estacionamento fora dos limites do Espaço.
+      </p>
+
+      <div class="page-break"></div>
+
+      <p class="title2"><strong>DECLARAÇÃO</strong></p>
+      <p>
+        Declaro estar ciente de todas as cláusulas do presente contrato que
+        tratam da incidência de multas que serão aplicadas mediante o
+        descumprimento da(s) mesma(s). Declaro também ter recebido e tomado
+        conhecimento do
+        <strong
+          >ANEXO – REGULAMENTO GERAL PARA HORÁRIOS E UTILIZAÇÂO DO
+          ESPAÇO</strong
+        >
+        que deverá ser repassado às empresas prestadoras de serviço envolvidas
+        no evento. Declaro ainda ser o responsável pelas atividades dos
+        prestadores de serviço envolvidos no evento que venham a danificar ou
+        exigir por parte do <strong>CONTRATADO</strong> mão de obra adicional
+        para a recomposição das condições anteriores ao evento.
+      </p>
+      <br />
+      <p>{{dataHoje}}</p>
+
+      {{assinaturasDeclaracao}}
+
+      <div class="page-break-meia-pagina"></div>
+
+      <p class="title2"><strong>NOTA PROMISSÓRIA</strong></p>
+
+      <p><strong>Valor: R$2.500,00</strong></p>
+      <p>
+        Aos {{dataEventoPromissoria}}, pagarei por essa única via de NOTA
+        PROMISSÓRIA a BSS SERVIÇOS ELÈTRICOS E LOCAÇÔES LTDA – BADULAQUE FESTAS
+        E EVENTOS, CNPJ 01.757.991/0001-14, ou à sua ordem, a quantia de
+        <strong>R$ 2.500,00</strong> (dois mil e quinhentos reais), em moeda
+        corrente nacional.
+      </p>
+      <br />
+      <p><strong>EMITENTE</strong></p>
+      <p>Nome: {{nomeContratante}}</p>
+      <p>RG: {{rgContratante}}</p>
+      <p>CPF: {{cpfContratante}}</p>
+      <p>Endereço: {{enderecoContratante}}</p>
+      <br />
+      <p>Vinhedo. {{dataHojePromissoria}}</p>
+      <br />
+      {{assinaturasPromissoria}}
     </div>
   </body>
 </html>

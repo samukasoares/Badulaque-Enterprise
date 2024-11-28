@@ -163,8 +163,8 @@
                             v-if="formaPagamento.numeroParcelasEntrada !== 0">
                         <label>Valor Parcelas</label>
                         <input type="text" v-model="valorParcela" disabled v-if="formaPagamento.valorParcela !== 0">
-                        <label>Saldo</label>
-                        <input type="text" v-model="saldo" disabled v-if="formaPagamento.valorParcela !== 0">
+                        <label v-if="formaPagamento.numeroParcelasEntrada !== 0">Saldo</label>
+                        <input type="text" v-model="saldo" disabled v-if="formaPagamento.numeroParcelasEntrada !== 0">
 
 
 
@@ -188,7 +188,7 @@ import { defineComponent } from 'vue';
 import { formatarValorMonetario } from '@/common/utils/Helper';
 import instance from '@/common/utils/AuthService';
 import { Cliente, Contrato } from '@/common/utils/Interfaces/Contrato/ContratoDetalhes';
-import { formatarDataExtenso } from '@/common/utils/Helper/Data';
+import { formatarData, formatarDataExtenso } from '@/common/utils/Helper/Data';
 import { FormaPagamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
 import { Opcional } from '@/common/utils/Interfaces';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
@@ -204,6 +204,7 @@ export default defineComponent({
     },
     data() {
         return {
+            datahoje: '',
             //Cliente
             id: '',
             nome: '',
@@ -224,6 +225,7 @@ export default defineComponent({
 
             //Orçamento
             convidados: '',
+            convReaj: '',
             referencia: '',
             cerimonia: '',
             totalProposta: '',
@@ -248,6 +250,7 @@ export default defineComponent({
 
             valorCerveja: '',
             valorPorPessoaBuffet: '',
+            valorPorPessoaBuffetReaj: '',
             valorTotalBuffet: '',
             cardapioBar: '',
             valorPorPessoaBar: '',
@@ -283,6 +286,7 @@ export default defineComponent({
                 const response = await instance.get<Contrato>('/contrato/info/' + id);
                 const contrato = response.data;
 
+                this.datahoje = formatarDataExtenso(new Date().toISOString().split('T')[0]);
                 this.nome = contrato.Orcamento.Lead.nomeLead
                 this.telefone = contrato.Orcamento.Lead.celular
                 this.cidade = contrato.Orcamento.Lead.cidade
@@ -293,11 +297,13 @@ export default defineComponent({
                 this.idFormaPagamento = contrato.FormaPagamento_idFormaPagamento
 
                 this.referencia = contrato.Orcamento.referenciaOrcamento
+                this.dataEventoRaw = formatarData(contrato.Orcamento.dataEvento)
                 this.data = formatarDataExtenso(contrato.Orcamento.dataEvento)
                 this.tipoEvento = contrato.Orcamento.tipoEvento
                 this.valorEspaco = formatarValorMonetario(contrato.Orcamento.valorEspacoFinal)
 
                 this.convidados = contrato.Orcamento.numConvidados.toString()
+                this.convReaj = (contrato.Orcamento.numConvidados * 0.2).toString()
                 this.totalProposta = formatarValorMonetario(contrato.Orcamento.valorTotalOrcamento)
 
                 this.cardapioBuffet = contrato.Orcamento.Cardapio.nomeCardapio
@@ -305,6 +311,9 @@ export default defineComponent({
                 this.tipoBebida = contrato.Orcamento.Cerveja.nome
                 this.valorCerveja = formatarValorMonetario(contrato.Orcamento.valorPPCerveja)
                 this.valorPorPessoaBuffet = formatarValorMonetario(contrato.Orcamento.valorPPCardapio + contrato.Orcamento.valorPPCerveja)
+                this.valorPorPessoaBuffetReaj = formatarValorMonetario(
+                    Math.round((contrato.Orcamento.valorPPCardapio + contrato.Orcamento.valorPPCerveja) * 1.2)
+                );
                 this.valorTotalBuffet = formatarValorMonetario((contrato.Orcamento.valorPPCardapio + contrato.Orcamento.valorPPCerveja) * contrato.Orcamento.numConvidados)
 
                 this.opcionaisSelecionados = contrato.Orcamento.Orcamento_Opcional
@@ -351,7 +360,7 @@ export default defineComponent({
             ).join('<br>');
 
             const barHtml = this.cardapioBar
-                ? `<p>• Cardápio Bar: ${this.cardapioBar}, Valor por Pessoa: ${this.valorPorPessoaBar}</p>
+                ? `<p>• Cardápio Bar: ${this.cardapioBar}, ${this.valorPorPessoaBar} por pessoa</p>
                    <p>• Valor Total Bar: <strong>${this.valorTotalBar}</strong></p>`
                 : '';
 
@@ -389,15 +398,31 @@ export default defineComponent({
                 .replace('{{dataEvento}}', this.data)
                 .replace('{{cerimoniaLocal}}', this.cerimonia)
                 .replace('{{numConvidados}}', this.convidados)
+                .replace('{{numConvidadosReaj}}', this.convReaj)
                 .replace('{{cardapioBuffet}}', this.cardapioBuffet)
                 .replace('{{valorPPBuffet}}', this.valorPorPessoaBuffet)
+                .replace('{{valorPPBuffetReaj}}', this.valorPorPessoaBuffetReaj)
                 .replace('{{tipoCerveja}}', this.tipoBebida)
                 .replace('{{valorEspaco}}', this.valorEspaco)
                 .replace('{{valorTotalBuffet}}', this.valorTotalBuffet)
                 .replace('{{valorContrato}}', this.valorTotal)
+                .replace('{{valorContratoClausula12}}', this.valorTotal)
                 .replace('{{opcionaisSelecionados}}', opcionaisHtml)
                 .replace('{{bardulaque}}', barHtml)
                 .replace('{{assinaturas}}', assinaturasHtml)
+
+                //Declaracao
+                .replace('{{assinaturasDeclaracao}}', assinaturasHtml)
+                .replace('{{dataHoje}}', this.datahoje)
+
+                //Nota Promissória
+                .replace('{{nomeContratante}}', this.contratantes[0].nome)
+                .replace('{{rgContratante}}', this.contratantes[0].rg)
+                .replace('{{cpfContratante}}', this.contratantes[0].cpf)
+                .replace('{{enderecoContratante}}', this.contratantes[0].rua + ", " + this.contratantes[0].numero + " - " + this.contratantes[0].cidade)
+                .replace('{{dataEventoPromissoria}}', this.dataEventoRaw)
+                .replace('{{assinaturasPromissoria}}', assinaturasHtml)
+                .replace('{{dataHojePromissoria}}', this.datahoje)
         },
 
     },
