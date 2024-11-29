@@ -190,7 +190,7 @@ import instance from '@/common/utils/AuthService';
 import { Cliente, Contrato } from '@/common/utils/Interfaces/Contrato/ContratoDetalhes';
 import { formatarData, formatarDataExtenso } from '@/common/utils/Helper/Data';
 import { FormaPagamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
-import { Opcional } from '@/common/utils/Interfaces';
+import { CardapioInfo, GroupedItem, Opcional } from '@/common/utils/Interfaces';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 
 
@@ -205,6 +205,11 @@ export default defineComponent({
     data() {
         return {
             datahoje: '',
+
+            dataHojeRaw: '',
+            dataUmMes: '',
+            dataEventoMenos15: '',
+
             //Cliente
             id: '',
             nome: '',
@@ -239,6 +244,7 @@ export default defineComponent({
             valorEspaco: '',
 
             //Cardapio
+            cardapioSelecionado: {} as CardapioInfo,
             cardapioBuffet: '',
             cardapioBuffetId: 0,
             valorCardapio: '',
@@ -270,6 +276,7 @@ export default defineComponent({
             numeroParcelasEntrada: '',
             valorParcela: '',
             valorTotal: '',
+            valorEntrada: '',
             saldo: ''
         };
     },
@@ -286,7 +293,22 @@ export default defineComponent({
                 const response = await instance.get<Contrato>('/contrato/info/' + id);
                 const contrato = response.data;
 
-                this.datahoje = formatarDataExtenso(new Date().toISOString().split('T')[0]);
+                const hoje = new Date();
+                const umMesDepois = new Date();
+                umMesDepois.setMonth(hoje.getMonth() + 1);
+
+                this.dataHojeRaw = formatarData(hoje.toISOString()); // Formata a data atual
+                this.dataUmMes = formatarData(umMesDepois.toISOString()); // Formata a data de um mês à frente
+
+                // Pega a data do evento e calcula 15 dias antes
+                const dataEvento = new Date(contrato.Orcamento.dataEvento);
+                const dataMenos15 = new Date(dataEvento);
+                dataMenos15.setDate(dataEvento.getDate() - 15);
+
+                this.dataEventoMenos15 = formatarData(dataMenos15.toISOString());
+                this.dataEventoRaw = formatarData(contrato.Orcamento.dataEvento)
+                this.data = formatarDataExtenso(contrato.Orcamento.dataEvento)
+
                 this.nome = contrato.Orcamento.Lead.nomeLead
                 this.telefone = contrato.Orcamento.Lead.celular
                 this.cidade = contrato.Orcamento.Lead.cidade
@@ -297,8 +319,6 @@ export default defineComponent({
                 this.idFormaPagamento = contrato.FormaPagamento_idFormaPagamento
 
                 this.referencia = contrato.Orcamento.referenciaOrcamento
-                this.dataEventoRaw = formatarData(contrato.Orcamento.dataEvento)
-                this.data = formatarDataExtenso(contrato.Orcamento.dataEvento)
                 this.tipoEvento = contrato.Orcamento.tipoEvento
                 this.valorEspaco = formatarValorMonetario(contrato.Orcamento.valorEspacoFinal)
 
@@ -307,6 +327,7 @@ export default defineComponent({
                 this.totalProposta = formatarValorMonetario(contrato.Orcamento.valorTotalOrcamento)
 
                 this.cardapioBuffet = contrato.Orcamento.Cardapio.nomeCardapio
+                this.cardapioSelecionado = await this.fetchCardapioDetails(contrato.Orcamento.Cardapio_idCardapio)
                 this.valorCardapio = formatarValorMonetario(contrato.Orcamento.valorPPCardapio)
                 this.tipoBebida = contrato.Orcamento.Cerveja.nome
                 this.valorCerveja = formatarValorMonetario(contrato.Orcamento.valorPPCerveja)
@@ -327,9 +348,11 @@ export default defineComponent({
                 this.formaPagamento = formaPagamento.data;
                 this.valorSinal = formatarValorMonetario(this.formaPagamento.valorSinal)
                 this.numeroParcelas = this.formaPagamento.numeroParcelas.toString(),
+                    this.valorEntrada = formatarValorMonetario(this.formaPagamento.valorEntrada),
                     this.numeroParcelasEntrada = this.formaPagamento.numeroParcelasEntrada.toString(),
                     this.valorParcela = formatarValorMonetario(this.formaPagamento.valorParcela),
-                    this.saldo = formatarValorMonetario(this.formaPagamento.valorTotal - this.formaPagamento.valorEntrada)
+                    this.saldo = formatarValorMonetario(this.formaPagamento.valorTotal - this.formaPagamento.valorEntrada - this.formaPagamento.valorSinal)
+
 
                 this.valorTotal = formatarValorMonetario(this.formaPagamento.valorTotal)
 
@@ -353,6 +376,29 @@ export default defineComponent({
             }
         },
 
+        async fetchCardapioDetails(id: number): Promise<CardapioInfo> {
+            this.loading = true;
+            try {
+                const response = await instance.get<CardapioInfo>('/buffet/cardapio/' + id);
+                return response.data;
+            } catch (error) {
+                console.error('Erro ao buscar detalhes do cardápio:', error);
+                throw error;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        getItensDoGrupo(nomeGrupo: string) {
+            if (!this.cardapioSelecionado || !Array.isArray(this.cardapioSelecionado.cardapio.itensAgrupados)) {
+                return [];
+            }
+            const grupoEncontrado = this.cardapioSelecionado.cardapio.itensAgrupados.find(
+                (grupo: GroupedItem) => grupo.grupo === nomeGrupo
+            );
+            return grupoEncontrado ? grupoEncontrado.itens : [];
+        },
+
         preencherTemplate(template: string) {
 
             const opcionaisHtml = this.opcionaisSelecionados.map(opcional =>
@@ -363,6 +409,19 @@ export default defineComponent({
                 ? `<p>• Cardápio Bar: ${this.cardapioBar}, ${this.valorPorPessoaBar} por pessoa</p>
                    <p>• Valor Total Bar: <strong>${this.valorTotalBar}</strong></p>`
                 : '';
+
+            const textoFormaPagamento = (() => {
+                switch (this.formaPagamento.tipo) {
+                    case 'Parcelado':
+                        return ` Sinal de <strong>${this.valorSinal}</strong> em <strong>${this.dataHojeRaw}</strong> e <strong>${this.numeroParcelas} parcelas</strong> de <strong>${this.valorParcela}</strong>, com primeiro vencimento em <strong>${this.dataUmMes}</strong>.`;
+                    case 'Entrada Parcelada':
+                        return `Sinal de <strong>${this.valorSinal}</strong> em <strong>${this.dataHojeRaw}</strong>. Entrada de <strong>${this.valorEntrada}</strong>, em <strong>${this.numeroParcelasEntrada}x</strong> de <strong>${this.valorParcela}</strong> e saldo de <strong>${this.saldo}</strong> até <strong>${this.dataEventoMenos15}</strong>`;
+                    case 'À vista':
+                        return `Sinal de <strong>${this.valorSinal}</strong> em <strong>${this.dataHojeRaw}</strong> e pagamento à vista no valor de <strong>${this.valorTotal}</strong> até <strong>${this.dataUmMes}</strong>`;
+                    default:
+                        return 'Informações de pagamento não disponíveis.';
+                }
+            })();
 
             const contratantesHtml = this.contratantes.map(contratante =>
                 `${contratante.nome}, portador do RG ${contratante.rg} e CPF ${contratante.cpf}, residente em ${contratante.rua}, ${contratante.numero}, ${contratante.cidade} - CEP ${contratante.cep}`
@@ -389,6 +448,17 @@ export default defineComponent({
         </div>
     `;
 
+            const gruposHTML = this.cardapioSelecionado.cardapio.grupos.map(grupo => {
+                const itensDoGrupo = this.getItensDoGrupo(grupo.nomeGrupo);
+
+                // Verifica se `itensDoGrupo` é um array válido e contém itens
+                const itens = Array.isArray(itensDoGrupo) && itensDoGrupo.length > 0
+                    ? itensDoGrupo.map((item: { name: string }) => `<span>${item.name}</span>`).join(', ')
+                    : '<span>Itens não encontrados</span>';
+
+                return `<p><strong>${grupo.nomeGrupo ? grupo.nomeGrupo : 'Grupo indefinido'} - ${grupo.qtdItens ? grupo.qtdItens : 0} opção(es)</strong> <br>${itens}</p>`;
+            }).join('');
+
             return template
                 .replace('{{id}}', this.id)
                 .replace('{{contratantes}}', contratantesFormatados)
@@ -410,6 +480,7 @@ export default defineComponent({
                 .replace('{{opcionaisSelecionados}}', opcionaisHtml)
                 .replace('{{bardulaque}}', barHtml)
                 .replace('{{assinaturas}}', assinaturasHtml)
+                .replace('{{formaPagamento}}', textoFormaPagamento)
 
                 //Declaracao
                 .replace('{{assinaturasDeclaracao}}', assinaturasHtml)
@@ -423,6 +494,9 @@ export default defineComponent({
                 .replace('{{dataEventoPromissoria}}', this.dataEventoRaw)
                 .replace('{{assinaturasPromissoria}}', assinaturasHtml)
                 .replace('{{dataHojePromissoria}}', this.datahoje)
+
+                .replace('{{cardapioTitulo}}', this.cardapioBuffet)
+                .replace('{{cardapio}}', gruposHTML)
         },
 
     },

@@ -61,7 +61,7 @@
 
       .page-break {
         page-break-after: always;
-        margin-bottom: 10mm; /* Espaçamento após quebra de página */
+        margin-bottom: 15mm; /* Espaçamento após quebra de página */
       }
 
       .page-break-grande {
@@ -91,7 +91,7 @@
       .assinaturas {
         display: flex;
         justify-content: space-around; /* Distribui espaço igualmente */
-        margin-top: 30px; /* Espaçamento superior */
+        margin-top: 20px; /* Espaçamento superior */
       }
 
       .assinatura {
@@ -192,12 +192,11 @@
         • Taxa ECAD de direitos autorais para a execução de músicas no evento
         paga.
       </p>
-
+      <div class="page-break"></div>
       <p class="paragrafo"><strong>Parágrafo 2º:</strong> Serviço de Buffet</p>
       <p class="paragrafo">• Souplast de Inox ou Ratan.</p>
       <p class="paragrafo">• Guardanapos de tecido branco</p>
       <p class="paragrafo">• Louças de porcelana, 2 dois pratos na mesa.</p>
-      <div class="page-break"></div>
       <p class="paragrafo">• Taças na mesa</p>
       <p class="paragrafo">
         • 1 garçom para servir até 20 convidados ou 2 a 3 mesas em média.
@@ -272,6 +271,7 @@
         relação ao indicado na <strong>cláusula 1ª</strong>, será cobrado R$
         8,00 por cadeira para atingir o número de convidados acrescido.
       </p>
+      <div class="page-break"></div>
       <p>
         <strong>Cláusula 8ª</strong> O <strong>CONTRATADO</strong> se obriga,
         através de sua equipe garantir que todas as bebidas e alimentos, crus
@@ -282,7 +282,7 @@
         conformidade com todas as exigências legais e sanitárias na armazenagem,
         preparação, manipulação, serviço e disposição.
       </p>
-      <div class="page-break"></div>
+
       <p>
         <strong>Cláusula 9ª</strong> No caso de o número de pessoas que estarão
         presentes no evento ultrapassar o número referenciado na
@@ -313,7 +313,7 @@
       </p>
       <p>
         <strong>Cláusula 12ª</strong> O valor total do contrato é de
-        {{valorContratoClausula12}}.
+        <strong>{{valorContratoClausula12}}</strong>.
       </p>
       <p class="paragrafo">
         <strong>Parágrafo 1º</strong> O pagamento será efetuado da seguinte
@@ -373,6 +373,8 @@
         este deverá comunicar IMEDIATAMENTE por escrito o
         <strong>CONTRATADO</strong>.
       </p>
+      <div class="page-break"></div>
+
       <p class="paragrafo">
         <strong>Parágrafo 1º</strong> Caso o comunicado ao
         <strong>CONTRATADO</strong> ocorra com 180 ou mais dias de antecedência
@@ -398,7 +400,6 @@
         ressarcimento com prejuízos administrativos/operacionais, descontando-se
         o valor já pago.
       </p>
-      <div class="page-break"></div>
 
       <p class="paragrafo">
         <strong>Parágrafo 4º</strong> Caso o comunicado ao
@@ -479,6 +480,9 @@
         devendo o <strong>CONTRATANTE</strong> zelar pelo cumprimento destas
         determinações.
       </p>
+
+      <div class="page-break"></div>
+
       <p class="paragrafo">
         <strong>Parágrafo 2º</strong> Os eventos que se realizarem após as 22
         horas (vinte e duas horas) deverão ser destinados ao público com idade
@@ -499,7 +503,7 @@
         dependências do Espaço e as particularidades específicas para cada
         serviço como pontos de energia, estacionamento, carga e descarga, etc.
       </p>
-      <div class="page-break"></div>
+
       <p class="paragrafo">
         <strong>Parágrafo 1º</strong> O <strong>CONTRATANTE</strong> deverá
         diligenciar previamente junto ao decorador
@@ -567,6 +571,9 @@
         do <strong>CONTRATANTE</strong> ou de terceiros por conta da referida
         interrupção e restabelecimento do fornecimento.
       </p>
+
+      <div class="page-break"></div>
+
       <p class="paragrafo">
         <strong>Parágrafo 2º</strong> Quando há a contratação de qualquer
         espécie de banda para o entretenimento do evento, toda a instalação,
@@ -596,7 +603,7 @@
         que impeçam a realização do evento, o <strong>CONTRATADO</strong> se
         responsabilizará conforme penalidade prevista na cláusula 16a.
       </p>
-      <div class="page-break"></div>
+
       <p>
         <strong>Cláusula 27ª</strong> Caberá o
         <strong>CONTRATADO</strong> disponibilizar o Espaço cedido livre e no
@@ -660,6 +667,9 @@
         cessão ou transferência deste contrato, o que somente poderá acontecer
         mediante prévia autorização por escrito do <strong>CONTRATADO</strong>.
       </p>
+
+      <div class="page-break"></div>
+
       <p>
         <strong>Cláusula 34ª</strong> Nenhum acréscimo ou modificação ao
         presente contrato produzirá efeitos, a menos que seja expresso, por
@@ -686,7 +696,7 @@
         cláusula, concordância, aprovação, endosso, permissão, consentimento ou
         conversão.
       </p>
-      <div class="page-break"></div>
+
       <p>
         <strong>Cláusula 37ª</strong> As partes se obrigam a cumprir
         integralmente com a legislação pertinente, declarando-se em condições
@@ -987,6 +997,13 @@
       <p>Vinhedo. {{dataHojePromissoria}}</p>
       <br />
       {{assinaturasPromissoria}}
+      <br />
+      <br />
     </div>
+
+    <br />
+    <div class="page-break-grande"></div>
+    <p class="title2"><strong>Cardápio {{cardapioTitulo}}</strong></p>
+    <p>{{cardapio}}</p>
   </body>
 </html>
