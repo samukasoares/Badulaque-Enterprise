@@ -8,6 +8,7 @@
                 <option>Grupos</option>
                 <option>Itens</option>
                 <option>Cervejas</option>
+                <option>Insumos</option>
             </select>
         </div>
         <input type="text" placeholder="Pesquisar..." v-model="searchText">
@@ -41,10 +42,13 @@ import popupDetalhesCardapio from '../buffet/popups/PopupDetalhes/PopupDetalhesC
 import popupEditarItem from '../buffet/popups/PopupEdit/PopupEditItem.vue'
 import popupEditarGrupo from '../buffet/popups/PopupEdit/PopupEditGrupo.vue'
 import popupEditarCerveja from '../buffet/popups/PopupEdit/PopupEditCerveja.vue'
+import popupEditarInsumo from '../buffet/popups/PopupEdit/PopupEditInsumo.vue'
+import popupInsumo from './popups/popupCriar/popupCriarInsumo.vue'
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
 import { Card, Cardapio, CardapioInfo, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
+import { Insumo } from '@/common/utils/Interfaces/Buffet';
 
 
 export default defineComponent({
@@ -62,7 +66,7 @@ export default defineComponent({
             cardapioData: null as Cardapio | null
         }
     },
-    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage, popupEditarCerveja },
+    components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage, popupEditarCerveja, popupInsumo, popupEditarInsumo },
     computed: {
         getPopupComponent() {
             if (this.isViewingDetails) {
@@ -75,6 +79,8 @@ export default defineComponent({
                     return 'popupEditarGrupo';
                 } else if (this.opcoes === 'Cervejas') {
                     return 'popupEditarCerveja';
+                } else if (this.opcoes === 'Insumos') {
+                    return 'popupEditarInsumo';
                 }
 
 
@@ -89,6 +95,8 @@ export default defineComponent({
                     return 'popupItem';
                 } else if (this.opcoes === 'Cervejas') {
                     return 'popupCerveja';
+                } else if (this.opcoes === 'Insumos') {
+                    return 'popupInsumo';
                 }
             }
             return null;
@@ -113,6 +121,9 @@ export default defineComponent({
                 } else if (this.opcoes === 'Cervejas') {
                     response = await instance.get<Cerveja[]>('/cerveja/get-all');
                     this.cards = response.data.map((cerveja: Cerveja) => ({ name: cerveja.nome, id: cerveja.idCerveja }));
+                } else if (this.opcoes === 'Insumos') {
+                    response = await instance.get<Insumo[]>('/buffet/insumos');
+                    this.cards = response.data.map((item: Insumo) => ({ name: item.descri____oInsumo, id: item.idInsumo }));
                 }
 
             } catch (error) {
