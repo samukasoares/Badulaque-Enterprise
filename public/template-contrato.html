@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contrato</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: Montserrat, sans-serif;
+        font-size: 8px;
+        line-height: 1.6;
+        color: #000000;
+        margin: 0;
+        padding: 20px;
+        text-align: justify;
+      }
+
+      .container {
+        height: auto;
+        overflow: hidden;
+      }
+
+      .grifado {
+        color: #000000;
+        font-weight: bold;
+      }
+
+      .secao-assinatura {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .linha-assinatura {
+        border-top: 1px solid #333;
+        width: 40%;
+        text-align: center;
+        padding-top: 10px;
+        font-style: italic;
+      }
+
+      .termos {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 20px;
+      }
+
+      .title {
+        justify-content: center;
+        display: flex;
+        font-size: 7px;
+      }
+
+      .title2 {
+        justify-content: center;
+        display: flex;
+        font-size: 5px;
+      }
+
+      .page-break {
+        page-break-after: always;
+        margin-bottom: 13mm; /* Espaçamento após quebra de página */
+      }
+
+      .page-break-grande {
+        page-break-after: always;
+        margin-bottom: 50mm; /* Espaçamento após quebra de página */
+      }
+
+      .page-break-meia-pagina {
+        page-break-after: always;
+        margin-bottom: 75mm; /* Espaçamento após quebra de página */
+      }
+
+      p {
+        font-size: 5px;
+        margin: 2px 0;
+      }
+
+      .clausula {
+        font-weight: bold;
+        text-decoration: underline;
+      }
+
+      .paragrafo {
+        padding-left: 4px;
+      }
+
+      .assinaturas {
+        display: flex;
+        justify-content: space-around; /* Distribui espaço igualmente */
+        margin-top: 20px; /* Espaçamento superior */
+      }
+
+      .assinatura {
+        text-align: center;
+        flex: 1; /* Todas as assinaturas terão o mesmo tamanho */
+        margin: 0 5px; /* Espaçamento horizontal entre assinaturas */
+      }
+
+      .assinatura .linha {
+        border-top: 1px solid #000; /* Linha para assinatura */
+        width: 80%; /* Ajuste a largura da linha */
+        margin: 0 auto; /* Centraliza a linha */
+      }
+
+      .assinatura p {
+        margin-top: 3px; /* Espaço entre a linha e o nome */
+        font-size: 4px; /* Tamanho do texto */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class="title"
+        >{{referencia}} {{nomeLead}} - Contrato de Prestação de Serviços</span
+      >
+
+      <p><strong>Contratante:</strong> {{contratantes}}</p>
+      <p>
+        <strong>Contratado:</strong> BSS Serviços Elétricos e Locações LTDA –
+        Badulaque Festas e Eventos, CNPJ 01.757.991/0001-14, representado por
+        Sérgio Corrêa Soares, RG 7.974.536-2 e CPF 003.476.458-52.
+      </p>
+      <p><strong>Cláusula 1ª: Dados do Evento</strong></p>
+      <p>• Evento: {{tipoEvento}}</p>
+      <p>• Data: {{dataEvento}}</p>
+      <p>• Cerimônia no local: {{cerimoniaLocal}}</p>
+      <p>
+        • Número de Convidados: <strong>{{numConvidados}}</strong>, conforme
+        <strong>Cláusula 4ª</strong>
+      </p>
+      <p>
+        • Cardápio Buffet: {{cardapioBuffet}}, {{valorPPBuffet}} por pessoa até
+        {{numConvidadosReaj}} convidados acima, excedente {{valorPPBuffetReaj}}
+        por pessoa.
+      </p>
+      <p>• Cerveja: {{tipoCerveja}}</p>
+      <p>• Valor Espaço: <strong>{{valorEspaco}}</strong></p>
+      <p>• Valor Buffet: <strong>{{valorTotalBuffet}}</strong></p>
+      {{bardulaque}}
+      <p>{{opcionaisSelecionados}}</p>
+      <p>• Valor Contrato: <strong>{{valorContrato}}</strong></p>
+      <p>
+        <strong>Cláusula 2ª:</strong> O presente contrato tem por objeto a
+        prestação de serviços de Buffet e cessão de Espaço pelo
+        <strong>CONTRATADO</strong>, com a infraestrutura descrita no
+        <strong>Parágrafo 1º</strong> e o cardápio anexado no final desse
+        contrato, fazendo parte integrante do presente instrumento, para a
+        realização de evento abaixo descrito:
+      </p>
+
+      <p class="paragrafo"><strong>Parágrafo 1º:</strong> Infraestrutura</p>
+      <p class="paragrafo">
+        • Espaço para realização de cerimônia ao ar livre, incluindo até 50
+        bancos de madeira
+      </p>
+      <p class="paragrafo">
+        • Salão para até 200 pessoas, com deck panorâmico, piscina, quiosque bar
+        e vários ambientes.
+      </p>
+      <p class="paragrafo">
+        • Lago natural com chafariz e iluminação, cercado de vegetação.
+      </p>
+      <p class="paragrafo">• Estacionamento para 90 vagas em local plano.</p>
+      <p class="paragrafo">• Salinha para uso do cerimonial.</p>
+      <p class="paragrafo">
+        • Mesas em tamanhos diversos, cadeiras de ferro estofadas na cor branca.
+      </p>
+      <p class="paragrafo">
+        • Gerador de energia 50 Kva à diesel sem limite de utilização.
+      </p>
+      <p class="paragrafo">
+        • Ar-condicionado no salão principal (Em caso de falta de energia os
+        mesmos permanecerão desligados durante a operação do gerador)
+      </p>
+      <p class="paragrafo">
+        • 5 banheiros, incluindo banheiro adaptado a pessoas com necessidades
+        especiais, incluindo todo material de higiene e limpeza.
+      </p>
+      <p class="paragrafo">
+        • Espaço kids com castelinho inflável, cama elástica e um monitor
+        durante o período do evento.
+      </p>
+      <p class="paragrafo">
+        • Monitores de patrimônio na parte externa do Espaço, uma auxiliar de
+        limpeza durante o evento.
+      </p>
+      <p class="paragrafo">
+        • Taxa ECAD de direitos autorais para a execução de músicas no evento
+        paga.
+      </p>
+      <div class="page-break"></div>
+      <p class="paragrafo"><strong>Parágrafo 2º:</strong> Serviço de Buffet</p>
+      <p class="paragrafo">• Souplast de Inox ou Ratan.</p>
+      <p class="paragrafo">• Guardanapos de tecido branco</p>
+      <p class="paragrafo">• Louças de porcelana, 2 dois pratos na mesa.</p>
+      <p class="paragrafo">• Taças na mesa</p>
+      <p class="paragrafo">
+        • 1 garçom para servir até 20 convidados ou 2 a 3 mesas em média.
+      </p>
+      <p class="paragrafo">• Cardápio em anexo.</p>
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> O objeto do presente Contrato se restringe
+        ao previsto nas Cláusulas 1a e 2a e anexos de serviços adicionais,
+        devendo ocorrer por conta do <strong>CONTRATANTE</strong> todas as
+        demais despesas para a realização do evento, tais como seguranças,
+        sonorização, tendas, valet parking (caso o número de veículos venha
+        exceder a capacidade de 90 vagas), etc.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 4º</strong> Não é permitida a utilização pelo
+        <strong>CONTRATANTE</strong> de qualquer outro Espaço que não o
+        especificado acima, não sendo permitida a montagens de “stands”, “show
+        rooms”, exposição de veículos, produtos, placas ou qualquer outra forma
+        de comunicação, propaganda ou publicidade fora dos limites do Espaço do
+        evento.
+      </p>
+      <p>
+        <strong>Cláusula 3ª</strong> A duração total dos serviços de buffet é de
+        5 horas, contados a partir da entrada dos convidados no salão.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Para eventos com cerimônia no Espaço a
+        duração prevista é de 60 minutos (uma hora), sendo concedido 30 minutos
+        de tolerância, sendo considerado como horário inicial a horário
+        informado no convite, a partir do qual será descontado do tempo de
+        atendimento determinado na <strong>Cláusula 3ª</strong>.
+      </p>
+      <p>
+        <strong>Cláusula 4ª</strong> O número de convidados é o indicado na
+        <strong>cláusula 2ª</strong>. Esse número deverá atender a totalidade de
+        pessoas presentes no evento na forma: total de adultos + total de
+        crianças com mais de 10 anos + 50% das crianças de 6 a 10 anos + 50% dos
+        profissionais de serviço contratados pelo <strong>CONTRATANTE</strong>,
+        crianças de até 5 anos não pagam
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> São considerados profissionais contratados
+        pelo <strong>CONTRATANTE</strong> fotógrafos, decorador, cantores e
+        componentes de banda musical, DJ, componentes do cerimonial, seguranças
+        e quaisquer outras pessoas que não sejam integrantes da equipe do
+        <strong>CONTRATADO</strong> e que estejam presentes durante o evento.
+      </p>
+      <p>
+        <strong>Cláusula 5ª</strong> Em caso de falta de pagamento por parte do
+        <strong>CONTRATANTE</strong> de quaisquer das parcelas descritas na
+        <strong>cláusula 12ª parágrafo 1º</strong> do presente contrato, serão
+        automaticamente antecipadas as parcelas subsequentes, independentemente
+        de notificação, incidindo uma multa de 2% sobre o saldo devedor, além da
+        incidência de juros legais e de correção monetária.
+      </p>
+      <p>
+        <strong>Cláusula 6ª</strong> Como garantia de eventuais danos no Espaço
+        físico e patrimônio do <strong>CONTRATADO</strong>, no ato da assinatura
+        do contrato o <strong>CONTRATADO</strong>
+        emitirá uma Nota Promissória no valor R$ 2.500,00 (dois mil e quinhentos
+        reais), com efeito apenas administrativo que será devolvido ao
+        <strong>CONTRATANTE</strong> ou inutilizada após a realização do evento.
+      </p>
+      <p>
+        <strong>Cláusula 7ª</strong> O <strong>CONTRATADO</strong> fornecerá
+        todos os materiais, objetos e utensílios necessários à realização do
+        evento, tais como: louças, talheres, copos, guardanapos de tecido, mesas
+        e cadeiras (10 a mais do número de convidados indicado na cláusula 1a).
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Caso o número de convidados aumente em
+        relação ao indicado na <strong>cláusula 1ª</strong>, será cobrado R$
+        8,00 por cadeira para atingir o número de convidados acrescido.
+      </p>
+      <div class="page-break"></div>
+      <p>
+        <strong>Cláusula 8ª</strong> O <strong>CONTRATADO</strong> se obriga,
+        através de sua equipe garantir que todas as bebidas e alimentos, crus
+        e/ou cozidos e/ou fritos e/ou assados, adquiridos prontos, semiprontos
+        ou preparados no local, sejam de boa procedência e que estejam
+        perfeitamente adequadas ao consumo e dentro dos seus respectivos prazos
+        de validade, ao longo de todo o período de duração do evento, em
+        conformidade com todas as exigências legais e sanitárias na armazenagem,
+        preparação, manipulação, serviço e disposição.
+      </p>
+
+      <p>
+        <strong>Cláusula 9ª</strong> No caso de o número de pessoas que estarão
+        presentes no evento ultrapassar o número referenciado na
+        <strong>cláusula 4ª</strong>, o <strong>CONTRATANTE</strong> deverá
+        informar o número final de convidados ao <strong>CONTRATADO</strong>,
+        com antecedência mínima de 15 (quinze) dias da data do evento, quando se
+        fará o cálculo do valor a ser acrescido no valor final do contrato,
+        sendo obedecido o valor por pessoa estipulado na
+        <strong>Cláusula 2ª</strong> do presente instrumento.
+      </p>
+
+      <p>
+        <strong>Cláusula 10ª</strong> No caso de o número de convidados que
+        compareceram ao evento for superior ao número final pactuado na cláusula
+        2a, será cobrado por cada convidado excedente o preço por pessoa
+        definido na cláusula referida. O pagamento desse excedente deverá ser
+        efetuado em até 3 (três) dias úteis após a data do evento.
+      </p>
+      <p>
+        <strong>Cláusula 11ª</strong> Na hipótese de quebra, perda, queima,
+        extravio, ou qualquer forma de dano aos materiais pertencentes ao
+        <strong>CONTRATADO</strong> e utilizados no evento, o
+        <strong>CONTRATANTE</strong> poderá ser responsabilizado e uma vez
+        comprovada a responsabilidade do mesmo ou de algum convidado, será
+        cobrado o reembolso do valor aferido de todo o material danificado,
+        mediante apresentação de três orçamentos pelo
+        <strong>CONTRATADO</strong> ao <strong>CONTRATANTE</strong>.
+      </p>
+      <p>
+        <strong>Cláusula 12ª</strong> O valor total do contrato é de
+        <strong>{{valorContratoClausula12}}</strong>.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> O pagamento será efetuado da seguinte
+        forma: {{formaPagamento}}
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Pago através de Depósito.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> Não será permitida a realização do evento
+        sem a devida comprovação da quitação integral do valor integral do
+        contrato.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 4º</strong> A conta corrente a ser utilizada para
+        efetuar depósitos quando necessário é:
+      </p>
+      <p>
+        <strong>Cláusula 13ª</strong> O <strong>CONTRATADO</strong> dará
+        tolerância máxima de até 30 (trinta) minutos para a finalização do
+        evento conforme descrito na <strong>cláusula 2ª</strong>, após esse
+        período o <strong>CONTRATANTE</strong> se obriga a pagar o valor
+        referente à HORA EXTRA nos termos descritos na
+        <strong>cláusula 14ª parágrafo 1º.</strong>
+      </p>
+      <p>
+        <strong>Cláusula 14ª</strong> O valor da HORA EXTRA acrescida para a
+        continuidade do evento além do tempo estabelecido na cláusula 1ª é de
+        <strong>R$ 2.500,00</strong>
+        (dois mil e quinhentos reais) por hora extra acrescida .
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Na HORA EXTRA apenas o serviço de bebidas
+        funciona, não sendo servido mais nenhum tipo de alimento dentro desse
+        período, sendo que o buffet será retirado uma hora antes do tempo
+        estabelecido na <strong>cláusula 1ª</strong>.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Caso nosso serviço de bartender seja
+        contratado, como cortesia, também continuará funcionando dentro do
+        período de hora extra.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> O <strong>CONTRATANTE</strong> poderá a
+        qualquer momento contratar a HORA EXTRA, sendo que no dia do evento
+        ficará à critério do <strong>CONTRATADO</strong> aceitar ou não de
+        acordo com nossa disponibilidade.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 4º</strong> O pagamento da HORA EXTRA poderá ser feito
+        antecipadamente através de depósito em conta, caso seja no dia do
+        evento, deverá ser pix ou dinheiro.
+      </p>
+      <p>
+        <strong>Cláusula 15ª</strong> Em caso de desistência da realização do
+        evento e eventual distrato por parte do <strong>CONTRATANTE</strong>,
+        este deverá comunicar IMEDIATAMENTE por escrito o
+        <strong>CONTRATADO</strong>.
+      </p>
+      <div class="page-break"></div>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Caso o comunicado ao
+        <strong>CONTRATADO</strong> ocorra com 180 ou mais dias de antecedência
+        à data do evento, o <strong>CONTRATANTE</strong> deverá pagar ao
+        <strong>CONTRATADO</strong> 30% do valor do contrato a título de
+        ressarcimento com prejuízos administrativos/operacionais, descontando-se
+        o valor já pago.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Caso o comunicado ao
+        <strong>CONTRATADO</strong> ocorra entre 179 e 90 dias de antecedência à
+        do evento, o <strong>CONTRATANTE</strong> deverá pagar o
+        <strong>CONTRATADO</strong> 50% do valor do contrato a título de
+        ressarcimento com prejuízos administrativos/operacionais, descontando-se
+        o valor já pago.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> Caso o comunicado ao
+        <strong>CONTRATADO</strong> ocorra entre 89 e 30 dias de antecedência à
+        do evento, o <strong>CONTRATANTE</strong> deverá pagar o
+        <strong>CONTRATADO</strong> 80% do valor do contrato a título de
+        ressarcimento com prejuízos administrativos/operacionais, descontando-se
+        o valor já pago.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 4º</strong> Caso o comunicado ao
+        <strong>CONTRATADO</strong> ocorra em um prazo menor que 30 dias de
+        antecedência à do evento, não haverá devolução dos valores pagos a
+        título de ressarcimento com prejuízos administrativos/operacionais.
+      </p>
+
+      <p>
+        <strong>Cláusula 16ª</strong> Em caso de desistência ou cancelamento do
+        presente contrato por parte do <strong>CONTRATADO</strong>, este deverá
+        comunicar ao <strong>CONTRATANTE</strong> imediatamente por escrito,
+        devolvendo os valores já pagos pelo <strong>CONTRATANTE</strong>,
+        acrescido de correção monetária com base no índice IPCA- Alimentos, além
+        de multa equivalente a 50% (cinquenta por cento) do valor total do
+        contrato.
+      </p>
+      <p>
+        <strong>Cláusula 17ª</strong> O <strong>CONTRATADO</strong> não se
+        responsabiliza por objetos esquecidos ou deixados nas dependências do
+        local do evento que pertençam ao <strong>CONTRATANTE</strong> ou
+        convidados.
+      </p>
+      <p>
+        <strong>Cláusula 18ª</strong> Caso o <strong>CONTRATANTE</strong> venha
+        solicitar transferência de data, somente será aceito dentro da
+        disponibilidade na agenda do <strong>CONTRATADO</strong> e recolhimento
+        da taxa de 20% (vinte por cento) do valor total do contrato.
+      </p>
+      <p>
+        <strong>Cláusula 19ª</strong> Caso o evento não possa ser realizado por
+        falecimento de membro direto da família do
+        <strong>CONTRATANTE</strong> ou algum motivo de força maior, o evento
+        poderá ser reagendado, conforme disponibilidade na agenda do
+        <strong>CONTRATADO</strong> ̧ num prazo de até 6 (seis) meses a contar da
+        data inicial do evento. Todas as demais condições permanecerão
+        inalteradas e não haverá cobrança de multas.
+      </p>
+      <p>
+        <strong>Cláusula 20ª</strong> No impedimento da realização do evento em
+        razão de eventuais problemas cuja responsabilidade seja exclusiva do
+        <strong>CONTRATADO</strong>, o mesmo disponibilizará outras datas para a
+        realização do evento num prazo de até 12 meses e pagará multa no valor
+        de 50% (cinquenta por cento) do valor do contrato. Caso não haja
+        interesse do <strong>CONTRATANTE</strong> em reagendar o evento, o
+        <strong>CONTRATADO</strong> devolverá o montante integral já pago
+        adicionados de multa no valor de 20 % (vinte por cento) do valor do
+        contrato.
+      </p>
+      <p>
+        <strong>Cláusula 21ª</strong> No caso de impedimento da realização do
+        evento por caso fortuito ou força maior, o evento poderá ser reagendado
+        num prazo de até 12 meses, conforme interesse do
+        <strong>CONTRATANTE</strong>.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Os valores referidos na cláusula 12a serão
+        corrigidos pelo IPCA-Alimentos do mês da data da assinatura do contrato
+        até a data da efetivação da alteração da data do novo contrato como
+        forma de reequilíbrio financeiro do contrato.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Caso o <strong>CONTRATANTE</strong> não
+        tenha interesse em reagendar o evento, o <strong>CONTRATADO</strong> não
+        devolverá os valores pagos.
+      </p>
+      <p>
+        <strong>Cláusula 22ª</strong> O <strong>CONTRATANTE</strong> deverá
+        fornecer uma lista com os nomes e telefones dos responsáveis de cada
+        serviço que estará presente no dia do evento.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Os prestadores de serviço e seus
+        colaboradores, que forem <strong>CONTRATADO</strong>s pelo
+        <strong>CONTRATANTE</strong>, deverão portar-se de forma respeitosa,
+        vestir-se de forma recatada e limitar-se a permanecer no local do
+        evento, vedado o acesso às outras dependências do Espaço ora cedido,
+        devendo o <strong>CONTRATANTE</strong> zelar pelo cumprimento destas
+        determinações.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Os eventos que se realizarem após as 22
+        horas (vinte e duas horas) deverão ser destinados ao público com idade
+        superior a 18 (dezoito) anos e, em caso de menores, os mesmos deverão
+        ser acompanhados dos responsáveis legais.
+      </p>
+
+      <div class="page-break"></div>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> O <strong>CONTRATADO</strong> tem o
+        direito de encerrar antecipadamente o evento a qualquer momento, caso
+        seja constatado qualquer tipo de imoralidade, atentado ao pudor, briga
+        física ou em decorrência de atos de violência que possa colocar em risco
+        vidas e/ou instalações do imóvel.
+      </p>
+
+      <p>
+        <strong>Cláusula 23ª</strong> Em relação aos serviços contratados de
+        terceiros deverá ser feita uma visita técnica para que todos conheçam as
+        dependências do Espaço e as particularidades específicas para cada
+        serviço como pontos de energia, estacionamento, carga e descarga, etc.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> O <strong>CONTRATANTE</strong> deverá
+        diligenciar previamente junto ao decorador
+        <strong>CONTRATADO</strong> para que a decoração do Espaço locado tenha
+        estrutura própria e independente, sendo vedado o apoio de qualquer
+        espécie de objeto ou decoração nas divisórias, bem como utilização de
+        pregos, parafusos, arames, grampos, fita dupla-face ou qualquer outro
+        tipo de material que possa danificar o madeiramento, paredes, teto,
+        piso, etc, sob pena de incidência de multa prevista n a
+        <strong>Cláusula 39ª</strong>.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> O <strong>CONTRATANTE</strong> poderá
+        montar, às suas expensas e mediante a contratação de serviços
+        especializados, cobertura na área externa ao Espaço.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> Toda a decoração, coberturas e móveis e
+        equipamentos utilizados deverão ser retirados e removidos imediatamente
+        após o término do evento, devendo o Espaço estar livre e totalmente
+        desimpedido até 3 horas após o horário previsto para o término do
+        evento, sob pena de incidência de multa prevista na Cláusula 39a,
+        Parágrafo 2o, ficando o <strong>CONTRATADO</strong>, desde já,
+        autorizada a removê- los para outro local, sem qualquer responsabilidade
+        pela sua integração e conservação.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 4º</strong> O serviço de BARTENDER tem estrutura fixa
+        no Espaço disponível é de uso exclusivo pelo
+        <strong>CONTRATADO</strong>, caso o <strong>CONTRATANTE</strong> opte
+        por contratar serviço externo, o valor da locação da estrutura ́é de R$
+        1.500,00, devendo ser pago até a data referida na Cláusula 12a parágrafo
+        2o.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 5º</strong> O serviço de BARTENDER poderá ser
+        instalado em outro local do Espaço, estando sujeito às regras
+        estabelecidas no ANEXO – REGULAMENTO GERAL.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 6º</strong> O serviço de CABINE DE FOTO contratado de
+        outro prestador de serviço deverá executar a montagem dos equipamentos
+        com no mínimo de 2 horas de antecedência e a desmontagem deverá ocorrer
+        apenas ao término do evento.
+      </p>
+      <p>
+        <strong>Cláusula 24ª</strong> O <strong>CONTRATANTE</strong> se
+        responsabiliza por todos os danos causados pelos participantes do evento
+        nas instalações móveis presentes ao Espaço do
+        <strong>CONTRATADO</strong>, que deverá ser devidamente indenizada, uma
+        vez comprovado, para a recomposição dos mesmos, de forma a manter as
+        condições e características originais, procedendo-se na forma prevista
+        na <strong>Cláusula 32ª.</strong>
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> As instalações elétricas do Espaço cedido
+        possuem capacidade para tensão nominal 220 volts em circuito monofásico,
+        e um gerador de energia próprio o qual no caso de falta de fornecimento
+        de energia elétrica pela concessionária (CPFL), entrará em operação,
+        operado manualmente, o que ocorrerá dentro de um lapso de
+        aproximadamente 5 (cinco) minutos, ficando, desde já, estabelecido que o
+        <strong>CONTRATADO</strong> esteja desobrigado de qualquer indenização
+        por conta de problemas ou defeitos ocorridos com equipamentos elétricos
+        do <strong>CONTRATANTE</strong> ou de terceiros por conta da referida
+        interrupção e restabelecimento do fornecimento.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Quando há a contratação de qualquer
+        espécie de banda para o entretenimento do evento, toda a instalação,
+        operação e custo serão de responsabilidade do
+        <strong>CONTRATANTE</strong>. Ficando o
+        <strong>CONTRATADO</strong> isento de qualquer queda de energia que
+        ocorra durante o evento por conta do uso excessivo de carga da rede
+        interna. Deste modo o <strong>CONTRATANTE</strong> fica responsável por
+        qualquer dano causado à rede elétrica das dependências do
+        <strong>CONTRATADO</strong>, devendo arcar com todos os custos para a
+        recuperação da mesma.
+      </p>
+
+      <div class="page-break"></div>
+      <p>
+        <strong>Cláusula 25ª</strong> O <strong>CONTRATANTE</strong> declara ter
+        conhecimento do ANEXO - REGULAMENTO com os procedimentos e regras a
+        serem adotadas pelos prestadores de serviços contratados e que deve
+        repassar aos mesmos para que tomem ciência antes da realização do
+        evento.
+      </p>
+      <p>
+        <strong>Cláusula 26ª</strong> O <strong>CONTRATANTE</strong> fará, até
+        um dia antes do evento, uma inspeção no Espaço cedido, em conjunto com o
+        <strong>CONTRATADO</strong>, no qual será constatada a perfeita condição
+        de uso e funcionalidade das instalações, assim como o perfeito estado de
+        conservação das mesmas, nada podendo reclamar a este título, após a
+        inspeção. Caso sejam constatados durante a vistoria eventuais problemas
+        que impeçam a realização do evento, o <strong>CONTRATADO</strong> se
+        responsabilizará conforme penalidade prevista na cláusula 16a.
+      </p>
+
+      <p>
+        <strong>Cláusula 27ª</strong> Caberá o
+        <strong>CONTRATADO</strong> disponibilizar o Espaço cedido livre e no
+        estado da vistoria realizada de acordo com a Cláusula 2 6 a na data de
+        realização do evento, se responsabilizando, para com a limpeza dos
+        banheiros antes e durante o evento e uma pessoa responsável para o
+        perfeito funcionamento dos equipamentos.
+      </p>
+
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> As dependências do Espaço cedidas deverão
+        estar à disposição do <strong>CONTRATANTE</strong> para a preparação do
+        evento a partir das 07:00 horas do dia previsto para a sua realização.
+      </p>
+      <p>
+        <strong>Cláusula 28ª</strong> O <strong>CONTRATADO</strong> não tem
+        responsabilidade por quaisquer lesões físicas sofridas pelos
+        participantes do evento em suas dependências, danos materiais ou morais,
+        uma vez que é do <strong>CONTRATANTE</strong> a responsabilidade pela
+        direção e organização do evento.
+      </p>
+      <p>
+        <strong>Cláusula 29ª</strong> O manuseio, uso e conservação das
+        instalações elétricas, hidráulicas, sanitárias, de gás, máquinas e
+        equipamentos, assim como o armazenamento de produtos, serão de
+        responsabilidade única e exclusiva do <strong>CONTRATADO</strong>,
+        comprometendo-se o mesmo a observar as normas de segurança vigentes dos
+        órgãos competentes.
+      </p>
+      <p>
+        <strong>Cláusula 30ª</strong> O <strong>CONTRATADO</strong> é
+        responsável pelo pagamento diretamente ao ECAD o valor referente aos
+        direitos autorais das músicas executadas durante o evento seja por
+        música mecânica, som ambiente, banda, etc.
+      </p>
+      <p>
+        <strong>Cláusula 31ª</strong> Após o evento, o
+        <strong>CONTRATADO</strong> procederá à vistoria na área cedida, sendo
+        que, caso não sejam constatados quaisquer estragos ou danos e não tenha
+        o <strong>CONTRATANTE</strong> incidido nas multas previstas na Cláusula
+        39a, implicará na inutilização da nota promissória conforme Cláusula 6a
+      </p>
+      <p>
+        <strong>Cláusula 32ª</strong> a Caso sejam constatados danos materiais
+        no Espaço locado, ou tenha o <strong>CONTRATANTE</strong> incidido em
+        algumas das situações passiveis de multas previstas neste contrato, o
+        <strong>CONTRATANTE</strong> se responsabilizará pelo ressarcimento
+        financeiro dos danos ocorridos, na ocasião da reunião técnica, conforme
+        especificado pela Cláusula 6a.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> O <strong>CONTRATADO</strong> somente fica
+        autorizado a apresentar nota promissória para desconto, caso não ocorra
+        a negociação referida no caput da Cláusula 32a. Nesse caso, o
+        <strong>CONTRATADO</strong> também está autorizado a emitir cobrança
+        bancária com vencimento após 5 (cinco) dias ao valor do dano que exceda
+        o valor da nota promissória.
+      </p>
+      <p>
+        <strong>Cláusula 33ª</strong> Fica expressamente proibido à sublocação,
+        cessão ou transferência deste contrato, o que somente poderá acontecer
+        mediante prévia autorização por escrito do <strong>CONTRATADO</strong>.
+      </p>
+
+      <p>
+        <strong>Cláusula 34ª</strong> Nenhum acréscimo ou modificação ao
+        presente contrato produzirá efeitos, a menos que seja expresso, por
+        escrito, no todo ou em parte, por meio de termo aditivo expresso e
+        esteja devidamente assinada por ambas as partes ou por seus
+        representantes legais.
+      </p>
+
+      <div class="page-break"></div>
+
+      <p>
+        <strong>Cláusula 35ª</strong> No caso de uma ou mais previsões do
+        presente Contrato, por qualquer razão, ser considerada inválida, ilegal
+        ou inexigível esta invalidade, ilegalidade e inexigibilidade não se
+        estenderá as outras previsões do presente Contrato. As partes deverão
+        com base na boa-fé tentar substituir as previsões inválidas, ilegais ou
+        inexigíveis por outras que possuam conteúdo equivalente. No caso desta
+        solução seja impraticável, o contrato será interpretado como se as
+        previsões inválidas, ilegais ou inexigíveis não tivessem sido inseridas.
+      </p>
+      <p>
+        <strong>Cláusula 36ª</strong> A tolerância eventualmente manifestada por
+        qualquer das partes não importará em novação quanto aos termos deste
+        instrumento, não podendo ser empregada como precedente ou justificativa
+        de futura infração contratual ou legal, não devendo ser interpretada
+        como renúncia, desistência, transformação, substituição, modificação de
+        cláusula, concordância, aprovação, endosso, permissão, consentimento ou
+        conversão.
+      </p>
+
+      <p>
+        <strong>Cláusula 37ª</strong> As partes se obrigam a cumprir
+        integralmente com a legislação pertinente, declarando-se em condições
+        para tanto e assumindo integralmente a responsabilidade por seu
+        descumprimento, devendo cada parte responder diretamente e isoladamente,
+        nos limites de seus encargos estabelecidos e nos termos da lei, por
+        todos os atos, perdas e danos causados à outra parte ou a terceiros,
+        decorrentes do dolo, imperícia, negligência, imprudência ou outro motivo
+        originado da ação ou omissão pertinente aos trabalhos, ora contratados
+        no presente instrumento.
+      </p>
+
+      <p>
+        <strong>Cláusula 38ª</strong> Fica compactuado entre as partes, a total
+        inexistência de vínculo empregatício ou grupo econômico entre as mesmas,
+        não havendo entre as partes qualquer tipo de relação de subordinação,
+        sendo cada parte responsável pelos seus próprios encargos
+        previdenciários, sociais e fiscais decorrentes dessa relação.
+      </p>
+      <p>
+        <strong>Cláusula 39ª</strong> Ficam estipuladas as multas a seguir
+        discriminadas para a garantia das cláusulas a que se referem, cujos
+        pagamentos serão efetuados pelo <strong>CONTRATANTE</strong> ao
+        <strong>CONTRATADO</strong> na forma disposta na Cláusula 6a, supra:
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 1º</strong> Caso ocorra “Chuva de papel”, pétalas de
+        flores dentro dos salões, seja deixado material utilizado na decoração
+        tais como arranjos de flores, velas, bexigas e afins, será cobrado o
+        valor de R$ 500,00 referente à taxa de limpeza.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 2º</strong> Caso o tempo decorrido de evento exceda os
+        prazos e tolerâncias estabelecidos haverá cobrança de multa de R$
+        2.500,00.
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 3º</strong> Conforme Lei estadual no 2.654 de
+        28/07/2021 é proibido a queima e soltura de Fogos de artifício com multa
+        de 400 UFESP aproximadamente R$ 14.144,00, valor pelo qual o
+        <strong>CONTRATANTE</strong>
+        será responsável pelo pagamento
+      </p>
+      <p class="paragrafo">
+        <strong>Parágrafo 4º</strong> É proibido a instalação lonas fixadas com
+        fitas adesivas de qualquer tipo no piso da pista de dança, será cobrado
+        o valor de R$ 500,00 referente a taxa de limpeza do local.
+      </p>
+      <p>
+        <strong>Cláusula 40ª</strong> E por estarem de comum acordo, assinam o
+        presente contrato em 02 (duas) vias de igual forma e teor, para que
+        produza seus efeitos jurídicos.
+      </p>
+      <p>
+        <strong>Cláusula 41ª</strong> As partes elegem para resolver os
+        conflitos oriundos deste instrumento o foro da Comarca de Vinhedo,
+        Estado de São Paulo, com renúncia a qualquer outro por mais privilegiado
+        que seja.
+      </p>
+      {{assinaturas}}
+
+      <div class="page-break"></div>
+
+      <p class="title2">
+        <strong
+          >ANEXO – REGULAMENTO GERAL PARA HORÁRIOS E UTILIZAÇÂO DO
+          ESPAÇO</strong
+        >
+      </p>
+
+      <p>
+        Os horários de montagem e desmontagem de todos os itens relacionados ao
+        evento deverão ser repassados para todos os profissionais contratados
+        que forem trabalhar e deverão ser rigorosamente cumpridos. A montagem
+        poderá ser feita a partir das 07h00 do dia do evento e a desmontagem
+        deverá ser feita em até <strong>03 horas</strong> após a realização do
+        evento. Não será permitida a permanência de nenhum prestador de serviço
+        após os horários estabelecidos. Poderá haver excepcionalidades mediante
+        prévio acordo entre <strong>CONTRATADO</strong> e
+        <strong>CONTRATANTE</strong>.
+      </p>
+
+      <p>
+        OS ITENS ASSINADADOS COM <strong>(*)</strong> SÃO CONSIDERADOS SEM
+        EFEITO CASO O SERVIÇO SEJA PRESTADO PELO CONTRATADO
+      </p>
+
+      <br />
+
+      <p>
+        <strong>CERIMONIAL</strong>
+      </p>
+      <p>
+        O profissional CONTRATADO será intermediário entre o
+        <strong>CONTRATANTE</strong> e o <strong>CONTRATADO</strong> no
+        tratamento para a organização do evento, deverá certificar-se que todos
+        os prestadores de serviço contratados estejam cientes dos procedimentos
+        e regras descritos a seguir:
+      </p>
+      <p>
+        <strong>1.</strong> Na falta do profissional fica o CONTRATANTE
+        responsável pelas atribuições.
+      </p>
+      <p>
+        <strong>2.</strong> Enviar com até 07 (sete) dias de antecedência ao
+        evento, o nome e o telefone para contato de todos os responsáveis
+        prestadores de serviço do evento, o número de mesas e cadeiras a serem
+        utilizadas no evento e o mapeamento das mesas no espaço (se tiver).
+      </p>
+      <p>
+        <strong>3.</strong> Caso a relação dos prestadores de serviço contratado
+        pelo CONTRATANTE não seja fornecida no prazo e forma prevista no item
+        anterior o CONTRATADO poderá não permitir a entrada para a execução do
+        serviço.
+      </p>
+      <p>
+        <strong>4.</strong> Os profissionais prestadores de serviço no dia do
+        evento não poderão consumir qualquer tipo de bebida alcoólica durante a
+        presença no Espaço.
+      </p>
+      <p><strong>DECORAÇÃO</strong></p>
+      <p>
+        A empresa contratada deverá providenciar e trazer toda sua estrutura já
+        pronta ou semipronta. É expressamente proibida a utilização de pregos,
+        grampos, fitas adesivas, fitas dupla-face ou qualquer outro material que
+        possa danificar a pintura das paredes e do forro, pisos e estruturas em
+        geral.
+      </p>
+      <p>
+        Caso haja constatação de danos o cheque caução ficará retido até que
+        seja estabelecido o custo do reparo.
+      </p>
+      <p>
+        <strong>1.</strong> A empresa deverá recolher as respectivas
+        flores/folhas/plantas que estiverem espalhadas pelo espaço e
+        acondicionar em sacos de lixo e para que posteriormente seja feita a
+        limpeza do salão. Caso a empresa não recolha, estará sob pena de
+        incidência de multa prevista na Cláusula 39a
+      </p>
+      <p>
+        <strong>2.</strong> É proibida a montagem de velas, diretamente no piso.
+        Quando necessário este tipo de ornamentação, deverá ser feito de forma a
+        não respingar no piso, pois sob pena de incidência de multa prevista na
+        Cláusula 39a.
+      </p>
+      <p>
+        <strong>3.</strong> A decoração não poderá interferir na visualização e
+        posicionamento dos extintores, e também nos acessos e saídas da
+        edificação, observando sempre manter ampla a circulação para os mesmos,
+        em caso de emergência.
+      </p>
+      <p>
+        <strong>4.</strong> É proibido o uso de qualquer tipo de pirotecnia,
+        fogos e artifício, ou apresentação envolvendo fogo nos espaços internos
+        e externos do espaço.
+      </p>
+      <p>
+        <strong>5.</strong>É proibida a utilização de chuva de pétalas, chuva de
+        papel, chuva de prata e afins nos gramados, jardins e dentro dos salões,
+        caso ocorra estará sob pena de incidência de multa prevista na Cláusula
+        39a.
+      </p>
+
+      <div class="page-break"></div>
+
+      <p><strong>BARTENDER (*)</strong></p>
+      <p>
+        <strong>1.</strong> A empresa contratada deverá providenciar e trazer
+        toda sua estrutura já pronta ou semipronta. É expressamente proibida a
+        utilização de pregos, grampos, fitas adesivas, fitas dupla-face ou
+        qualquer outro material que possa danificar a pintura das paredes e do
+        forro, pisos e estruturas em geral. Caso haja constatação de danos o
+        cheque caução ficará retido até que seja estabelecido o custo do reparo.
+      </p>
+      <p>
+        <strong>2.</strong> A empresa deverá recolher todo material utilizado
+        para o serviço que estiver no local utilizado e acondicioná-las em sacos
+        de lixo para que posteriormente seja feita a limpeza do salão. Caso a
+        empresa não recolha, estará sob pena de incidência de multa prevista na
+        Cláusula 39a
+      </p>
+      <p><strong>3.</strong> Todo o lixo deverá ser levado embora.</p>
+      <p>
+        <strong>4.</strong> O bar e decoração não poderão interferir na
+        visualização e posicionamento dos extintores, e também nos acessos e
+        saídas da edificação, observando sempre manter ampla a circulação para
+        os mesmos, em caso de emergência.
+      </p>
+
+      <p><strong>DJ OU BANDA</strong></p>
+      <p>
+        <strong>1.</strong> Após as 23 horas o volume máximo permitido medido
+        externamente é de 60 decibéis, que poderá ser aferido junto ao
+        cerimonial ou responsável pela festa, juntamente com o responsável
+        indicado pelo CONTRATADO no dia do evento.
+      </p>
+      <p>
+        <strong>2.</strong> Não é permitido instrumentos de percussão, tipo
+        bateria de escola de samba ou similares.
+      </p>
+      <p>
+        <strong>3.</strong> O <strong>CONTRATANTE</strong> deverá indicar o
+        local onde será instalada a aparelhagem de som, e aferir junto ao
+        <strong>CONTRATADO</strong> as tomadas e respectiva voltagem disponíveis
+        para a instalação, ficando assim o <strong>CONTRATANTE</strong>
+        desobrigado no dia do evento de qualquer tipo de adaptação ou
+        fornecimento de extensão elétrica, adaptadores e afins.
+      </p>
+      <p>
+        <strong>4.</strong> Para a montagem de estruturas metálicas deverá haver
+        uma permissão prévia juntamente com uma vistoria para certificar-se que
+        a montagem não irá danificar o piso, para tal é necessário que estrutura
+        disponha de algum tipo de proteção nas partes que irão apoiar-se no
+        piso. Caso haja constatação de danos o cheque caução ficará retido até
+        que seja estabelecido o custo do reparo.
+      </p>
+
+      <p><strong>CABINE DE FOTO LEMBRANÇA (*)</strong></p>
+      <p>
+        <strong>1.</strong> A montagem da estrutura e equipamentos deverá
+        ocorrer com no mínimo de 2 horas de antecedência do horário previsto
+        para início do evento
+      </p>
+      <p>
+        <strong>2.</strong> A desmontagem da estrutura e equipamentos deverá ser
+        feita apenas ao término completo do evento.
+      </p>
+      <p>
+        <strong>3.</strong> Todo tipo de lixo ou material deverá ser recolhido e
+        acondicionado em sacos plásticos e levado embora do Espaço.
+      </p>
+      <p>
+        <strong>4.</strong> A cabine de foto não poderá interferir na
+        visualização e posicionamento dos extintores, e também nos acessos e
+        saídas da edificação, observando sempre manter ampla a circulação para
+        os mesmos, em caso de emergência.
+      </p>
+
+      <p>GERAL</p>
+      <p>
+        <strong>1.</strong> É proibida a circulação pelas demais dependências do
+        Espaço, devendo-se utilizar somente a área reservada para o evento.
+      </p>
+      <p>
+        <strong>2.</strong> Os profissionais contratados deverão utilizar
+        somente os sanitários para funcionários, ficando vetado o uso dos
+        banheiros dos salões. Os sanitários deverão ser mantidos limpos.
+      </p>
+      <p>
+        <strong>3.</strong> Os veículos dos prestadores deverão ser estacionados
+        no local reservado para prestadores de serviço, disponibilizado para o
+        evento, uma hora antes do início do evento, sendo proibido o
+        estacionamento fora dos limites do Espaço.
+      </p>
+
+      <div class="page-break"></div>
+
+      <p class="title2"><strong>DECLARAÇÃO</strong></p>
+      <p>
+        Declaro estar ciente de todas as cláusulas do presente contrato que
+        tratam da incidência de multas que serão aplicadas mediante o
+        descumprimento da(s) mesma(s). Declaro também ter recebido e tomado
+        conhecimento do
+        <strong
+          >ANEXO – REGULAMENTO GERAL PARA HORÁRIOS E UTILIZAÇÂO DO
+          ESPAÇO</strong
+        >
+        que deverá ser repassado às empresas prestadoras de serviço envolvidas
+        no evento. Declaro ainda ser o responsável pelas atividades dos
+        prestadores de serviço envolvidos no evento que venham a danificar ou
+        exigir por parte do <strong>CONTRATADO</strong> mão de obra adicional
+        para a recomposição das condições anteriores ao evento.
+      </p>
+      <br />
+      <p>{{dataHoje}}</p>
+
+      {{assinaturasDeclaracao}}
+
+      <div class="page-break-meia-pagina"></div>
+
+      <p class="title2"><strong>NOTA PROMISSÓRIA</strong></p>
+
+      <p><strong>Valor: R$2.500,00</strong></p>
+      <p>
+        Aos {{dataEventoPromissoria}}, pagarei por essa única via de NOTA
+        PROMISSÓRIA a BSS SERVIÇOS ELÈTRICOS E LOCAÇÔES LTDA – BADULAQUE FESTAS
+        E EVENTOS, CNPJ 01.757.991/0001-14, ou à sua ordem, a quantia de
+        <strong>R$ 2.500,00</strong> (dois mil e quinhentos reais), em moeda
+        corrente nacional.
+      </p>
+      <br />
+      <p><strong>EMITENTE</strong></p>
+      <p>Nome: {{nomeContratante}}</p>
+      <p>RG: {{rgContratante}}</p>
+      <p>CPF: {{cpfContratante}}</p>
+      <p>Endereço: {{enderecoContratante}}</p>
+      <br />
+      <p>Vinhedo. {{dataHojePromissoria}}</p>
+      <br />
+      {{assinaturasPromissoria}}
+      <br />
+      <br />
+    </div>
+
+    <br />
+    <div class="page-break-grande"></div>
+    <p class="title2"><strong>Cardápio {{cardapioTitulo}}</strong></p>
+    <p>{{cardapio}}</p>
+  </body>
+</html>
