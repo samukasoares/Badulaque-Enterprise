@@ -17,7 +17,7 @@
             <label>Valor Embalagem:</label>
             <input type="number" required v-model="insumo.valorEmbalagem">
             <label>Valor unitário</label>
-            <input type="number" required v-model="insumo.valorUnitario" step="0.0001">
+            <input disabled type="number" required v-model="insumo.valorUnitario" step="0.0001">
             <label>Perda (%)</label>
             <input type="number" required v-model="insumo.perda">
             <button type="submit" class="submit-button" @click="atualizarInsumo">Atualizar</button>

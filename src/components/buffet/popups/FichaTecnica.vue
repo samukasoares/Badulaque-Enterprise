@@ -31,7 +31,9 @@
             <input type="number" :value="valorTotalGeral" disabled />
 
             <div class="form-group">
-                <button type="submit" class="submit-button" @click.prevent="salvarFichaTecnica">Salvar</button>
+                <button type="submit" class="submit-button" @click.prevent="salvarFichaTecnica">
+                    {{ botaoSalvarOuAtualizar }}
+                </button>
                 <button type="button" class="submit-button" @click="fechar">Cancelar</button>
             </div>
         </form>
@@ -93,6 +95,7 @@ export default defineComponent({
             try {
                 let response = await instance.get<Insumo[]>('/buffet/insumos');
                 this.insumosDisponiveis = response.data;
+
             } catch (error) {
                 console.error('Erro ao encontrar insumos:', error);
             }
@@ -100,15 +103,27 @@ export default defineComponent({
 
         async salvarFichaTecnica() {
             try {
-                await instance.post('/buffet/ficha-tecnica/create', {
+                const endpoint = this.insumos.length > 0
+                    ? '/buffet/ficha-tecnica/update'
+                    : '/buffet/ficha-tecnica/create';
+
+                const payload = {
                     itemId: this.itemId,
                     insumos: this.insumos,
-                    custoTotal: this.valorTotalGeral
-                });
-                this.$emit('success', 'Ficha Técnica salva com sucesso!');
+                    custoTotal: this.valorTotalGeral,
+                };
+
+                await instance.post(endpoint, payload);
+
+                const sucessoMensagem = this.insumos.length > 0
+                    ? 'Ficha Técnica atualizada com sucesso!'
+                    : 'Ficha Técnica salva com sucesso!';
+
+                this.$emit('success', sucessoMensagem);
+                this.$emit('update-custo', this.valorTotalGeral); // Emitindo o custo total para o modal pai
                 this.fechar();
             } catch (error) {
-                this.$emit('error', 'Erro ao salvar ficha técnica!');
+                this.$emit('error', 'Erro ao salvar ou atualizar ficha técnica!');
             }
         },
 
@@ -125,7 +140,8 @@ export default defineComponent({
             );
 
             if (insumoInfo) {
-                const quantAjustada = insumoSelecionado.quantidade / (1 - (insumoInfo.perda / 100))
+                const perda = insumoInfo.perda || 0;
+                const quantAjustada = insumoSelecionado.quantidade / (1 - (perda / 100))
                 insumoSelecionado.valorTotal = (insumoInfo.valorUnitario * quantAjustada) / this.baseReceita;
             } else {
                 console.error(`Insumo com ID ${insumoSelecionado.insumoId} não encontrado`);
@@ -140,8 +156,11 @@ export default defineComponent({
     computed: {
         valorTotalGeral(): number {
             return this.insumos.reduce((total, insumo) => total + insumo.valorTotal, 0);
-        }
-    }
+        },
+        botaoSalvarOuAtualizar(): string {
+            return this.insumos.length > 0 ? 'Atualizar' : 'Salvar';
+        },
+    },
 });
 </script>
 
