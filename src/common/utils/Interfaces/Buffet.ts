@@ -8,3 +8,14 @@ export interface ItemInfo {
     custo: number | null;
     valor: number | null;
 }
+
+export interface Insumo {
+    idInsumo: number;
+    descri____oInsumo: string;
+    unidadeInsumo: string;
+    fornecedor: string;
+    quantidadeEmbalagem: number;
+    valorEmbalagem: number;
+    valorUnitario: number;
+    perda: number;
+}

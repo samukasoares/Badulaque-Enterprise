@@ -22,21 +22,24 @@
             </select>
 
             <label>Base Receita:</label>
-            <input type="number" required v-model.number="item.baseReceita">
+            <input disabled type="number" required v-model.number="item.baseReceita">
 
             <label>Custo:</label>
-            <input type="number" v-model.number="item.custo">
+            <input disabled type="number" v-model.number="item.custo">
 
             <label>Valor:</label>
-            <input type="number" v-model.number="item.valor">
+            <input disabled type="number" v-model.number="item.valor">
 
             <div class="form-group">
                 <button type="submit" class="submit-button" @click="atualizarValor()">Atualizar</button>
-                <button type="submit" class="submit-button">Ficha Técnica</button>
+                <button type="submit" class="submit-button" @click="abrirFichaTecnica()">Ficha Técnica</button>
             </div>
 
         </form>
     </div>
+
+    <FichaTecnica v-if="fichaTecnicaModalAberto" :itemId="item.idItem" @close="fecharFichaTecnica"
+        :baseReceita="item.baseReceita" @update-custo="atualizarCusto" @sucess="handleSuccessMessage" />
 </template>
 
 <script lang="ts">
@@ -45,8 +48,12 @@ import { ItemInfo } from '@/common/utils/Interfaces/Buffet';
 import { Grupo } from '@/common/utils/Interfaces';
 import { fetchGrupos } from '@/common/utils/FetchMethods';
 import instance from '@/common/utils/AuthService';
+import FichaTecnica from '../FichaTecnica.vue';
+import { formatarValorMonetario } from '@/common/utils/Helper';
+
 
 export default defineComponent({
+    components: { FichaTecnica },
     props: {
         cardId: {
             type: Number,
@@ -58,10 +65,13 @@ export default defineComponent({
             item: {} as ItemInfo,
             loading: false,
             grupos: [] as Grupo[],
+            fichaTecnicaModalAberto: false,
+            message: ''
 
         };
     },
     methods: {
+        formatarValorMonetario,
         close() {
             this.$emit('close');
         },
@@ -76,6 +86,14 @@ export default defineComponent({
             } finally {
                 this.loading = false;
             }
+        },
+
+        abrirFichaTecnica() {
+            this.fichaTecnicaModalAberto = true;
+        },
+
+        fecharFichaTecnica() {
+            this.fichaTecnicaModalAberto = false;
         },
 
         async atualizarValor() {
@@ -93,11 +111,22 @@ export default defineComponent({
             try {
                 const data = await instance.post('buffet/item/update', itemAtualizado)
                 this.$emit('success', 'Item atualizado com sucesso!');
-                this.close(); // Fecha o modal após o sucesso
+                //this.close(); // Fecha o modal após o sucesso
             } catch (error) {
                 this.$emit('error', 'Item atualizado com sucesso!');
             }
-        }
+        },
+
+        atualizarCusto(novoCusto: number) {
+            this.item.custo = novoCusto; // Atualiza o valor do custo no modal de Edit Item
+        },
+
+        handleSuccessMessage(message: string) {
+            this.message = message;
+            setTimeout(() => {
+                this.message = '';
+            }, 3000);
+        },
 
     },
     async mounted() {
