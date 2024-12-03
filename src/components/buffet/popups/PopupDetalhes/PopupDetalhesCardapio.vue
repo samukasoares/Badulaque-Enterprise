@@ -44,7 +44,7 @@
                     <button class="submit-button" @click="gerarPDF()">Imprimir</button>
                 </div>
                 <div class="form-column">
-                    <button class="submit-button">Editar </button>
+                    <button class="submit-button" @click.prevent="emitEditEvent">Editar </button>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@ import instance from '@/common/utils/AuthService';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { CardapioInfo, GroupedItem, Item } from '@/common/utils/Interfaces';
-import { ReajusteCardapio } from '@/common/utils/Interfaces/Buffet';
+import { Reajuste } from '@/common/utils/Interfaces/Helper';
 import { formatarValorMonetario } from '@/common/utils/Helper';
 
 export default defineComponent({
@@ -76,11 +76,14 @@ export default defineComponent({
             cardapio: null as CardapioInfo | null,
             loading: false,
             currentYear: new Date().getFullYear(),
-            reajusteCardapio: {} as ReajusteCardapio
+            reajusteCardapio: {} as Reajuste
         };
     },
     methods: {
         formatarValorMonetario,
+        emitEditEvent() {
+            this.$emit('edit-cardapio', this.cardapio);
+        },
         async fetchCardapioDetails(id: number) {
             this.loading = true;
             try {
@@ -95,7 +98,7 @@ export default defineComponent({
 
         async fetchValoresCardapio(id: number) {
             try {
-                const response = await instance.get<ReajusteCardapio>('buffet/cardapio/reajuste/' + id);
+                const response = await instance.get<Reajuste>('buffet/cardapio/reajuste/' + id);
                 this.reajusteCardapio = response.data;
             } catch (error) {
                 console.error('Erro ao buscar detalhes do cardápio:', error);

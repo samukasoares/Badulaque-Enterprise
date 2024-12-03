@@ -22,7 +22,8 @@
 
     <!--Componente Popup de Criar Cardapios, Itens ou Grupos-->
     <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId"
-        @success="handleSuccessMessage" />
+        @success="handleSuccessMessage" @edit-cardapio="editCardapio" :cardapioData="cardapioData"
+        :isEditMode="isEditMode" />
 
     <NotificationMessage :message="message" />
 
@@ -43,7 +44,7 @@ import popupEditarCerveja from '../buffet/popups/PopupEdit/PopupEditCerveja.vue'
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
-import { Card, Cardapio, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
+import { Card, Cardapio, CardapioInfo, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
 
 
 export default defineComponent({
@@ -55,7 +56,10 @@ export default defineComponent({
             searchText: '',
             isViewingDetails: false,
             selectedCardId: null as number | null,
-            message: ''
+            message: '',
+            isEditMode: false,
+
+            cardapioData: null as Cardapio | null
         }
     },
     components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage, popupEditarCerveja },
@@ -131,6 +135,13 @@ export default defineComponent({
             }, 3000);
         },
 
+        editCardapio(cardapio: Cardapio) {
+            this.isViewingDetails = false; // Fecha o modal de detalhes
+            this.showModal = true; // Abre o modal de criação
+            this.cardapioData = cardapio; // Passa os dados do cardápio para edição
+            this.isEditMode = true;
+        },
+
         showCard(id: number) {
             this.isViewingDetails = true;
             this.selectedCardId = id; // Passa apenas o ID para o modal
@@ -140,10 +151,13 @@ export default defineComponent({
             this.isViewingDetails = false; // Define que estamos criando um novo item
             this.selectedCardId = null;
             this.showModal = true;
+            this.cardapioData = null;
+            this.isEditMode = false
         },
         closeModal() {
             this.showModal = false;
             this.selectedCardId = null;
+            this.cardapioData = null;
         }
 
     },

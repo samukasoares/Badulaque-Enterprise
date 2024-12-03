@@ -1,10 +1,10 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <form @submit.prevent="atualizarValor">
-            <h4>{{ Parametro.nomeParametro }}</h4><br>
-
+        <form class="modal-form" @submit.prevent="atualizarParametro">
+            <h4>{{ parametro.nomeParametro }}</h4><br>
             <label>Valor:</label>
-            <input type="number" required v-model.number="valorParametro">
+            <input type="number" required v-model="parametro.valorParametro">
+
 
             <button type="submit" class="submit-button">Atualizar</button>
         </form>
@@ -12,40 +12,70 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
+import instance from '@/common/utils/AuthService';
+import { formatarValorMonetario } from '@/common/utils/Helper';
 import { Parametro } from '@/common/utils/Interfaces/Parametro';
 
 export default defineComponent({
     props: {
-        Parametro: {
-            type: Object as PropType<Parametro>,
+        cardId: {
+            type: Number,
             required: true
         }
     },
     data() {
         return {
-            valorParametro: this.Parametro.valorParametro
+            parametro: {} as Parametro,
+            loading: false,
         };
     },
     methods: {
+        formatarValorMonetario,
         close() {
             this.$emit('close');
         },
-        async atualizarValor() {
-            if (this.valorParametro !== this.Parametro.valorParametro) {
-                try {
-                    this.$emit('update', {
-                        ...this.Parametro,
-                        valorParametro: this.valorParametro
-                    });
-                    this.close();
-                    alert('Valor alterado com sucesso!')
 
-                } catch (error) {
-                    console.error('Erro ao atualizar parâmetro:', error);
+        async fetchParametroDetails(id: number) {
+            this.loading = true;
+            try {
+                const response = await instance.get<Parametro>('/parametro/get/' + id);
+                this.parametro = response.data;
+
+            } catch (error) {
+                console.error('Erro ao buscar parametro:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+
+        async atualizarParametro() {
+            const parametroAtualizado: Parametro = {
+                idParametro: this.parametro.idParametro,
+                valorParametro: this.parametro.valorParametro,
+                nomeParametro: this.parametro.nomeParametro
+            }
+
+            try {
+                const data = await instance.post('parametro/update', parametroAtualizado)
+                this.$emit('success', 'Valor do espaço atualizado com sucesso!');
+                this.close(); // Fecha o modal após o sucesso
+            } catch (error) {
+                this.$emit('error', 'Erro ao atualizar valor do espaço!');
+            }
+        }
+
+
+    },
+
+    watch: {
+        cardId: {
+            immediate: true,
+            handler(newId: number) {
+                if (newId) {
+                    this.fetchParametroDetails(newId);
                 }
-            } else {
-                this.close();
             }
         }
     }
@@ -53,72 +83,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-form {
-    max-width: 400px;
-    margin: 30px auto;
-    background: white;
-    text-align: left;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2;
-}
-
-label {
-    color: #aaa;
-    display: inline-block;
-    margin: 25px 0 15px;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-input,
-select {
-    display: block;
-    padding: 10px 6px;
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    color: #555;
-}
-
-.backdrop {
-    top: 0;
-    left: 0;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-button.submit-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #425C4D;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    font-family: Montserrat;
-}
-
-button.submit-button:hover {
-    background-color: #2F4036;
-}
-
-h4 {
-    color: black;
-    display: inline-block;
-    margin: 25px 0 15px;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
+@import '../../../assets/styles/modal-style.css'
 </style>

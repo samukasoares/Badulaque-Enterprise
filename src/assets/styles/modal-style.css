@@ -11,7 +11,7 @@
 
 .modal-form {
     max-width: 80%;
-    min-width: 20%;
+    min-width: 30%;
     width: fit-content;
     max-height: 90%;
     height: fit-content;
@@ -80,7 +80,6 @@
     margin: 10px 0;
 }
 
-
 .modal-form button.submit-button {
     display: block;
     width: 100%;
@@ -128,6 +127,11 @@
     justify-content: space-between;
     margin-bottom: 2px;
 }
+
+.modal-form .form-item {
+    width: 100%;
+}
+
 
 .botao-add {
     display: block;
@@ -180,6 +184,29 @@
   }
 
   /* Final Formatação para mostrar Valores no MODAL */
+
+
+
+/* Botão Remover */
+.modal-form .botao-remover {
+    display: inline-block;
+    padding: 3px;
+    background-color: #c94b4b; /* Vermelho suave para diferenciar o remover */
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.6em;
+    text-transform: uppercase;
+}
+
+.modal-form .botao-remover:hover {
+    background-color: #a33c3c;
+}
+
+
 
 /* Media Queries */
 @media (max-width: 768px) {

@@ -1,10 +1,28 @@
 <template>
     <div class="backdrop" @click.self="close">
-        <form @submit.prevent="atualizarValor">
-            <h4>{{ Opcional.nomeOpcional }}</h4><br>
+        <form class="modal-form" @submit.prevent="atualizarOpcional">
+            <h4>{{ opcional.nomeOpcional }}</h4><br>
+            <div class="valores-container">
+                <div class="valor-item">
+                    <label>{{ currentYear }}:</label>
+                    <h4> R$ {{ reajuste.atual }},00</h4>
+                </div>
+                <div class="valor-item">
+                    <label>{{ currentYear + 1 }}:</label>
+                    <h4>R$ {{ reajuste.ano1 }},00</h4>
+                </div>
+                <div class="valor-item">
+                    <label>{{ currentYear + 2 }}:</label>
+                    <h4>R$ {{ reajuste.ano2 }},00</h4>
+                </div>
+            </div>
 
             <label>Valor:</label>
-            <input type="number" required v-model.number="valorAtual">
+            <input type="number" required v-model="opcional.valorAtual">
+
+            <label>Por Pessoa?</label><br>
+            <input type="checkbox" v-model='porPessoaBoolean'>
+
 
             <button type="submit" class="submit-button">Atualizar</button>
         </form>
@@ -12,40 +30,98 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 import { Opcional } from '@/common/utils/Interfaces';
+import instance from '@/common/utils/AuthService';
+import { Reajuste } from '@/common/utils/Interfaces/Helper';
+import { formatarValorMonetario } from '@/common/utils/Helper';
 
 export default defineComponent({
     props: {
-        Opcional: {
-            type: Object as PropType<Opcional>,
+        cardId: {
+            type: Number,
             required: true
         }
     },
     data() {
         return {
-            valorAtual: this.Opcional.valorAtual
+            opcional: {} as Opcional,
+            loading: false,
+
+            nomeCervejaAnterior: '',
+
+            currentYear: new Date().getFullYear(),
+            reajuste: {} as Reajuste
         };
     },
+    computed: {
+        porPessoaBoolean: {
+            get(): boolean {
+                return this.opcional.porPessoa === 1;
+            },
+            set(value: boolean) {
+                this.opcional.porPessoa = value ? 1 : 0;
+            }
+        }
+    },
     methods: {
+        formatarValorMonetario,
         close() {
             this.$emit('close');
         },
-        async atualizarValor() {
-            if (this.valorAtual !== this.Opcional.valorAtual) {
-                try {
-                    this.$emit('update', {
-                        ...this.Opcional,
-                        valorAtual: this.valorAtual
-                    });
-                    this.close();
-                    alert('Valor alterado com sucesso!')
 
-                } catch (error) {
-                    console.error('Erro ao atualizar o valor do espaço:', error);
+        async fetchOpcionalDetails(id: number) {
+            this.loading = true;
+            try {
+                const response = await instance.get<Opcional>('/opcional/get/' + id);
+                this.opcional = response.data;
+
+            } catch (error) {
+                console.error('Erro ao buscar opcional:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async fetchValoresOpcional(id: number) {
+            try {
+                const response = await instance.get<Reajuste>('opcional/reajuste/' + id);
+                this.reajuste = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar reajustes do opcional:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async atualizarOpcional() {
+            const valorOpcionalAtualizado: Opcional = {
+                idOpcional: this.opcional.idOpcional,
+                nomeOpcional: this.opcional.nomeOpcional,
+                valorAtual: this.opcional.valorAtual,
+                porPessoa: this.opcional.porPessoa
+            }
+
+            try {
+                const data = await instance.post('opcional/update', valorOpcionalAtualizado)
+                this.$emit('success', 'Opcional atualizado com sucesso!');
+                this.close(); // Fecha o modal após o sucesso
+            } catch (error) {
+                this.$emit('error', 'Erro ao atualizar opcional!');
+            }
+        }
+
+
+    },
+
+    watch: {
+        cardId: {
+            immediate: true,
+            handler(newId: number) {
+                if (newId) {
+                    this.fetchOpcionalDetails(newId);
+                    this.fetchValoresOpcional(newId);
                 }
-            } else {
-                this.close();
             }
         }
     }
@@ -53,72 +129,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-form {
-    max-width: 400px;
-    margin: 30px auto;
-    background: white;
-    text-align: left;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2;
-}
-
-label {
-    color: #aaa;
-    display: inline-block;
-    margin: 25px 0 15px;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
-
-input,
-select {
-    display: block;
-    padding: 10px 6px;
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    color: #555;
-}
-
-.backdrop {
-    top: 0;
-    left: 0;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-button.submit-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #425C4D;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    font-family: Montserrat;
-}
-
-button.submit-button:hover {
-    background-color: #2F4036;
-}
-
-h4 {
-    color: black;
-    display: inline-block;
-    margin: 25px 0 15px;
-    font-size: 0.6em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: bold;
-}
+@import '../../../assets/styles/modal-style.css'
 </style>

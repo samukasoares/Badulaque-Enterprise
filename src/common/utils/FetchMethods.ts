@@ -1,7 +1,7 @@
 import instance from '@/common/utils/AuthService';
-import { Cardapio, CardapioBar, Cerveja, Grupo, Opcional } from './Interfaces';
+import { Cardapio, CardapioBar, Cerveja, Grupo, Opcional, ValorEspaco } from './Interfaces';
 import { AllOrcamentos, Orcamento, OrcamentoBasico } from './Interfaces/Orcamento';
-import { Contrato } from './Interfaces/Contrato';
+import { Contrato } from './Interfaces/Contrato/ContratoTabela';
 
 export async function fetchCardapios(): Promise<Cardapio[]> {
   try {
@@ -33,15 +33,29 @@ export async function fetchCardapioBar(): Promise<CardapioBar[]> {
   }
 }
 
-export async function fetchCidades(): Promise<{ id: number; nome: string }[]> {
+export async function fetchCidades(id: number): Promise<{ id: number; nome: string }[]> {
   try {
-    const response = await instance.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios');
+    const response = await instance.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${id}/municipios`);
     return response.data.map((cidade: any) => ({
       id: cidade.id,
       nome: cidade.nome,
     }));
   } catch (error) {
     console.error('Erro ao buscar cidades:', error);
+    throw error;
+  }
+}
+
+export async function fetchEstados(): Promise<{ id: number; nome: string, sigla:string}[]> {
+  try {
+    const response = await instance.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
+    return response.data.map((uf: any) => ({
+      id: uf.id,
+      nome: uf.nome,
+      sigla: uf.sigla
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar estados:', error);
     throw error;
   }
 }
@@ -85,4 +99,15 @@ export async function fetchContratos(): Promise<Contrato[]> {
     throw error;
   }
 }
+
+export async function fetchValoresEspaco(): Promise<ValorEspaco[]> {
+  try {
+    const response = await instance.get<ValorEspaco[]>('/espaco/get-all');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar contratos:', error);
+    throw error;
+  }
+}
+
 

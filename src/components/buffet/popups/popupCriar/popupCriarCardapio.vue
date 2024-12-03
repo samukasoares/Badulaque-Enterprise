@@ -1,7 +1,8 @@
 <template>
     <div class="backdrop" @click.self="close">
         <form :class="{ 'with-dynamic-items': filteredGroups.length > 0 }">
-            <h4>Criar Cardápio</h4>
+            <h4 v-if="isEditMode">Editar Cardápio</h4>
+            <h4 v-else>Criar Cardápio</h4>
             <div class="form-columns">
                 <div class="form-column">
                     <label>Nome:</label>
@@ -12,6 +13,9 @@
                     <label>Tipo:</label>
                     <VueMultiselect v-model="tipoCardapio" :options="opcTipoCardapio" :multiple="false"
                         :close-on-select="true" :show-labels="false" :preselect-first="true"></VueMultiselect>
+
+                    <label>Link:</label>
+                    <input type="text" required class="especial" v-model="linkCardapio">
 
                     <label>Itens:</label>
                     <VueMultiselect v-model="items" :options="itensAgrupados" :multiple="true" :close-on-select="false"
@@ -30,26 +34,39 @@
                 </div>
             </div>
 
-            <button type="submit" class="submit-button" @click.prevent="criarCardapio">Criar</button>
+            <button type="submit" class="submit-button" @click.prevent="submitCardapio">
+                {{ isEditMode ? 'Salvar Alterações' : 'Criar' }}
+            </button>
         </form>
     </div>
 </template>
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { CardapioGrupos, GroupedItem, Item, RegistroCardapio } from '@/common/utils/Interfaces';
-import { defineComponent } from 'vue';
+import { CardapioGrupos, CardapioInfo, GroupedItem, Item, RegistroCardapio } from '@/common/utils/Interfaces';
+import { defineComponent, PropType } from 'vue';
 import VueMultiselect from 'vue-multiselect';
 
 export default defineComponent({
     name: 'PopupOrcamento',
     components: { VueMultiselect },
+    props: {
+        cardapioData: {
+            type: Object as PropType<CardapioInfo | null>,
+            default: null
+        },
+        isEditMode: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             nomeCardapio: '',
             precoCardapio: 0,
             tipoCardapio: '',
             opcTipoCardapio: ['Padrão', 'Personalizado'],
+            linkCardapio: '',
 
             cardapioGrupos: [] as CardapioGrupos[],
             selectedItemsIds: [] as number[],
@@ -74,13 +91,13 @@ export default defineComponent({
                 console.error('Erro ao achar itens agrupados:', error);
             }
         },
-        async criarCardapio() {
-            try {
 
+        async submitCardapio() {
+            try {
                 // Construir o array de IDs dos itens selecionados
                 this.selectedItemsIds = this.items.map((item: Item) => item.idItem);
 
-                // Construi o array de CardapioGrupos
+                // Construir o array de CardapioGrupos
                 this.cardapioGrupos = this.filteredGroups.map(group => {
                     return {
                         idGrupo: group.itens[0].Grupo_idGrupo,
@@ -92,18 +109,26 @@ export default defineComponent({
                 const cardapio: RegistroCardapio = {
                     nomeCardapio: this.nomeCardapio,
                     precoCardapio: this.precoCardapio,
+                    linkCardapio: this.linkCardapio,
                     tipo: this.tipoCardapio,
                     items: this.selectedItemsIds,
                     grupos: this.cardapioGrupos,
                 };
 
-                const response = await instance.post('http://localhost:3001/buffet/criar-cardapio', cardapio);
 
+                let response;
+                if (this.isEditMode && this.cardapioData) {
+                    // Modo de Edição: Faz uma requisição PUT ou PATCH para atualizar o cardápio
+                    //response = await instance.put(`/buffet/cardapio/${this.cardapioData.cardapio.idCardapio}`, cardapio);
+                } else {
+                    // Modo de Criação: Faz uma requisição POST para criar um novo cardápio
+                    response = await instance.post('/buffet/criar-cardapio', cardapio);
+                }
 
-                window.location.reload()
+                window.location.reload();
 
             } catch (error) {
-                alert('Erro ao criar cardápio!');
+                alert('Erro ao salvar o cardápio!');
             }
         }
     },
@@ -117,6 +142,33 @@ export default defineComponent({
             });
         },
     },
+
+    watch: {
+        cardapioData: {
+            immediate: true,
+            handler(newData) {
+                if (newData && newData.cardapio) {
+                    // Preenchendo campos básicos
+                    this.nomeCardapio = newData.cardapio.nome;
+                    this.precoCardapio = newData.cardapio.preco;
+                    this.linkCardapio = newData.cardapio.linkCardapio;
+                    this.tipoCardapio = newData.cardapio.tipo;
+
+                    // Verificando se 'itensAgrupados' existe e preenchendo 'items' para o VueMultiselect
+                    if (Array.isArray(newData.cardapio.itensAgrupados)) {
+                        this.items = newData.cardapio.itensAgrupados.flatMap((group: GroupedItem) => group.itens);
+                    }
+
+                    // Preenchendo as quantidades de itens por grupo em 'inputValues'
+                    if (Array.isArray(newData.cardapio.grupos)) {
+                        newData.cardapio.grupos.forEach((grupo: { nomeGrupo: string; qtdItens: number }) => {
+                            this.inputValues[grupo.nomeGrupo] = grupo.qtdItens.toString() || '';
+                        });
+                    }
+                }
+            }
+        }
+    }
 });
 </script>
 

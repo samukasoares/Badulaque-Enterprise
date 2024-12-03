@@ -1,43 +1,29 @@
 <template>
     <div class="barraOpcoes">
-        <button @click="showModal = true">Novo Opcional</button>
+        <button @click="showCreateModal">Novo</button>
         <div class="group">
+            <label>Visualizando:</label>
+            <select v-model="opcoes" @change="fetchData">
+                <option>Espaço</option>
+                <option>Opcionais</option>
+                <option>Parâmetros</option>
+            </select>
         </div>
+        <input type="text" placeholder="Pesquisar..." v-model="searchText">
     </div><br>
 
-    <h4>Espaço</h4>
-    <div class="containerCards">
-        <div v-for="dia in diasDaSemana" :key="dia.idValorEspaco" class="card" @click="openEditModal(dia)">
-            {{ dia.dia }}
+    <!--Container para os cards-->
+    <div class="containerCards" v-if="opcoes">
+        <div class="card" v-for="(card, id) in filteredCards" :key="id" @click="showCard(card.id)">
+            <label>{{ card.name }}</label>
         </div>
     </div>
 
-    <h4>Opcionais</h4>
-    <div class="containerCards">
-        <div v-for="opcional in opcionais" :key="opcional.idOpcional" class="card"
-            @click="openEditModalOpcional(opcional)">
-            {{ opcional.nomeOpcional }}
-        </div>
-    </div>
+    <!--Componente Popup de Criar Cardapios, Itens ou Grupos-->
+    <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId"
+        @success="handleSuccessMessage" />
 
-    <h4>Parâmetros</h4>
-    <div class="containerCards">
-        <div v-for="parametro in parametros" :key="parametro.idParametro" class="card"
-            @click="openEditModalParametro(parametro)">
-            {{ parametro.nomeParametro }}
-        </div>
-    </div>
-
-    <PopupCriarOpcional v-if="showModal" @close="showModal = false" />
-
-    <PopupEditarValorEspaco v-if="showModalEspaco" @close="showModalEspaco = false" :dia-da-semana="currentDia"
-        :valor-espaco="currentValorEspaco" @update="updateValorEspaco" />
-
-    <PopupEditarOpcional v-if="showModalOpcional" @close="showModalOpcional = false" :Opcional="currentOpcional"
-        @update="updateOpcional" />
-
-    <PopupEditarParametro v-if="showModalParametro" @close="showModalParametro = false" :Parametro="currentParametro"
-        @update="updateParametro" />
+    <NotificationMessage :message="message" />
 
 </template>
 
@@ -45,121 +31,91 @@
 import { defineComponent } from 'vue';
 import PopupCriarOpcional from './popups/PopupCriarOpcional.vue';
 import PopupEditarValorEspaco from './popups/PopupEditarValorEspaco.vue';
-import { Opcional, ValorEspaco } from '@/common/utils/Interfaces';
-import instance from '@/common/utils/AuthService';
 import PopupEditarOpcional from './popups/PopupEditarOpcional.vue';
-import { Parametro } from '@/common/utils/Interfaces/Parametro';
-import PopupEditarParametro from './popups/PopupEditParametro.vue'
+import PopupEditarParametro from './popups/PopupEditParametro.vue';
+import NotificationMessage from '@/views/NotificationMessage.vue';
+import instance from '@/common/utils/AuthService';
+import { ValorEspaco, Opcional, Card } from '@/common/utils/Interfaces';
+import { Parametro } from '@/common/utils/Interfaces/Parametro'
 
 export default defineComponent({
-    components: { PopupCriarOpcional, PopupEditarValorEspaco, PopupEditarOpcional, PopupEditarParametro },
+    components: { PopupCriarOpcional, PopupEditarValorEspaco, PopupEditarOpcional, PopupEditarParametro, NotificationMessage },
     data() {
         return {
+            opcoes: 'Opcionais',
             showModal: false,
-            showModalEspaco: false,
-
-            diasDaSemana: [] as ValorEspaco[],
-            currentDia: '',
-            currentValorEspaco: {} as ValorEspaco,
-
-            showModalOpcional: false,
-            currentOpcional: {} as Opcional,
-
-            showModalParametro: false,
-            currentParametro: {} as Parametro,
-
-            opcionais: [] as Opcional[],
-            parametros: [] as Parametro[],
+            cards: [] as { name: string, id: number }[],
+            searchText: '',
+            selectedCardId: null as number | null,
+            isViewingDetails: false,
+            message: '',
         };
     },
+    computed: {
+        getPopupComponent() {
+            if (this.isViewingDetails) {
+                if (this.opcoes === 'Espaço') {
+                    return 'PopupEditarValorEspaco';
+                } else if (this.opcoes === 'Opcionais') {
+                    return 'PopupEditarOpcional';
+                } else if (this.opcoes === 'Parâmetros') {
+                    return 'PopupEditarParametro';
+                }
+            } else {
+                // Retorna o popup de criação para "Opcionais"
+                if (this.opcoes === 'Opcionais') {
+                    return 'PopupCriarOpcional';
+                }
+            }
+            // Retorna null como fallback para garantir um retorno
+            return null;
+        },
+        filteredCards(): Card[] {
+            return this.cards.filter(card => card.name.toLowerCase().includes(this.searchText.toLowerCase()));
+        }
+    },
     methods: {
-        openEditModal(dia: ValorEspaco) {
-            this.currentDia = dia.dia ?? 'Desconhecido';
-            this.currentValorEspaco = { ...dia };
-            this.showModalEspaco = true;
-        },
-        openEditModalOpcional(opcional: Opcional) {
-            this.currentOpcional = { ...opcional };
-            this.showModalOpcional = true;
-        },
-        openEditModalParametro(parametro: Parametro) {
-            this.currentParametro = { ...parametro };
-            this.showModalParametro = true;
-        },
-
-
-        async updateValorEspaco(updatedData: ValorEspaco) {
+        async fetchData() {
             try {
-                const response = await instance.post('/espaco/update', updatedData);
-
-                const index = this.diasDaSemana.findIndex(d => d.idValorEspaco === updatedData.idValorEspaco);
-                if (index !== -1) {
-                    this.diasDaSemana[index] = { ...response.data };
+                let response;
+                if (this.opcoes === 'Espaço') {
+                    response = await instance.get<ValorEspaco[]>('/espaco/get-all');
+                    this.cards = response.data.map((valorEspaco: ValorEspaco) => ({ name: valorEspaco.dia, id: valorEspaco.idValorEspaco }));
+                } else if (this.opcoes === 'Opcionais') {
+                    response = await instance.get<Opcional[]>('/opcional/get-all');
+                    this.cards = response.data.map((item: Opcional) => ({ name: item.nomeOpcional, id: item.idOpcional }));
+                } else if (this.opcoes === 'Parâmetros') {
+                    response = await instance.get<Parametro[]>('/parametro/get-all');
+                    this.cards = response.data.map((item: Parametro) => ({ name: item.nomeParametro, id: item.idParametro }));
                 }
-
-                this.showModalEspaco = false;
             } catch (error) {
-                console.error('Erro ao atualizar o valor do espaço:', error);
+                console.error('Erro ao buscar dados:', error);
             }
         },
-        async updateOpcional(updatedOpcional: Opcional) {
-            try {
-                const response = await instance.post('/opcional/update', updatedOpcional);
-
-                const index = this.opcionais.findIndex(o => o.idOpcional === updatedOpcional.idOpcional);
-                if (index !== -1) {
-                    this.opcionais[index] = { ...response.data };
-                }
-
-                this.showModalOpcional = false;
-            } catch (error) {
-                console.error('Erro ao atualizar o opcional:', error);
-            }
+        showCard(id: number) {
+            this.isViewingDetails = true;
+            this.selectedCardId = id; // Passa apenas o ID para o modal
+            this.showModal = true;
         },
-        async updateParametro(updatedParametro: Parametro) {
-            try {
-                const response = await instance.post('/parametro/update', updatedParametro);
-
-                const index = this.parametros.findIndex(p => p.idParametro === updatedParametro.idParametro);
-                if (index !== -1) {
-                    this.opcionais[index] = { ...response.data };
-                }
-
-                this.showModalParametro = false;
-            } catch (error) {
-                console.error('Erro ao atualizar o parâmetro:', error);
-            }
+        showCreateModal() {
+            this.isViewingDetails = false; // Define que estamos criando um novo item
+            this.selectedCardId = null;
+            this.showModal = true;
         },
-
-        async fetchValorEspaco() {
-            try {
-                const response = await instance.get<ValorEspaco[]>('/espaco/get-all');
-                this.diasDaSemana = response.data;
-            } catch (error) {
-                console.error('Erro ao buscar dias da semana:', error);
-            }
+        closeModal() {
+            this.showModal = false;
+            this.selectedCardId = null;
         },
-        async fetchOpcionais() {
-            try {
-                const response = await instance.get<Opcional[]>('/opcional/get-all');
-                this.opcionais = response.data;
-            } catch (error) {
-                console.error('Erro ao buscar opcionais:', error);
-            }
-        },
-        async fetchParametros() {
-            try {
-                const response = await instance.get<Parametro[]>('/parametro/get-all');
-                this.parametros = response.data;
-            } catch (error) {
-                console.error('Erro ao buscar parametros:', error);
-            }
-        },
+        handleSuccessMessage(message: string) {
+            this.message = message;
+            this.fetchData();
+            setTimeout(() => {
+                this.message = '';
+            }, 3000);
+        }
     },
     mounted() {
-        this.fetchValorEspaco();
-        this.fetchOpcionais();
-        this.fetchParametros();
+        this.fetchData();
     }
 });
 </script>

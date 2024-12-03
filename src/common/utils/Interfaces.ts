@@ -19,7 +19,8 @@ export interface Cardapio {
     idCardapio: number,
     nomeCardapio: string,
     precoCardapio: number,
-    tipo: string
+    linkCardapio: string,
+    tipo: string,
 }
 
 export interface Cerveja {
@@ -37,6 +38,7 @@ export type CardapioInfo = {
     cardapio: {
         nome: string,
         preco: number,
+        link:string,
         itensAgrupados: GroupedItem,
         grupos: Array<{ nomeGrupo: string, qtdItens: number; }>;
     };
@@ -52,6 +54,7 @@ export interface RegistroCardapio {
     nomeCardapio: string,
     precoCardapio: number,
     tipo: string,
+    linkCardapio: string
     items: number[],
     grupos: CardapioGrupos[],
 }
@@ -92,7 +95,6 @@ export interface RegistroLead {
 
 export interface RegistroOrcamentoData {
     referenciaOrcamento: string,
-    cadeira: string | null,
     Cardapio_idCardapio: number,
     Cerveja_idCerveja: number,
     numConvidados: number,
@@ -104,7 +106,8 @@ export interface RegistroOrcamentoData {
     tipoEvento: string,
     cerimoniaLocal: number,
     fonte: string,
-    CardapioBar_idCardapioBar: number
+    CardapioBar_idCardapioBar: number | null,
+    patrocinado: number
 } 
 
 export interface RegistroOrcamento {
@@ -122,12 +125,13 @@ export interface Card {
 
 export interface ValorEspaco {
     idValorEspaco: number;
-    dia: string | null;
-    valor: number | null;
+    dia: string;
+    valor: number;
 }
 
 export interface Opcional {
     idOpcional:number,
     nomeOpcional:string,
-    valorAtual:number
+    valorAtual:number,
+    porPessoa: number
 }

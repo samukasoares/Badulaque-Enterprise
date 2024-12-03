@@ -2,12 +2,37 @@
     <div class="backdrop" @click.self="close">
         <form class="modal-form" @submit.prevent="submitForm">
             <h4>Orçamento</h4>
+            <!--
             <select v-model="orcamentoSelecionado" required>
                 <option disabled value="">Selecione um orçamento...</option>
                 <option v-for="orcamento in orcamentos" :key="orcamento.idOrcamento" :value="orcamento">
                     {{ orcamento.referenciaOrcamento }} - {{ orcamento.Lead.nomeLead }}
                 </option>
             </select>
+            -->
+
+            <VueMultiselect v-model="orcamentoSelecionado" :options="orcamentos" :multiple="false"
+                :close-on-select="true" :show-labels="false" :preserve-search="true"
+                placeholder="Escolha o orçamento..." :custom-label="customLabel" track-by="idOrcamento"
+                :preselect-first="false" :max-height="250"></VueMultiselect>
+
+
+            <h4>Forma de Pagamento</h4>
+            <VueMultiselect v-model="formaDePagamentoSelecionada" :options="formasDePagamento" :multiple="false"
+                :close-on-select="true" :show-labels="false" :preserve-search="true"
+                placeholder="Escolha a forma de pagamento..." :custom-label="customLabelFormaPagamento"
+                track-by="idFormaPagamento" :preselect-first="false" :max-height="250">
+            </VueMultiselect>
+            <!--
+                <select v-model="formaDePagamentoSelecionada" required>
+                <option disabled value="">Selecione uma forma de pagamento...</option>
+                <option v-for="formaPagamento in formasDePagamento" :key="formaPagamento.idFormaPagamento"
+                    :value="formaPagamento">
+                    {{ formaPagamento.tipo }}
+                </option>
+            </select>
+            -->
+
 
             <h4>Observações</h4>
             <input type="text" v-model="observacoes">
@@ -43,22 +68,25 @@
             <button class="submit-button" type="submit">Criar Contrato</button>
         </form>
     </div>
+
+    <!--Mensagens de Erro Validacao CEP, CPF e RG-->
     <NotificationMessage :message="message" type="error" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
-import { AllOrcamentos, Orcamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
+import { FormaPagamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
 import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
-import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato';
+import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato/RegistroContrato';
 import instance from '@/common/utils/AuthService';
+import VueMultiselect from 'vue-multiselect';
+import 'vue-multiselect/dist/vue-multiselect.css'; // Importar o estilo aqui
 
 export default defineComponent({
     components: {
-        NotificationMessage
+        NotificationMessage, VueMultiselect
     },
-    emits: ['close', 'success'],
     data() {
         return {
             contratantes: [
@@ -76,6 +104,8 @@ export default defineComponent({
 
             observacoes: '',
             orcamentoSelecionado: {} as OrcamentoBasico,
+            formaDePagamentoSelecionada: {} as FormaPagamento,
+            formasDePagamento: [] as FormaPagamento[],
             orcamentos: [] as OrcamentoBasico[],
 
             message: ''
@@ -93,6 +123,15 @@ export default defineComponent({
                 cidade: '',
                 numero: ''
             });
+        },
+        customLabel(option: OrcamentoBasico) {
+            return option && option.Lead && option.Lead.nomeLead
+                ? `${option.referenciaOrcamento} - ${option.Lead.nomeLead}`
+                : '';
+        },
+
+        customLabelFormaPagamento(option: FormaPagamento) {
+            return option && option.tipo ? option.tipo : '';
         },
         async fetchAddress(index: number) {
             const cep = this.contratantes[index].cep.replace(/\D/g, ''); // Remove caracteres não numéricos
@@ -163,6 +202,16 @@ export default defineComponent({
                 this.contratantes[index].rg = '';
             }
         },
+        async fetchFormasDePagamento(idOrcamento: number): Promise<FormaPagamento[]> {
+            try {
+                const response = await instance.get<FormaPagamento[]>('/contrato/formasPagamento/' + idOrcamento);
+                this.formasDePagamento = response.data;
+                return response.data; // Retorna as formas de pagamento
+            } catch (error) {
+                this.message = "Erro ao buscar formas de pagamento!";
+                return []; // Retorna um array vazio em caso de erro
+            }
+        },
         close() {
             this.$emit('close');
         },
@@ -177,6 +226,7 @@ export default defineComponent({
                 assinado: 0,
                 Orcamento_idOrcamento: this.orcamentoSelecionado.idOrcamento,
                 observacoes: this.observacoes,
+                FormaPagamento_idFormaPagamento: this.formaDePagamentoSelecionada.idFormaPagamento,
                 valorNF: 0,
             };
 
@@ -187,13 +237,14 @@ export default defineComponent({
                 nome: contratante.nome,
                 rg: contratante.rg,
                 rua: contratante.rua,
+                numero: contratante.numero
             }));
 
             const contratoFullData: ContratoFullData = {
                 contrato: contrato,
                 clientes: clientes,
+                orcamento: { referenciaOrcamento: this.orcamentoSelecionado.referenciaOrcamento }
             };
-
             try {
                 const data = await instance.post('/contrato/create', contratoFullData)
                 this.$emit('success', 'Contrato criado com sucesso!');
@@ -209,10 +260,18 @@ export default defineComponent({
     },
     async mounted() {
         this.orcamentos = await fetchOrcamentosEnviados()
+    },
+    watch: {
+        async orcamentoSelecionado(newOrcamento) {
+            if (newOrcamento && newOrcamento.idOrcamento) {
+                this.formasDePagamento = await this.fetchFormasDePagamento(newOrcamento.idOrcamento);
+            }
+        }
     }
 });
 </script>
 
 <style scoped>
 @import '../../../assets/styles/modal-style.css';
+@import 'vue-multiselect/dist/vue-multiselect.css';
 </style>

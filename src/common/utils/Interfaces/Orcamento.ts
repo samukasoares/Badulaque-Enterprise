@@ -1,4 +1,4 @@
-interface FormaPagamento {
+export interface FormaPagamento {
     idFormaPagamento: number;
     valorSinal: number;
     valorEntrada: number;
@@ -7,13 +7,14 @@ interface FormaPagamento {
     valorTotal: number;
     numeroParcelasEntrada: number;
     Orcamento_idOrcamento: number;
+    tipo: string;
   };
   
 interface Opcional {
     idOpcional: number;
     nomeOpcional: string;
     valorAtual: number;
-    mostrarOrcamento: number;
+    porPessoa: number;
   };
   
   export interface OrcamentoOpcional {
@@ -21,6 +22,7 @@ interface Opcional {
     Orcamento_idOrcamento: number;
     Opcional: Opcional;
     valorOrcamento: number;
+    porPessoa:number;
   };
   
   interface Lead  {
@@ -35,6 +37,7 @@ interface Opcional {
     idCardapio: number;
     nomeCardapio: string;
     precoCardapio: number;
+    linkCardapio: string;
     tipo: string;
   };
   
@@ -79,6 +82,8 @@ interface Opcional {
     CardapioBar: CardapioBar;
     Cerveja: Cerveja;
     valorPPCerveja: number;
+    valorOpcionais: number,
+    valorTotalOrcamento: number
   };
 
   export interface OrcamentoBasico {

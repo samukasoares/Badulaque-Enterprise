@@ -27,7 +27,7 @@ export default defineComponent({
     methods: {
         async loginUser() {
             try {
-                const response = await axios.post('http://localhost:3001/login', {
+                const response = await axios.post('http://localhost:3000/login', {
                     email: this.email,
                     senha: this.password,
                 });
@@ -38,7 +38,6 @@ export default defineComponent({
                 localStorage.setItem('token', token);   // Armazena o token no localStorage
                 localStorage.setItem('username', username)
                 this.$router.push('/orcamentos');       // Redireciona para a rota após o login
-                console.log(token);
             } catch (error) {
                 console.error('Erro ao fazer login:', error);
             }
