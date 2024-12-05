@@ -27,7 +27,7 @@
                 </div>
             </div>
             <button type="button" @click="adicionarInsumo">+</button><br>
-            <label>Custo:</label>
+            <label>Custo Unitário:</label>
             <input type="number" :value="valorTotalGeral" disabled />
 
             <div class="form-group">

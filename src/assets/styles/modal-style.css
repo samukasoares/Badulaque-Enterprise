@@ -24,7 +24,6 @@
     z-index: 2;
     box-sizing: border-box;
     overflow-y: auto; /* Adiciona barra de rolagem vertical se o conteúdo exceder a altura */
-    overflow: visible;
 }
 
 
