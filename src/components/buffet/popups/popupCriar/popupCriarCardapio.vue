@@ -44,6 +44,7 @@
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
 import { CardapioGrupos, CardapioInfo, GroupedItem, Item, RegistroCardapio } from '@/common/utils/Interfaces';
+import { UpdateCardapio } from '@/common/utils/Interfaces/Buffet/Cardapio';
 import { defineComponent, PropType } from 'vue';
 import VueMultiselect from 'vue-multiselect';
 
@@ -62,6 +63,7 @@ export default defineComponent({
     },
     data() {
         return {
+            idCardapio: 0,
             nomeCardapio: '',
             precoCardapio: 0,
             tipoCardapio: '',
@@ -97,6 +99,8 @@ export default defineComponent({
                 // Construir o array de IDs dos itens selecionados
                 this.selectedItemsIds = this.items.map((item: Item) => item.idItem);
 
+                console.log(this.selectedItemsIds)
+
                 // Construir o array de CardapioGrupos
                 this.cardapioGrupos = this.filteredGroups.map(group => {
                     return {
@@ -105,24 +109,36 @@ export default defineComponent({
                     };
                 });
 
-                // Criar o objeto cardapio usando a interface RegistroCardapio
-                const cardapio: RegistroCardapio = {
-                    nomeCardapio: this.nomeCardapio,
-                    precoCardapio: this.precoCardapio,
-                    linkCardapio: this.linkCardapio,
-                    tipo: this.tipoCardapio,
-                    items: this.selectedItemsIds,
-                    grupos: this.cardapioGrupos,
-                };
+                let payload;
 
 
                 let response;
                 if (this.isEditMode && this.cardapioData) {
-                    // Modo de Edição: Faz uma requisição PUT ou PATCH para atualizar o cardápio
-                    //response = await instance.put(`/buffet/cardapio/${this.cardapioData.cardapio.idCardapio}`, cardapio);
+                    // Modo de Edição
+                    payload = {
+                        idCardapio: this.idCardapio,
+                        nomeCardapio: this.nomeCardapio,
+                        precoCardapio: this.precoCardapio,
+                        linkCardapio: this.linkCardapio,
+                        tipo: this.tipoCardapio,
+                        items: this.selectedItemsIds,
+                        grupos: this.cardapioGrupos,
+                    } as UpdateCardapio;
+
+                    response = await instance.put(`/buffet/cardapio/update/${payload.idCardapio}`, payload);
                 } else {
-                    // Modo de Criação: Faz uma requisição POST para criar um novo cardápio
-                    response = await instance.post('/buffet/criar-cardapio', cardapio);
+                    // Modo de Criação
+
+                    payload = {
+                        nomeCardapio: this.nomeCardapio,
+                        precoCardapio: this.precoCardapio,
+                        linkCardapio: this.linkCardapio,
+                        tipo: this.tipoCardapio,
+                        items: this.selectedItemsIds,
+                        grupos: this.cardapioGrupos,
+                    } as RegistroCardapio;
+
+                    response = await instance.post('/buffet/criar-cardapio', payload);
                 }
 
                 window.location.reload();
@@ -149,6 +165,7 @@ export default defineComponent({
             handler(newData) {
                 if (newData && newData.cardapio) {
                     // Preenchendo campos básicos
+                    this.idCardapio = newData.cardapio.idCardapio;
                     this.nomeCardapio = newData.cardapio.nome;
                     this.precoCardapio = newData.cardapio.preco;
                     this.linkCardapio = newData.cardapio.linkCardapio;
