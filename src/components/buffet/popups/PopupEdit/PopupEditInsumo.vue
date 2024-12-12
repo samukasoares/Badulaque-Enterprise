@@ -17,7 +17,8 @@
             <label>Valor Embalagem:</label>
             <input type="number" required v-model="insumo.valorEmbalagem">
             <label>Valor unitário</label>
-            <input disabled type="number" required v-model="insumo.valorUnitario" step="0.0001">
+            <input disabled type="text" required :value="formatarValorMonetarioCusto(insumo.valorUnitario)"
+                step="0.0001">
             <label>Perda (%)</label>
             <input type="number" required v-model="insumo.perda">
             <button type="submit" class="submit-button" @click="atualizarInsumo">Atualizar</button>
@@ -28,6 +29,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
+import { formatarValorMonetario, formatarValorMonetarioCusto } from '@/common/utils/Helper';
 import { Insumo } from '@/common/utils/Interfaces/Buffet';
 import { defineComponent } from 'vue';
 
@@ -47,6 +49,7 @@ export default defineComponent({
         };
     },
     methods: {
+        formatarValorMonetarioCusto,
         close() {
             this.$emit('close');
         },

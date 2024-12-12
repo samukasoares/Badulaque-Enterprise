@@ -3,9 +3,18 @@
         <form class="modal-form">
             <div v-if="cardapio">
                 <!-- Nome do Cardápio -->
-                <h4>{{ cardapio.cardapio.nome }}</h4>
+                <h4>{{ cardapio.cardapio.nome }}</h4><br>
 
-                <br>
+                <div class="valores-container">
+                    <div class="valor-item">
+                        <label>Custo: </label>
+                        <h4>{{ formatarValorMonetario(cardapio.custoTotal) }}</h4>
+                    </div>
+                    <div class="valor-item">
+                        <label>Preço Sugerido: </label>
+                        <h4>R$ 0.00</h4>
+                    </div>
+                </div>
                 <div class="valores-container">
                     <div class="valor-item">
                         <label>{{ currentYear }}:</label>
@@ -76,7 +85,8 @@ export default defineComponent({
             cardapio: null as CardapioInfo | null,
             loading: false,
             currentYear: new Date().getFullYear(),
-            reajusteCardapio: {} as Reajuste
+            reajusteCardapio: {} as Reajuste,
+            custoTotal: 0
         };
     },
     methods: {

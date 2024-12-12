@@ -25,10 +25,10 @@
             <input disabled type="number" required v-model.number="item.baseReceita">
 
             <label>Custo:</label>
-            <input disabled type="number" v-model.number="item.custo">
+            <input disabled type="text" :value="formatarValorMonetarioCusto(item.custo)">
 
             <label>Valor:</label>
-            <input disabled type="number" v-model.number="item.valor">
+            <input disabled type="text" :value="formatarValorMonetarioCusto(item.valor)">
 
             <div class="form-group">
                 <button type="submit" class="submit-button" @click="atualizarValor()">Atualizar</button>
@@ -49,7 +49,7 @@ import { Grupo } from '@/common/utils/Interfaces';
 import { fetchGrupos } from '@/common/utils/FetchMethods';
 import instance from '@/common/utils/AuthService';
 import FichaTecnica from '../FichaTecnica.vue';
-import { formatarValorMonetario } from '@/common/utils/Helper';
+import { formatarValorMonetario, formatarValorMonetarioCusto } from '@/common/utils/Helper';
 
 
 export default defineComponent({
@@ -71,7 +71,7 @@ export default defineComponent({
         };
     },
     methods: {
-        formatarValorMonetario,
+        formatarValorMonetarioCusto,
         close() {
             this.$emit('close');
         },
@@ -141,7 +141,7 @@ export default defineComponent({
                 }
             }
         }
-    }
+    },
 });
 </script>
 

@@ -43,6 +43,7 @@ export type CardapioInfo = {
         itensAgrupados: GroupedItem,
         grupos: Array<{ nomeGrupo: string, qtdItens: number; }>;
     };
+    custoTotal: number
 };
 
 // Registro Cardapio
