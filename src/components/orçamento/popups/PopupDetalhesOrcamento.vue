@@ -828,7 +828,7 @@ export default defineComponent({
                         this.sinalEntrada = formatarValorMonetario(forma.valorSinal);
                         this.parcelasEntrada = (forma.numeroParcelasEntrada).toString();
                         this.valorEntrada = formatarValorMonetario(forma.valorEntrada);
-                        this.saldoEntrada = formatarValorMonetario(forma.valorTotal - forma.valorEntrada);
+                        this.saldoEntrada = formatarValorMonetario(forma.valorTotal - forma.valorEntrada - forma.valorSinal);
                         this.valorParcelasEntrada = formatarValorMonetario(forma.valorParcela);
                     }
 
