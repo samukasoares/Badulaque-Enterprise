@@ -36,7 +36,6 @@ export interface GroupedItem {
 
 export type CardapioInfo = {
     cardapio: {
-        id: number,
         nome: string,
         preco: number,
         link:string,
