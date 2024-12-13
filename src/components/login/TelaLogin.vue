@@ -27,7 +27,7 @@ export default defineComponent({
     methods: {
         async loginUser() {
             try {
-                const response = await axios.post('http://localhost:3000/login', {
+                const response = await axios.post('http://192.168.3.192:3000/login', {
                     email: this.email,
                     senha: this.password,
                 });
