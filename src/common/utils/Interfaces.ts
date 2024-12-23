@@ -8,6 +8,7 @@ export interface Item {
     baseReceita: number;
     consumoPorPessoa: number;
     Grupo_idGrupo: number;
+    custo: number;
 }
 
 export interface Grupo {
