@@ -8,11 +8,13 @@ export interface Item {
     baseReceita: number;
     consumoPorPessoa: number;
     Grupo_idGrupo: number;
+    custo: number;
 }
 
 export interface Grupo {
     nomeGrupo: string;
     idGrupo: number;
+    sequencia: number;
 }
 
 export interface Cardapio {
@@ -41,7 +43,7 @@ export type CardapioInfo = {
         preco: number,
         link:string,
         itensAgrupados: GroupedItem,
-        grupos: Array<{ nomeGrupo: string, qtdItens: number; }>;
+        grupos: Array<{ nomeGrupo: string, qtdItens: number, sequencia:number }>;
     };
     custoTotal: number
 };

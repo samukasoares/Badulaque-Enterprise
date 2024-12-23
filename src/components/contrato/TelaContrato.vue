@@ -12,30 +12,6 @@
             </select>
         </div>
         <input type="text" v-model="searchQuery" placeholder="Pesquisar Contratos...">
-        <div class="groupConsolidado">
-            <label>Ativos:</label>
-            <label>52</label>
-        </div>
-        <div class="groupConsolidado">
-            <label>Cerimônia:</label>
-            <label>43</label>
-        </div>
-        <div class="groupConsolidado">
-            <label>Bar:</label>
-            <label>20</label>
-        </div>
-        <div class="groupConsolidado">
-            <label>Noiva:</label>
-            <label>12</label>
-        </div>
-        <div class="groupConsolidado">
-            <label>Cabine:</label>
-            <label>15</label>
-        </div>
-        <div class="groupConsolidado">
-            <label>Faturamento:</label>
-            <label>R$900.000,00</label>
-        </div>
     </div>
 
     <table>
@@ -61,7 +37,8 @@
             <td>{{ contrato.Orcamento.Cardapio.nomeCardapio }}</td>
             <td><input type="checkbox" class="custom-checkbox" v-model="contrato.assinado" :true-value="1"
                     :false-value="0" @change="atualizarAssinado(contrato)"></td>
-            <td><i class="fa-solid fa-edit action-icon"></i></td>
+            <td><button class="paginationButton" @click="abrirDefCardapioModal(contrato)"><i
+                        class="fa-solid fa-edit action-icon"></i></button></td>
             <td><i class="fa-solid fa-hand-holding-dollar action-icon"></i></td>
             <td><i class="fa-solid fa-sack-dollar action-icon"></i></td>
         </tr>
@@ -82,12 +59,19 @@
 
     <PopupDetalhesContrato v-if="showDetailModal" @close="closeDetailModal"
         :contratoId="contratoSelecionado?.idContrato" />
+
+    <PopupDefinicaoCardapio v-if="showDefCardapioModal" :contratoId="contratoSelecionado?.idContrato"
+        @close="closeDefCardapioModal" @success="handleMessage"
+        :convidadosContrato="contratoSelecionado?.Orcamento.numConvidados"
+        :dataContrato="contratoSelecionado?.Orcamento.dataEvento" />
+
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import PopupCriarContrato from '../contrato/popups/PopupCriarContrato.vue'
 import PopupDetalhesContrato from './popups/PopupDetalhesContrato.vue';
+import PopupDefinicaoCardapio from './popups/PopupDefinicaoCardapio.vue';
 import { Contrato } from '@/common/utils/Interfaces/Contrato/ContratoTabela';
 import { formatarData } from '@/common/utils/Helper/Data';
 import { fetchContratos } from '@/common/utils/FetchMethods';
@@ -95,7 +79,7 @@ import { formatarValorMonetario } from '@/common/utils/Helper';
 import instance from '@/common/utils/AuthService';
 
 export default defineComponent({
-    components: { PopupCriarContrato, PopupDetalhesContrato },
+    components: { PopupCriarContrato, PopupDetalhesContrato, PopupDefinicaoCardapio },
     data() {
         return {
             showModal: false,
@@ -103,6 +87,7 @@ export default defineComponent({
             contratos: [] as Contrato[],
             searchQuery: '',
             showDetailModal: false,
+            showDefCardapioModal: false,
             selectedRow: null as number | null,
             contratoSelecionado: null as Contrato | null,
             status: 'Ativo',
@@ -172,6 +157,14 @@ export default defineComponent({
         closeDetailModal() {
             this.showDetailModal = false;
             this.selectedRow = null;
+        },
+        abrirDefCardapioModal(contrato: Contrato) {
+            this.contratoSelecionado = contrato;
+            this.showDefCardapioModal = true;
+        },
+
+        closeDefCardapioModal() {
+            this.showDefCardapioModal = false;
         },
 
         changePage(page: number) {

@@ -2,7 +2,7 @@
     <div class="backdrop" @click.self="fechar">
         <form class="modal-form">
             <h4>Ficha Técnica</h4><br>
-            <div v-for="(insumo, index) in insumos" :key="index" class="insumo-group">
+            <div v-for="(insumo, index) in insumos" :key="index">
 
                 <label>Nome:</label> <button type="button" @click="removerInsumo(index)"
                     class="botao-remover">Remover</button>
@@ -10,7 +10,7 @@
                 <select v-model="insumo.insumoId" @change="calcularValorTotal(index)">
                     <option disabled value="">Escolha o insumo...</option>
                     <option v-for="insumo in insumosDisponiveis" :key="insumo.idInsumo" :value="insumo.idInsumo">
-                        {{ insumo.descri____oInsumo }}
+                        {{ insumo.descricaoInsumo }}
                     </option>
                 </select>
 

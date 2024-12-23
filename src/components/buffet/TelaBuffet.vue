@@ -132,7 +132,7 @@ export default defineComponent({
                 } else if (this.opcoes === 'Insumos') {
                     response = await instance.get<Insumo[]>('/buffet/insumos');
                     this.cards = response.data
-                        .map((item: Insumo) => ({ name: item.descri____oInsumo, id: item.idInsumo }))
+                        .map((item: Insumo) => ({ name: item.descricaoInsumo, id: item.idInsumo }))
                         .sort((a, b) => a.name.localeCompare(b.name));
                 }
 
