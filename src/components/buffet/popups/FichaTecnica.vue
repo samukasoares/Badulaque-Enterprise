@@ -10,7 +10,7 @@
                 <select v-model="insumo.insumoId" @change="calcularValorTotal(index)">
                     <option disabled value="">Escolha o insumo...</option>
                     <option v-for="insumo in insumosDisponiveis" :key="insumo.idInsumo" :value="insumo.idInsumo">
-                        {{ insumo.descri____oInsumo }}
+                        {{ insumo.descricaoInsumo }}
                     </option>
                 </select>
 
