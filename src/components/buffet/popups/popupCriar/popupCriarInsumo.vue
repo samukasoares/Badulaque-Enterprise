@@ -17,7 +17,7 @@
             <label>Valor Embalagem:</label>
             <input type="number" required v-model="valorEmbalagem">
             <label>Valor unitário</label>
-            <input type="number" required v-model="valorUnitario" step="0.0001">
+            <input type="number" disabled required v-model="valorUnitario" step="0.0001">
             <label>Perda (%)</label>
             <input type="number" required v-model="perda">
             <button type="submit" class="submit-button" @click="criarInsumo">Criar</button>
@@ -50,7 +50,7 @@ export default defineComponent({
         async criarInsumo() {
             try {
                 const data = await instance.post('/buffet/insumo/criar-insumo', {
-                    descri____oInsumo: this.descricaoInsumo,
+                    descricaoInsumo: this.descricaoInsumo,
                     unidadeInsumo: this.unidadeInsumo,
                     fornecedor: this.fornecedor,
                     quantidadeEmbalagem: this.quantidadeEmbalagem,

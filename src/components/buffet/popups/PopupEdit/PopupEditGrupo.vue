@@ -8,6 +8,8 @@
             <label>Novo Nome:</label>
             <input type="text" required v-model="grupo.nomeGrupo">
 
+            <label>Sequência:</label>
+            <input type="number" required v-model="grupo.sequencia">
 
             <button type="submit" class="submit-button">Atualizar</button>
         </form>
@@ -57,7 +59,8 @@ export default defineComponent({
         async atualizarGrupo() {
             const grupoAtualizado: Grupo = {
                 idGrupo: this.grupo.idGrupo,
-                nomeGrupo: this.grupo.nomeGrupo
+                nomeGrupo: this.grupo.nomeGrupo,
+                sequencia: this.grupo.sequencia
             }
 
             try {

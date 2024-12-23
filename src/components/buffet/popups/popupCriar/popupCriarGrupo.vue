@@ -4,6 +4,8 @@
             <h4>Criar Grupo</h4><br>
             <label>Nome:</label>
             <input type="text" required v-model='nomeGrupo'>
+            <label>Sequência:</label>
+            <input type="number" required v-model='sequenciaGrupo'>
             <button type="submit" class="submit-button" @click="criarGrupo">Criar</button>
         </form>
     </div>
@@ -18,7 +20,8 @@ export default defineComponent({
     name: 'PopupOrcamento',
     data() {
         return {
-            nomeGrupo: ''
+            nomeGrupo: '',
+            sequenciaGrupo: 0
         };
     },
     methods: {
@@ -28,7 +31,8 @@ export default defineComponent({
         async criarGrupo() {
             try {
                 const data = await instance.post('/buffet/criar-grupo', {
-                    nomeGrupo: this.nomeGrupo
+                    nomeGrupo: this.nomeGrupo,
+                    sequencia: this.sequenciaGrupo
                 });
                 window.location.reload()
             } catch (error) {

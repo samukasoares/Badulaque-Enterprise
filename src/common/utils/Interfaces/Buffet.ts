@@ -11,7 +11,7 @@ export interface ItemInfo {
 
 export interface Insumo {
     idInsumo: number;
-    descri____oInsumo: string;
+    descricaoInsumo: string;
     unidadeInsumo: string;
     fornecedor: string;
     quantidadeEmbalagem: number;

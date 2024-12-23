@@ -72,6 +72,7 @@ import html2canvas from 'html2canvas';
 import { CardapioInfo, GroupedItem, Item } from '@/common/utils/Interfaces';
 import { Reajuste } from '@/common/utils/Interfaces/Helper';
 import { formatarValorMonetario } from '@/common/utils/Helper';
+import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 
 export default defineComponent({
     props: {
@@ -147,16 +148,18 @@ export default defineComponent({
             const yearAfterNext = this.currentYear + 2;
 
             // Construção dos itens do cardápio em HTML
-            const gruposHTML = this.cardapio.cardapio.grupos.map(grupo => {
-                const itensDoGrupo = this.getItensDoGrupo(grupo.nomeGrupo);
+            const gruposHTML = this.cardapio.cardapio.grupos
+                .sort((a, b) => a.sequencia - b.sequencia) // Ordenar pelo atributo "sequencia"
+                .map(grupo => {
+                    const itensDoGrupo = this.getItensDoGrupo(grupo.nomeGrupo);
 
-                // Verifica se `itensDoGrupo` é um array válido e contém itens
-                const itens = Array.isArray(itensDoGrupo) && itensDoGrupo.length > 0
-                    ? itensDoGrupo.map((item: { name: string }) => `<span>${item.name}</span>`).join(', ')
-                    : '<span>Itens não encontrados</span>';
+                    // Verifica se `itensDoGrupo` é um array válido e contém itens
+                    const itens = Array.isArray(itensDoGrupo) && itensDoGrupo.length > 0
+                        ? itensDoGrupo.map((item: { name: string }) => `<span>${item.name}</span>`).join(', ')
+                        : '<span>Itens não encontrados</span>';
 
-                return `<div class="titulo"><strong>${grupo.nomeGrupo ? grupo.nomeGrupo : 'Grupo indefinido'} - ${grupo.qtdItens ? grupo.qtdItens : 0} opção(es)</strong> <br>${itens}</div>`;
-            }).join('');
+                    return `<div class="titulo"><strong>${grupo.nomeGrupo ? grupo.nomeGrupo : 'Grupo indefinido'} - ${grupo.qtdItens ? grupo.qtdItens : 0} opção(es)</strong> <br>${itens}</div>`;
+                }).join('');
 
             return template
                 .replace('{{nome}}', this.cardapio.cardapio.nome)
@@ -179,61 +182,8 @@ export default defineComponent({
                 // Preenche o template com os dados do cardápio
                 template = this.preencherTemplate(template);
 
-                const doc = new jsPDF('p', 'mm', 'a4');
-                doc.setProperties({
-                    title: this.cardapio?.cardapio.nome || 'Cardápio'
-                });
+                await gerarPDFDoHtml(template, "Cardápio" + this.cardapio?.cardapio.nome || "Cardápio");
 
-                // Criação de iframe para renderizar o HTML em um canvas
-                const iframe = document.createElement('iframe');
-                iframe.style.position = 'absolute';
-                iframe.style.left = '-9999px';
-                document.body.appendChild(iframe);
-
-                if (!iframe.contentWindow) {
-                    console.error('Erro: iframe.contentWindow é nulo');
-                    return;
-                }
-
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                if (!iframeDoc) {
-                    console.error('Erro: Não foi possível acessar o documento do iframe');
-                    return;
-                }
-                iframeDoc.open();
-                iframeDoc.write(template);
-                iframeDoc.close();
-
-                iframe.onload = async () => {
-                    try {
-                        const canvas = await html2canvas(iframeDoc.body, { scale: 4 });
-                        const imgData = canvas.toDataURL('image/png');
-                        const imgWidth = 210; // Largura da página A4 em mm
-                        const pageHeight = 295; // Altura da página A4 em mm
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                        let heightLeft = imgHeight;
-
-                        let position = 0;
-
-                        while (heightLeft >= 0) {
-                            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                            heightLeft -= pageHeight;
-                            if (heightLeft >= 0) {
-                                position = heightLeft - imgHeight;
-                                doc.addPage();
-                            }
-                        }
-
-                        const pdfBlob = doc.output('blob');
-                        const pdfUrl = URL.createObjectURL(pdfBlob);
-                        window.open(pdfUrl);
-
-                        // Remove o iframe após a geração do PDF
-                        document.body.removeChild(iframe);
-                    } catch (error) {
-                        console.error('Erro ao gerar o canvas:', error);
-                    }
-                };
             } catch (error) {
                 console.error('Erro ao carregar o template:', error);
             }

@@ -3,7 +3,7 @@
         <form class="modal-form">
             <h4>Criar Insumo</h4><br>
             <label>Nome</label>
-            <input type="text" required v-model="insumo.descri____oInsumo">
+            <input type="text" required v-model="insumo.descricaoInsumo">
             <label>Unidade</label>
             <select v-model="insumo.unidadeInsumo">
                 <option>Gramas</option>
@@ -57,7 +57,7 @@ export default defineComponent({
             try {
                 const data = await instance.post('/buffet/insumo/update', {
                     idInsumo: this.insumo.idInsumo,
-                    descri____oInsumo: this.insumo.descri____oInsumo,
+                    descricaoInsumo: this.insumo.descricaoInsumo,
                     unidadeInsumo: this.insumo.unidadeInsumo,
                     fornecedor: this.insumo.fornecedor,
                     quantidadeEmbalagem: this.insumo.quantidadeEmbalagem,
