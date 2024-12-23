@@ -61,7 +61,9 @@
         :contratoId="contratoSelecionado?.idContrato" />
 
     <PopupDefinicaoCardapio v-if="showDefCardapioModal" :contratoId="contratoSelecionado?.idContrato"
-        @close="closeDefCardapioModal" @success="handleMessage" />
+        @close="closeDefCardapioModal" @success="handleMessage"
+        :convidadosContrato="contratoSelecionado?.Orcamento.numConvidados"
+        :dataContrato="contratoSelecionado?.Orcamento.dataEvento" />
 
 </template>
 

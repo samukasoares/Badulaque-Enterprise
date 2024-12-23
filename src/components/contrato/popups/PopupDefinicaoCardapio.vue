@@ -23,15 +23,28 @@
                 </div>
             </div>
             <button type="button" @click="adicionarItem">+</button><br>
-            <label>Custo Total Por Pessoa:</label>
-            <input type="text" disabled :value="formatarValorMonetario(custoTotal)">
 
             <div class="form-group">
                 <div class="form-item">
-                    <button type="submit" class="submit-button" @click="salvarCardapio">Salvar</button>
+                    <label>Convidados para Lista de compra:</label>
+                    <input type="number" v-model="convidados">
                 </div>
                 <div class="form-item">
-                    <button type="submit" class="submit-button">Visualizar Lista de Compras</button>
+                    <label>Custo Total Por Pessoa:</label>
+                    <input type="text" disabled :value="formatarValorMonetario(custoTotal)">
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group">
+                <div class="form-item">
+                    <button type="submit" class="submit-button" @click="visualizarListaDeCompras">Visualizar Lista de
+                        Compras</button>
+                </div>
+                <div class="form-item">
+                    <button type="submit" class="submit-button" @click="salvarCardapio">Salvar</button>
                 </div>
             </div>
 
@@ -43,7 +56,9 @@
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
 import { formatarValorMonetario } from '@/common/utils/Helper';
+import { formatarData } from '@/common/utils/Helper/Data';
 import { Item } from '@/common/utils/Interfaces';
+import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -52,11 +67,21 @@ export default defineComponent({
             type: Number,
             required: false,
         },
+        convidadosContrato: {
+            type: Number,
+            required: false
+        },
+        dataContrato: {
+            type: String,
+            required: false
+        }
+
     },
     data() {
         return {
             itens: [] as Item[],
-            itensEscolhidos: [] as Item[]
+            itensEscolhidos: [] as Item[],
+            convidados: this.convidadosContrato || 0,
         };
     },
     methods: {
@@ -142,6 +167,54 @@ export default defineComponent({
                 }));
             } catch (error) {
                 console.error('Erro ao buscar ficha técnica:', error);
+            }
+        },
+
+        async visualizarListaDeCompras() {
+            try {
+                // Realiza a requisição para obter os dados de compras
+                const payload = {
+                    idContrato: this.contratoId,
+                    numeroConvidados: this.convidados,
+                };
+
+                const response = await instance.post('/contrato/lista-de-compras', payload);
+
+                // Verificar se a resposta contém dados válidos
+                if (!Array.isArray(response.data) || response.data.length === 0) {
+                    throw new Error('Dados de compras não encontrados ou estão no formato errado.');
+                }
+
+                // Obter o template HTML
+                const templatePath = '/template-listacompras.html'; // Caminho do arquivo HTML
+                const responseTemplate = await fetch(templatePath);
+                let template = await responseTemplate.text();
+
+                // Processar os dados de insumos para gerar o conteúdo HTML
+                const insumosHtml = response.data.map((insumo: any) => {
+                    return `
+                    <div class="insumo">
+                    <h4>${insumo.nome}</h4>
+                        <p>Quantidade: <strong>${insumo.quantidadeFormatada}</strong></p>
+                        <p>Embalagens: <strong>${insumo.embalagensNecessarias}</strong> embalagens de ${insumo.embalagemFormatada}</p>
+                        <p>Custo Previsto: <strong>${insumo.custoFormatado}</strong></p>
+                    <hr>
+                    </div>
+                    `;
+                }).join('');
+
+                const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
+                // Substituir a tag {{grupos}} no template pelo HTML gerado com os insumos
+                template = template
+                    .replace('{{grupos}}', insumosHtml)
+                    .replace('{{dataContrato}}', dataFormatada)
+                    .replace('{{numConvidados}}', this.convidados.toString());
+
+                // Gerar o PDF com o template preenchido
+                await gerarPDFDoHtml(template, `Lista de Compras - Evento ${dataFormatada}`);
+            } catch (error) {
+                console.error('Erro ao gerar a lista de compras:', error);
+                this.$emit('error', 'Erro ao gerar a lista de compras.');
             }
         }
     },
