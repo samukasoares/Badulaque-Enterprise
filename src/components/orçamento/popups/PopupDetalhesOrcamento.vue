@@ -111,15 +111,18 @@
 
 
 
-                        <h4>BAR</h4><br>
+                        <h4>BAR</h4>
+                        <input type="checkbox" v-model="isBarEnabled" :disabled="!isEditing"
+                            @click="handleBarToggle()"><br>
                         <div class="form-group">
                             <div class="form-item">
                                 <label>Cardápio:</label>
                                 <template v-if="!isEditing">
-                                    <input v-model="cardapioBar" disabled type="text">
+                                    <input v-model="cardapioBar" :disabled="!isBarEnabled" type="text">
                                 </template>
                                 <template v-else>
-                                    <select v-model="tipoBarId" :disabled="!isEditing" @change="onBarSelect">
+                                    <select v-model="tipoBarId" :disabled="!isBarEnabled || !isEditing"
+                                        @change="onBarSelect">
                                         <option v-for="bar in cardapiosBar" :key="bar.idCardapioBar"
                                             :value="bar.idCardapioBar">
                                             {{ bar.nomeCardapioBar }}
@@ -129,7 +132,7 @@
                             </div>
                             <div class="form-item">
                                 <label>Valor:</label>
-                                <input v-model="valorPorPessoaBar" :disabled="!isEditing" type="text">
+                                <input v-model="valorPorPessoaBar" :disabled="!isBarEnabled || !isEditing" type="text">
                             </div>
                         </div>
                         <label>Total Bar:</label>
@@ -310,6 +313,7 @@ export default defineComponent({
             valorPorPessoaBuffet: '',
             valorTotalBuffet: '',
 
+            isBarEnabled: this.cardapioBar !== null,
             cardapioBar: '',
             valorPorPessoaBar: '',
             valorTotalBar: '',
@@ -428,13 +432,13 @@ export default defineComponent({
                 idOrcamento: parseInt(this.id),
                 referenciaOrcamento: this.referencia,
                 Cardapio_idCardapio: this.cardapioBuffetId,
-                CardapioBar_idCardapioBar: this.tipoBarId,
+                CardapioBar_idCardapioBar: this.isBarEnabled ? this.tipoBarId : null,
                 Cerveja_idCerveja: this.tipoBebidaId,
                 numConvidados: parseInt(this.convidados),
                 observacoesOrcamento: this.observacoes,
                 dataEvento: formattedDate,
                 ValorEspaco_idValorEspaco: this.valorEspacoId,
-                valorPPBar: this.removerFormatacaoMonetaria(this.valorPorPessoaBar),
+                valorPPBar: this.removerFormatacaoMonetaria(this.valorPorPessoaBar) || 0,
                 valorPPCardapio: this.removerFormatacaoMonetaria(this.valorCardapio),
                 tipoEvento: this.tipoEvento,
                 cerimoniaLocal: this.cerimonia === 'Sim' ? 1 : 0,
@@ -575,6 +579,16 @@ export default defineComponent({
                     // Em caso de erro, manter o valor original
                     this.valorPorPessoaBar = formatarValorMonetario(selectedBar.precoCardapio);
                 }
+            }
+        },
+
+        handleBarToggle() {
+            if (this.isBarEnabled) {
+                // Se desmarcado, limpa os campos relacionados ao BAR
+                this.cardapioBar = '';
+                this.tipoBarId = 0;
+                this.valorPorPessoaBar = '';
+                this.valorTotalBar = '';
             }
         },
 
@@ -803,8 +817,8 @@ export default defineComponent({
 
                 this.valorPorPessoaBuffet = formatarValorMonetario(orcamento.valorPPCardapio + orcamento.valorPPCerveja)
                 this.valorTotalBuffet = formatarValorMonetario((orcamento.valorPPCardapio + orcamento.valorPPCerveja) * orcamento.numConvidados)
-                this.cardapioBar = orcamento.CardapioBar.nomeCardapioBar;
-                this.tipoBarId = orcamento.CardapioBar.idCardapioBar;
+                this.cardapioBar = orcamento.CardapioBar?.nomeCardapioBar ?? "-";
+                this.tipoBarId = orcamento.CardapioBar?.idCardapioBar ?? 0;
                 this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
                 this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
                 this.totalProposta = formatarValorMonetario(orcamento.valorTotalOrcamento);

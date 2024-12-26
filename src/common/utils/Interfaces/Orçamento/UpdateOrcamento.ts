@@ -5,7 +5,7 @@ interface OrcamentoFullData {
     idOrcamento: number;
     referenciaOrcamento: string;
     Cardapio_idCardapio: number;
-    CardapioBar_idCardapioBar: number;
+    CardapioBar_idCardapioBar: number | null;
     Cerveja_idCerveja: number;
     numConvidados: number;
     observacoesOrcamento: string | null;

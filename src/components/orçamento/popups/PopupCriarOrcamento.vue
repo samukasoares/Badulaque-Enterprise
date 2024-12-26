@@ -38,8 +38,8 @@
                             <label>Estado:</label>
                             <select v-model="estado" required>
                                 <option value="" disabled>Estado</option>
-                                <option v-for="estado in estados" :key="estado.id" :value="estado.sigla">{{ estado.nome
-                                    }} - {{ estado.sigla }}
+                                <option v-for="estado in estados" :key="estado.id" :value="estado.sigla">{{ estado.sigla
+                                    }}
                                 </option>
                             </select>
                         </div>
@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
