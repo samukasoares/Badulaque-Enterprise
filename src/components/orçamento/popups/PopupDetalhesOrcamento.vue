@@ -872,6 +872,11 @@ export default defineComponent({
                 return `<span class="flex-item-estrutura"><strong>${opcional.Opcional.nomeOpcional}:</strong><span> ${this.formatarValorMonetario(opcional.valorOrcamento)}</span></span>`;
             }).join('');
 
+            // Verifique se cardapioBar está vazio e remova ou substitua o HTML relacionado
+            const cardapioBarHTML = this.cardapioBar && this.cardapioBar !== '-'
+                ? `<span class="flex-item-estrutura"><strong>Bartender:</strong><span> ${this.cardapioBar} - ${this.valorPorPessoaBar}</span><span> ${this.valorTotalBar}</span></span>`
+                : '';
+
             return template
                 .replace('{{id}}', this.id)
                 .replace('{{referencia}}', this.referencia)
@@ -891,7 +896,7 @@ export default defineComponent({
 
 
 
-                .replace('{{cardapioBar}}', this.cardapioBar)
+                .replace('{{cardapioBar}}', cardapioBarHTML)
                 .replace('{{valorPorPessoaBar}}', this.valorPorPessoaBar)
                 .replace('{{valorTotalBar}}', this.valorTotalBar)
                 .replace('{{cardapios}}', cardapiosHTML)

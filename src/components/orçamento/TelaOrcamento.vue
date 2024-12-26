@@ -347,6 +347,10 @@ export default defineComponent({
 
             })
 
+            const cardapioBarHTML = orcamento.CardapioBar && orcamento.CardapioBar.nomeCardapioBar !== '-'
+                ? `<span class="flex-item-estrutura"><strong>Bartender:</strong><span> ${orcamento.CardapioBar.nomeCardapioBar} - ${formatarValorMonetario(orcamento.valorPPBar)}</span><span> ${formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados)}</span></span>`
+                : '';
+
             return template
                 .replace('{{id}}', orcamento.idOrcamento.toString())
                 .replace('{{referencia}}', orcamento.referenciaOrcamento)
@@ -360,7 +364,7 @@ export default defineComponent({
                 .replace('{{dataEnvio}}', dataEnvio)
                 .replace('{{observacoes}}', orcamento.observacoesOrcamento)
                 .replace('{{valorEspaco}}', formatarValorMonetario(orcamento.valorEspacoFinal))
-                .replace('{{cardapioBar}}', orcamento.CardapioBar.nomeCardapioBar)
+                .replace('{{cardapioBar}}', cardapioBarHTML)
                 .replace('{{valorPorPessoaBar}}', formatarValorMonetario(orcamento.valorPPBar))
                 .replace('{{cardapios}}', cardapiosHTML)
                 .replace('{{opcionais}}', opcionaisSelecionadosHTML)
