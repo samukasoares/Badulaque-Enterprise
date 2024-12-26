@@ -35,10 +35,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cerveja } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Reajuste } from '@/common/utils/Interfaces/Helper';
-import { formatarValorMonetario } from '@/common/utils/Helper';
+import { Cerveja } from '@/common/utils/Interfaces/Cerveja/Cerveja';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
     props: {

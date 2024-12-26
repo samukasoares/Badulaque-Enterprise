@@ -1,4 +1,4 @@
-import { RegistroLead } from "../../Interfaces";
+import { RegistroLead } from "../Lead/Lead";
 
 // Interface para Orcamento
 interface OrcamentoFullData {

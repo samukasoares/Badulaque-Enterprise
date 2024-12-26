@@ -1,5 +1,4 @@
-import { formatarValorMonetario } from "../Helper";
-import { Orcamento } from "../Interfaces/Orcamento";
+import { Orcamento } from "../Interfaces/Orcamento/Orcamento";
 import { formatarDataExtenso } from "./Data";
 
 export function gerarMensagemWhatsApp(orcamento: Orcamento, linkOrcamento: string): string {

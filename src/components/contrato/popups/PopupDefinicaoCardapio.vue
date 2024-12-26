@@ -55,9 +55,9 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { formatarValorMonetario } from '@/common/utils/Helper';
 import { formatarData } from '@/common/utils/Helper/Data';
-import { Item } from '@/common/utils/Interfaces';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
+import { Item } from '@/common/utils/Interfaces/Buffet/Cardapio';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 import { defineComponent } from 'vue';
 

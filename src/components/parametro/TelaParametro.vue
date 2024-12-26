@@ -35,8 +35,11 @@ import PopupEditarOpcional from './popups/PopupEditarOpcional.vue';
 import PopupEditarParametro from './popups/PopupEditParametro.vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
-import { ValorEspaco, Opcional, Card } from '@/common/utils/Interfaces';
+
 import { Parametro } from '@/common/utils/Interfaces/Parametro'
+import { Card } from '@/common/utils/Interfaces/Helper';
+import { ValorEspaco } from '@/common/utils/Interfaces/Espaco/Espaço';
+import { Opcional } from '@/common/utils/Interfaces/Opcional/Opcional';
 
 export default defineComponent({
     components: { PopupCriarOpcional, PopupEditarValorEspaco, PopupEditarOpcional, PopupEditarParametro, NotificationMessage },
