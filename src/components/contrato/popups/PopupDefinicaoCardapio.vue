@@ -181,7 +181,11 @@ export default defineComponent({
                 const response = await instance.post('/contrato/lista-de-compras', payload);
 
                 // Verificar se a resposta contém dados válidos
-                if (!Array.isArray(response.data) || response.data.length === 0) {
+                const listaFinal = response.data.listaFinal;
+                const custoTotalGeralFormatado = response.data.custoTotalGeralFormatado;
+
+                // Verificar se a resposta contém dados válidos
+                if (!Array.isArray(listaFinal) || listaFinal.length === 0) {
                     throw new Error('Dados de compras não encontrados ou estão no formato errado.');
                 }
 
@@ -191,24 +195,27 @@ export default defineComponent({
                 let template = await responseTemplate.text();
 
                 // Processar os dados de insumos para gerar o conteúdo HTML
-                const insumosHtml = response.data.map((insumo: any) => {
-                    return `
-                    <div class="insumo">
-                    <h4>${insumo.nome}</h4>
-                        <p>Quantidade: <strong>${insumo.quantidadeFormatada}</strong></p>
-                        <p>Embalagens: <strong>${insumo.embalagensNecessarias}</strong> embalagens de ${insumo.embalagemFormatada}</p>
-                        <p>Custo Previsto: <strong>${insumo.custoFormatado}</strong></p>
-                    <hr>
-                    </div>
-                    `;
-                }).join('');
+                const insumosHtml = listaFinal
+                    .sort((a: any, b: any) => a.nome.localeCompare(b.nome)) // Ordena os insumos por nome
+                    .map((insumo: any) => {
+                        return `
+        <div class="insumo">
+        <h4>${insumo.nome}</h4>
+            <p>Quantidade: <strong>${insumo.quantidadeFormatada}</strong> | <strong>${insumo.embalagensNecessarias}</strong> embalagens de <strong>${insumo.embalagemFormatada}</strong>   |
+            Custo Previsto: <strong>${insumo.custoFormatado}</strong></p>
+        <hr>
+        </div>
+        `;
+                    })
+                    .join('');
 
                 const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
                 // Substituir a tag {{grupos}} no template pelo HTML gerado com os insumos
                 template = template
                     .replace('{{grupos}}', insumosHtml)
                     .replace('{{dataContrato}}', dataFormatada)
-                    .replace('{{numConvidados}}', this.convidados.toString());
+                    .replace('{{numConvidados}}', this.convidados.toString())
+                    .replace('{{custoGeral}}', custoTotalGeralFormatado)
 
                 // Gerar o PDF com o template preenchido
                 await gerarPDFDoHtml(template, `Lista de Compras - Evento ${dataFormatada}`);
