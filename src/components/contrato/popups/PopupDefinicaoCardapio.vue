@@ -40,12 +40,16 @@
 
             <div class="form-group">
                 <div class="form-item">
-                    <button type="submit" class="submit-button" @click="visualizarListaDeCompras">Visualizar Lista de
+                    <button type="submit" class="submit-button" @click="visualizarListaDeCompras">Lista de
                         Compras</button>
+                </div>
+                <div class="form-item">
+                    <button type="submit" class="submit-button" @click="visualizarFichaTecnica">Ficha Técnica</button>
                 </div>
                 <div class="form-item">
                     <button type="submit" class="submit-button" @click="salvarCardapio">Salvar</button>
                 </div>
+
             </div>
 
 
@@ -222,6 +226,59 @@ export default defineComponent({
             } catch (error) {
                 console.error('Erro ao gerar a lista de compras:', error);
                 this.$emit('error', 'Erro ao gerar a lista de compras.');
+            }
+        },
+
+        async visualizarFichaTecnica() {
+            try {
+                // Requisição ao backend para gerar a ficha técnica
+                const payload = {
+                    idContrato: this.contratoId,
+                    numeroConvidados: this.convidados,
+                };
+                const response = await instance.post('/contrato/ficha-tecnica', payload);
+
+                // Verificar se a resposta contém dados válidos
+                const fichasTecnicas = response.data;
+
+                if (!Array.isArray(fichasTecnicas) || fichasTecnicas.length === 0) {
+                    throw new Error('Dados de ficha técnica não encontrados ou estão no formato errado.');
+                }
+
+                // Obter o template HTML
+                const templatePath = '/template-fichatecnica.html'; // Caminho do arquivo HTML
+                const responseTemplate = await fetch(templatePath);
+                let template = await responseTemplate.text();
+
+                // Processar os dados de ficha técnica para gerar o conteúdo HTML
+                const itensHtml = fichasTecnicas
+                    .map(item => {
+                        const insumosHtml = item.fichaTecnica
+                            .map((insumo: any) => `
+                                <p>• ${insumo.nomeInsumo}: <strong>${insumo.quantidade}</strong></p>
+                            `)
+                            .join('');
+                        return `
+                            <div class="item">
+                                <h4>${item.nomeItem}</h4>
+                                <div>${insumosHtml}</div>
+                            </div>
+                        `;
+                    })
+                    .join('');
+
+                const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
+                // Substituir os placeholders no template
+                template = template
+                    .replace('{{itens}}', itensHtml)
+                    .replace('{{dataContrato}}', dataFormatada)
+                    .replace('{{numConvidados}}', this.convidados.toString());
+
+                // Gerar o PDF com o template preenchido
+                await gerarPDFDoHtml(template, `Ficha Técnica - Evento ${dataFormatada}`);
+            } catch (error) {
+                console.error('Erro ao gerar a ficha técnica:', error);
+                this.$emit('error', 'Erro ao gerar a ficha técnica.');
             }
         }
     },

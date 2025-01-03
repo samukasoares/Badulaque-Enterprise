@@ -7,7 +7,7 @@
             <label>Unidade</label>
             <select v-model="insumo.unidadeInsumo">
                 <option>Gramas</option>
-                <option>Litros</option>
+                <option>Mililitros</option>
                 <option>Unidades</option>
             </select>
             <label>Fornecedor</label>
