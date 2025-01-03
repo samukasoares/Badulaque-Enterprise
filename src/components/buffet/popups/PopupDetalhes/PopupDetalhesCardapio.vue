@@ -65,14 +65,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import axios from 'axios';
 import instance from '@/common/utils/AuthService';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { CardapioInfo, GroupedItem, Item } from '@/common/utils/Interfaces';
 import { Reajuste } from '@/common/utils/Interfaces/Helper';
-import { formatarValorMonetario } from '@/common/utils/Helper';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
+import { CardapioInfo, GroupedItem } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
     props: {

@@ -18,8 +18,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Grupo } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
+import { Grupo } from '@/common/utils/Interfaces/Buffet/Cardapio';
 
 export default defineComponent({
     props: {

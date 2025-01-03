@@ -249,15 +249,21 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, ValorEspaco } from '@/common/utils/Interfaces';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
-import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
+import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento/Orcamento';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
-import { formatarCelular, formatarValorMonetario } from '@/common/utils/Helper';
+import { OpcionaisFormatados, UpdateFormaPagamento, UpdateOrcamento } from '@/common/utils/Interfaces/Orcamento/UpdateOrcamento';
+import { Cardapio } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { Cerveja } from '@/common/utils/Interfaces/Cerveja/Cerveja';
+import { CardapioBar } from '@/common/utils/Interfaces/Bardulaque/Registro';
+import { ValorEspaco } from '@/common/utils/Interfaces/Espaco/Espaço';
+import { RegistroLead } from '@/common/utils/Interfaces/Lead/Lead';
+import { Opcional } from '@/common/utils/Interfaces/Opcional/Opcional';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
-import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchOpcionais, fetchValoresEspaco } from '@/common/utils/FetchMethods';
-import { OpcionaisFormatados, UpdateFormaPagamento, UpdateOrcamento } from '@/common/utils/Interfaces/Orçamento/UpdateOrcamento';
+import { fetchCardapios, fetchCervejas, fetchCardapioBar, fetchOpcionais, fetchValoresEspaco } from '@/common/utils/Helper/FetchMethods';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
+import { formatarCelular } from '@/common/utils/Helper/Celular';
 
 
 export default defineComponent({

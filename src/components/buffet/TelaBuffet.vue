@@ -47,8 +47,10 @@ import popupInsumo from './popups/popupCriar/popupCriarInsumo.vue'
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
-import { Card, Cardapio, CardapioInfo, Cerveja, Grupo, Item } from '@/common/utils/Interfaces';
-import { Insumo } from '@/common/utils/Interfaces/Buffet';
+import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
+import { Cardapio, Grupo, Item } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { Cerveja } from '@/common/utils/Interfaces/Cerveja/Cerveja';
+import { Card } from '@/common/utils/Interfaces/Helper';
 
 
 export default defineComponent({

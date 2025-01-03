@@ -14,8 +14,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import instance from '@/common/utils/AuthService';
-import { formatarValorMonetario } from '@/common/utils/Helper';
 import { Parametro } from '@/common/utils/Interfaces/Parametro';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
     props: {

@@ -45,7 +45,7 @@ import { defineComponent } from 'vue';
 import instance from '@/common/utils/AuthService';
 import { InsumoFichaTecnica } from '@/common/utils/Interfaces/Buffet/FichaTecnica';
 
-import { Insumo } from '@/common/utils/Interfaces/Buffet';
+import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
 
 export default defineComponent({
 

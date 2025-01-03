@@ -28,7 +28,8 @@ import axios from 'axios';
 import instance from '@/common/utils/AuthService';
 import PopupCriarCardapioBar from './popups/PopupCriar/PopupCriarCardapioBar.vue';
 import PopupCriarDrink from './popups/PopupCriar/PopupCriarDrink.vue'
-import { Card, CardapioBar, Drink } from '@/common/utils/Interfaces';
+import { CardapioBar, Drink } from '@/common/utils/Interfaces/Bardulaque/Registro';
+import { Card } from '@/common/utils/Interfaces/Helper';
 
 
 export default defineComponent({
