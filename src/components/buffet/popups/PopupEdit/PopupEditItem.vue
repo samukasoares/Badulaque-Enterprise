@@ -9,8 +9,12 @@
             <label>Nome:</label>
             <input type="text" required v-model="item.nomeItem">
 
-            <label>Unidade:</label>
-            <input type="text" required v-model="item.unidade">
+            <label>Unidade</label>
+            <select v-model="item.unidade">
+                <option>Gramas</option>
+                <option>Mililitros</option>
+                <option>Unidades</option>
+            </select>
 
             <label>Consumo por Pessoa:</label>
             <input type="number" required v-model.number="item.consumoPorPessoa">

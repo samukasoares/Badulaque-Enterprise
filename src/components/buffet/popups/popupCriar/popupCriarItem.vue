@@ -7,7 +7,7 @@
             <label>Unidade:</label>
             <select v-model="unidade">
                 <option>Gramas</option>
-                <option>Litros</option>
+                <option>Mililitros</option>
                 <option>Unidades</option>
             </select>
             <label>Consumo Por Pessoa:</label>
