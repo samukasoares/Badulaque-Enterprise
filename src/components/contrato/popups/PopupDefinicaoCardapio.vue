@@ -255,13 +255,13 @@ export default defineComponent({
                     .map(item => {
                         const insumosHtml = item.fichaTecnica
                             .map((insumo: any) => `
-                                <li>${insumo.nomeInsumo}: <strong>${insumo.quantidade}</strong></li>
+                                <p>• ${insumo.nomeInsumo}: <strong>${insumo.quantidade}</strong></p>
                             `)
                             .join('');
                         return `
                             <div class="item">
                                 <h4>${item.nomeItem}</h4>
-                                <ul>${insumosHtml}</ul>
+                                <div>${insumosHtml}</div>
                             </div>
                         `;
                     })
