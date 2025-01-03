@@ -9,8 +9,12 @@
             <label>Nome:</label>
             <input type="text" required v-model="item.nomeItem">
 
-            <label>Unidade:</label>
-            <input type="text" required v-model="item.unidade">
+            <label>Unidade</label>
+            <select v-model="item.unidade">
+                <option>Gramas</option>
+                <option>Mililitros</option>
+                <option>Unidades</option>
+            </select>
 
             <label>Consumo por Pessoa:</label>
             <input type="number" required v-model.number="item.consumoPorPessoa">
@@ -44,12 +48,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { ItemInfo } from '@/common/utils/Interfaces/Buffet';
-import { Grupo } from '@/common/utils/Interfaces';
-import { fetchGrupos } from '@/common/utils/FetchMethods';
+import { ItemInfo } from '@/common/utils/Interfaces/Buffet/Buffet';
 import instance from '@/common/utils/AuthService';
 import FichaTecnica from '../FichaTecnica.vue';
-import { formatarValorMonetario, formatarValorMonetarioCusto } from '@/common/utils/Helper';
+import { Grupo } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { fetchGrupos } from '@/common/utils/Helper/FetchMethods';
+import { formatarValorMonetarioCusto } from '@/common/utils/Helper/Monetario';
 
 
 export default defineComponent({

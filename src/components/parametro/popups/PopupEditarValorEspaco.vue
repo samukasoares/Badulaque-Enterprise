@@ -28,10 +28,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Cerveja, ValorEspaco } from '@/common/utils/Interfaces';
 import instance from '@/common/utils/AuthService';
 import { Reajuste } from '@/common/utils/Interfaces/Helper';
-import { formatarValorMonetario } from '@/common/utils/Helper';
+import { ValorEspaco } from '@/common/utils/Interfaces/Espaco/Espaço';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
     props: {

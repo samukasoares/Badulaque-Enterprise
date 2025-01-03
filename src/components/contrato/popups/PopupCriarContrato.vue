@@ -76,12 +76,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
-import { FormaPagamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento';
-import { fetchOrcamentosEnviados } from '@/common/utils/FetchMethods';
+import { FormaPagamento, OrcamentoBasico } from '@/common/utils/Interfaces/Orcamento/Orcamento';
 import { ContratoFullData, RegistroCliente, RegistroContrato } from '@/common/utils/Interfaces/Contrato/RegistroContrato';
 import instance from '@/common/utils/AuthService';
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css'; // Importar o estilo aqui
+import { fetchOrcamentosEnviados } from '@/common/utils/Helper/FetchMethods';
 
 export default defineComponent({
     components: {

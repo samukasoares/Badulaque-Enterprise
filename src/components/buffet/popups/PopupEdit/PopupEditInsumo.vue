@@ -7,7 +7,7 @@
             <label>Unidade</label>
             <select v-model="insumo.unidadeInsumo">
                 <option>Gramas</option>
-                <option>Litros</option>
+                <option>Mililitros</option>
                 <option>Unidades</option>
             </select>
             <label>Fornecedor</label>
@@ -29,8 +29,8 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { formatarValorMonetario, formatarValorMonetarioCusto } from '@/common/utils/Helper';
-import { Insumo } from '@/common/utils/Interfaces/Buffet';
+import { formatarValorMonetarioCusto } from '@/common/utils/Helper/Monetario';
+import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
 import { defineComponent } from 'vue';
 
 

@@ -61,14 +61,14 @@ import { defineComponent, computed, ref } from 'vue';
 import PopupOrcamento from '@/components/orçamento/popups/PopupCriarOrcamento.vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
-import { AllOrcamentos, Orcamento, OrcamentoBasico, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
+import { AllOrcamentos, Orcamento, OrcamentoBasico, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento/Orcamento';
 import PopupDetalhes from './popups/PopupDetalhesOrcamento.vue';
-import { gerarPDFDoHtml, gerarPDFDoHtmlWhatsapp } from '@/common/utils/pdfService';
+import { gerarPDFDoHtmlWhatsapp } from '@/common/utils/pdfService';
 import { formatarDataExtenso, formatarDateToString } from '@/common/utils/Helper/Data';
-import { Cardapio } from '@/common/utils/Interfaces';
-import { formatarValorMonetario } from '@/common/utils/Helper';
-import { fetchCardapios } from '@/common/utils/FetchMethods';
+import { Cardapio } from '@/common/utils/Interfaces/Buffet/Cardapio';
 import { gerarMensagemWhatsApp } from '@/common/utils/Helper/Whatsapp';
+import { fetchCardapios } from '@/common/utils/Helper/FetchMethods';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
     components: { PopupOrcamento, NotificationMessage, PopupDetalhes },

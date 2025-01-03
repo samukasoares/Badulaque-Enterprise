@@ -74,9 +74,9 @@ import PopupDetalhesContrato from './popups/PopupDetalhesContrato.vue';
 import PopupDefinicaoCardapio from './popups/PopupDefinicaoCardapio.vue';
 import { Contrato } from '@/common/utils/Interfaces/Contrato/ContratoTabela';
 import { formatarData } from '@/common/utils/Helper/Data';
-import { fetchContratos } from '@/common/utils/FetchMethods';
-import { formatarValorMonetario } from '@/common/utils/Helper';
+import { fetchContratos } from '@/common/utils/Helper/FetchMethods';
 import instance from '@/common/utils/AuthService';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
     components: { PopupCriarContrato, PopupDetalhesContrato, PopupDefinicaoCardapio },

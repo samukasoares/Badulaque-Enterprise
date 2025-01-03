@@ -21,7 +21,7 @@
                     <VueMultiselect v-model="items" :options="itensAgrupados" :multiple="true" :close-on-select="false"
                         group-values='itens' group-label='grupo' :group-select="true" :show-labels="false"
                         :preserve-search="true" placeholder="Escolha os itens..." label="name" track-by="idItem"
-                        :preselect-first="false" :max-height="250"></VueMultiselect>
+                        :preselect-first="false" :max-height="250" :hideSelected="true"></VueMultiselect>
                 </div>
 
                 <!-- Seção Dinâmica -->
@@ -43,8 +43,8 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { CardapioGrupos, CardapioInfo, GroupedItem, Item, RegistroCardapio } from '@/common/utils/Interfaces';
-import { UpdateCardapio } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { CardapioInfo, Item, GroupedItem } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { CardapioGrupos, UpdateCardapio, RegistroCardapio } from '@/common/utils/Interfaces/Buffet/Registro';
 import { defineComponent, PropType } from 'vue';
 import VueMultiselect from 'vue-multiselect';
 

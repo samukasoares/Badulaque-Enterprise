@@ -3,3 +3,8 @@ export interface Reajuste {
     ano1: number,
     ano2: number
 }
+
+export interface Card {
+    name: string;
+    id: number;
+}

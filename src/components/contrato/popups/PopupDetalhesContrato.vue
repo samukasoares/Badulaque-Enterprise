@@ -185,13 +185,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { formatarValorMonetario } from '@/common/utils/Helper';
 import instance from '@/common/utils/AuthService';
 import { Cliente, Contrato } from '@/common/utils/Interfaces/Contrato/ContratoDetalhes';
 import { formatarData, formatarDataExtenso } from '@/common/utils/Helper/Data';
-import { FormaPagamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento';
-import { CardapioInfo, GroupedItem, Opcional } from '@/common/utils/Interfaces';
+import { FormaPagamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento/Orcamento';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
+import { CardapioInfo, GroupedItem } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 
 
 export default defineComponent({

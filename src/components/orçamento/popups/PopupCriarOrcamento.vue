@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -117,8 +117,13 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchCidades, fetchEstados, fetchOpcionais } from '@/common/utils/FetchMethods';
-import { Cardapio, CardapioBar, Cerveja, Opcional, RegistroLead, RegistroOrcamento, RegistroOrcamentoData } from '@/common/utils/Interfaces';
+import { fetchCardapioBar, fetchCardapios, fetchCervejas, fetchCidades, fetchEstados, fetchOpcionais } from '@/common/utils/Helper/FetchMethods';
+import { CardapioBar } from '@/common/utils/Interfaces/Bardulaque/Registro';
+import { Cardapio } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { Cerveja } from '@/common/utils/Interfaces/Cerveja/Cerveja';
+import { RegistroLead } from '@/common/utils/Interfaces/Lead/Lead';
+import { Opcional } from '@/common/utils/Interfaces/Opcional/Opcional';
+import { RegistroOrcamentoData, RegistroOrcamento } from '@/common/utils/Interfaces/Orcamento/Registro';
 import notificationMixin from '@/mixins/notificationMixin';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import { defineComponent } from 'vue';

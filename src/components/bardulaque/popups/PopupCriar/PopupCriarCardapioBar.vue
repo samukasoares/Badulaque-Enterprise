@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
-import { Drink, RegistroCardapioBar } from '@/common/utils/Interfaces';
+import { Drink, RegistroCardapioBar } from '@/common/utils/Interfaces/Bardulaque/Registro';
 import { defineComponent } from 'vue';
 import VueMultiselect from 'vue-multiselect';
 
