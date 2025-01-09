@@ -27,6 +27,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
+import { primeiraLetraMaiscula } from '@/common/utils/Helper/Outros';
 import { defineComponent } from 'vue';
 
 interface Grupo {
@@ -46,6 +47,7 @@ export default defineComponent({
         };
     },
     methods: {
+        primeiraLetraMaiscula,
         close() {
             this.$emit('close');
         },
@@ -74,6 +76,11 @@ export default defineComponent({
     },
     mounted() {
         this.fetchGrupos();
+    },
+    watch: {
+        nome(newVal) {
+            this.nome = primeiraLetraMaiscula(newVal);
+        }
     }
 }
 );
