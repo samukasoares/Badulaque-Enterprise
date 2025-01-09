@@ -340,7 +340,7 @@ export default defineComponent({
                 this.opcionaisSelecionados = contrato.Orcamento.Orcamento_Opcional
                 this.valorOpcionais = formatarValorMonetario(contrato.Orcamento.valorOpcionais)
 
-                this.cardapioBar = contrato.Orcamento.CardapioBar.nomeCardapioBar
+                this.cardapioBar = contrato.Orcamento.CardapioBar?.nomeCardapioBar ?? "-";
                 this.valorPorPessoaBar = formatarValorMonetario(contrato.Orcamento.valorPPBar)
                 this.valorTotalBar = formatarValorMonetario(contrato.Orcamento.valorPPBar * contrato.Orcamento.numConvidados)
 

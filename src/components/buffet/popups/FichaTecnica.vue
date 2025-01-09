@@ -1,33 +1,46 @@
 <template>
     <div class="backdrop" @click.self="fechar">
         <form class="modal-form">
-            <h4>Ficha Técnica</h4><br>
-            <div v-for="(insumo, index) in insumos" :key="index">
-
-                <label>Nome:</label> <button type="button" @click="removerInsumo(index)"
-                    class="botao-remover">Remover</button>
-
-                <select v-model="insumo.insumoId" @change="calcularValorTotal(index)">
-                    <option disabled value="">Escolha o insumo...</option>
-                    <option v-for="insumo in insumosDisponiveis" :key="insumo.idInsumo" :value="insumo.idInsumo">
-                        {{ insumo.descricaoInsumo }}
-                    </option>
-                </select>
-
-                <div class="form-group">
-                    <div class="form-item">
-                        <label>Quantidade:</label>
-                        <input type="number" v-model.number="insumo.quantidade" placeholder="Quantidade"
-                            @input="calcularValorTotal(index)" />
-                    </div>
-                    <div class="form-item">
-                        <label>Valor Total:</label>
-                        <input disabled type="number" v-model.number="insumo.valorTotal" placeholder="Valor Total" />
-                    </div>
-                </div>
-            </div>
-            <button type="button" @click="adicionarInsumo">+</button><br>
-            <label>Custo Unitário:</label>
+            <h4>Ficha Técnica</h4><button type="button" @click="adicionarInsumo" class="add-button">+</button>
+            <br />
+            <table class="insumos-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Quantidade</th>
+                        <th>Valor Total</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(insumo, index) in insumos" :key="index">
+                        <td>
+                            <select v-model="insumo.insumoId" @change="calcularValorTotal(index)">
+                                <option disabled value="">Escolha o insumo...</option>
+                                <option v-for="insumo in insumosDisponiveis" :key="insumo.idInsumo"
+                                    :value="insumo.idInsumo">
+                                    {{ insumo.descricaoInsumo }}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model.number="insumo.quantidade" placeholder="Quantidade"
+                                @input="calcularValorTotal(index)" />
+                        </td>
+                        <td>
+                            <input disabled type="number" v-model.number="insumo.valorTotal"
+                                placeholder="Valor Total" />
+                        </td>
+                        <td>
+                            <button type="button" @click="removerInsumo(index)" class="botao-remover">
+                                Remover
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            <label>Custo por pessoa:</label>
             <input type="number" :value="valorTotalGeral" disabled />
 
             <div class="form-group">
@@ -46,6 +59,7 @@ import instance from '@/common/utils/AuthService';
 import { InsumoFichaTecnica } from '@/common/utils/Interfaces/Buffet/FichaTecnica';
 
 import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
+import { formatarValorMonetarioCusto } from '@/common/utils/Helper/Monetario';
 
 export default defineComponent({
 
@@ -66,6 +80,7 @@ export default defineComponent({
         };
     },
     methods: {
+        formatarValorMonetarioCusto,
         fechar() {
             this.$emit('close');
         },
@@ -94,8 +109,11 @@ export default defineComponent({
         async fetchInsumos() {
             try {
                 let response = await instance.get<Insumo[]>('/buffet/insumos');
-                this.insumosDisponiveis = response.data;
-
+                this.insumosDisponiveis = response.data.sort((a, b) => {
+                    if (a.descricaoInsumo < b.descricaoInsumo) return -1;
+                    if (a.descricaoInsumo > b.descricaoInsumo) return 1;
+                    return 0;
+                });
             } catch (error) {
                 console.error('Erro ao encontrar insumos:', error);
             }
@@ -164,8 +182,41 @@ export default defineComponent({
 });
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
-<style scoped>
+<style scoped src="vue-multiselect/dist/vue-multiselect.css">
 @import '../../../assets/styles/modal-style.css';
+
+.insumos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+.insumos-table th,
+.insumos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.insumos-table th {
+    background-color: #f4f4f4;
+}
+
+.botao-remover {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.add-button {
+    margin-top: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+}
 </style>

@@ -11,7 +11,23 @@
                 <option>Unidades</option>
             </select>
             <label>Fornecedor</label>
-            <input type="text" required v-model="fornecedor">
+            <select v-model="fornecedor">
+                <option value="3GX">3GX</option>
+                <option value="Arosa">Arosa</option>
+                <option value="Bebidas Bom Preço">Bebidas Bom Preço</option>
+                <option value="Birigui">Birigui</option>
+                <option value="Bossi">Bossi</option>
+                <option value="Dinhana">Dinhana</option>
+                <option value="Edsonia">Edsonia</option>
+                <option value="Empório Incasa">Empório Incasa</option>
+                <option value="Hortifruti">Hortifruti</option>
+                <option value="JS Locações">JS Locações</option>
+                <option value="Jotace">Jotace</option>
+                <option value="Luflan">Luflan</option>
+                <option value="Padaria">Padaria</option>
+                <option value="Paraty">Paraty</option>
+                <option value="Tenda">Tenda</option>
+            </select>
             <label>Quantidade Embalagem:</label>
             <input type="number" required v-model="quantidadeEmbalagem">
             <label>Valor Embalagem:</label>
@@ -28,6 +44,7 @@
 
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
+import { primeiraLetraMaiscula } from '@/common/utils/Helper/Outros';
 import { defineComponent } from 'vue';
 
 
@@ -44,6 +61,7 @@ export default defineComponent({
         };
     },
     methods: {
+        primeiraLetraMaiscula,
         close() {
             this.$emit('close');
         },
@@ -70,9 +88,13 @@ export default defineComponent({
             } else {
                 this.valorUnitario = 0;
             }
-        }
+        },
+
     },
     watch: {
+        descricaoInsumo(newVal) {
+            this.descricaoInsumo = primeiraLetraMaiscula(newVal);
+        },
         quantidadeEmbalagem(newVal, oldVal) {
             this.calcularValorUnitario();
         },
