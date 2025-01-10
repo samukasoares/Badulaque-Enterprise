@@ -19,3 +19,17 @@ export interface Insumo {
     valorUnitario: number;
     perda: number;
 }
+
+export interface ItemTabela {
+    idItem: number;
+    nomeItem: string;
+    unidade: string;
+    baseReceita: number;
+    consumoPorPessoa: number;
+    Grupo_idGrupo: number;
+    custo: number;
+    Grupo: {
+        nomeGrupo: string,
+        sequencia: number
+    }
+}

@@ -47,7 +47,7 @@ export default defineComponent({
         return {
             opcoes: 'Opcionais',
             showModal: false,
-            cards: [] as { name: string, id: number }[],
+            cards: [] as Card[],
             searchText: '',
             selectedCardId: null as number | null,
             isViewingDetails: false,
@@ -83,13 +83,13 @@ export default defineComponent({
                 let response;
                 if (this.opcoes === 'Espaço') {
                     response = await instance.get<ValorEspaco[]>('/espaco/get-all');
-                    this.cards = response.data.map((valorEspaco: ValorEspaco) => ({ name: valorEspaco.dia, id: valorEspaco.idValorEspaco }));
+                    this.cards = response.data.map((valorEspaco: ValorEspaco) => ({ name: valorEspaco.dia, id: valorEspaco.idValorEspaco, grupo: null }));
                 } else if (this.opcoes === 'Opcionais') {
                     response = await instance.get<Opcional[]>('/opcional/get-all');
-                    this.cards = response.data.map((item: Opcional) => ({ name: item.nomeOpcional, id: item.idOpcional }));
+                    this.cards = response.data.map((item: Opcional) => ({ name: item.nomeOpcional, id: item.idOpcional, grupo: null }));
                 } else if (this.opcoes === 'Parâmetros') {
                     response = await instance.get<Parametro[]>('/parametro/get-all');
-                    this.cards = response.data.map((item: Parametro) => ({ name: item.nomeParametro, id: item.idParametro }));
+                    this.cards = response.data.map((item: Parametro) => ({ name: item.nomeParametro, id: item.idParametro, grupo: null }));
                 }
             } catch (error) {
                 console.error('Erro ao buscar dados:', error);
