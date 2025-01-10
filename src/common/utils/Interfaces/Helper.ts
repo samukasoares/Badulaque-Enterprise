@@ -7,4 +7,5 @@ export interface Reajuste {
 export interface Card {
     name: string;
     id: number;
+    grupo: string | null;
 }

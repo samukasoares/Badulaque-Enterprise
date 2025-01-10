@@ -62,10 +62,10 @@ export default defineComponent({
                 let response;
                 if (this.opcoes === 'Cardápios') {
                     response = await instance.get<CardapioBar[]>('/bar/get-all');
-                    this.cards = response.data.map((cardapioBar: CardapioBar) => ({ name: cardapioBar.nomeCardapioBar, id: cardapioBar.idCardapioBar }))
+                    this.cards = response.data.map((cardapioBar: CardapioBar) => ({ name: cardapioBar.nomeCardapioBar, id: cardapioBar.idCardapioBar, grupo: null }))
                 } else if (this.opcoes === 'Drinks') {
                     response = await instance.get<Drink[]>('/bar/drink/get-all');
-                    this.cards = response.data.map((drink: Drink) => ({ name: drink.nome, id: drink.idDrink }))
+                    this.cards = response.data.map((drink: Drink) => ({ name: drink.nome, id: drink.idDrink, grupo: null }))
                 }
             } catch (error) {
                 this.handleError(error);

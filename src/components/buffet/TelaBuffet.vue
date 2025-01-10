@@ -11,15 +11,38 @@
                 <option>Insumos</option>
             </select>
         </div>
+
+        <div v-if="opcoes === 'Itens'" class="group-filter">
+            <label>Filtrar por Grupo:</label>
+            <select v-model="selectedGroup">
+                <option value="">Todos</option>
+                <option v-for="(group, index) in availableGroups" :key="index" :value="group">
+                    {{ group }}
+                </option>
+            </select>
+        </div>
         <input type="text" placeholder="Pesquisar..." v-model="searchText">
     </div><br>
 
-    <!--Container para os cards-->
-    <div class="containerCards" v-if="opcoes">
-        <div class="card" v-for="(card, id) in filteredCards" :key="id" @click="showCard(card.id)">
-            <label>{{ card.name }}</label>
-        </div>
-    </div>
+    <table v-if="opcoes">
+        <template v-if="opcoes === 'Itens' && groupedCards">
+            <tbody v-for="(groupItems, groupName) in groupedCards" :key="groupName">
+                <tr>
+                    <td class="group-name"><strong>{{ groupName }}</strong></td>
+                </tr>
+                <tr v-for="(item, id) in groupItems" :key="id" @click="showCard(item.id)" class="table-row">
+                    <td>{{ item.name }}</td>
+                </tr>
+            </tbody>
+        </template>
+        <template v-else>
+            <tbody>
+                <tr v-for="(card, id) in filteredCards" :key="id" @click="showCard(card.id)" class="table-row">
+                    <td>{{ card.name }}</td>
+                </tr>
+            </tbody>
+        </template>
+    </table>
 
     <!--Componente Popup de Criar Cardapios, Itens ou Grupos-->
     <component :is="getPopupComponent" v-if="showModal" @close="showModal = false" :card-id="selectedCardId"
@@ -29,7 +52,6 @@
     <NotificationMessage :message="message" />
 
 </template>
-
 
 
 <script lang="ts">
@@ -47,7 +69,7 @@ import popupInsumo from './popups/popupCriar/popupCriarInsumo.vue'
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import axios from 'axios';
 import instance from '@/common/utils/AuthService';
-import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
+import { Insumo, ItemTabela } from '@/common/utils/Interfaces/Buffet/Buffet';
 import { Cardapio, Grupo, Item } from '@/common/utils/Interfaces/Buffet/Cardapio';
 import { Cerveja } from '@/common/utils/Interfaces/Cerveja/Cerveja';
 import { Card } from '@/common/utils/Interfaces/Helper';
@@ -64,12 +86,47 @@ export default defineComponent({
             selectedCardId: null as number | null,
             message: '',
             isEditMode: false,
+            selectedGroup: '', // Grupo selecionado
+            availableGroups: [] as string[], // Lista de grupos disponíveis
 
             cardapioData: null as Cardapio | null
         }
     },
     components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage, popupEditarCerveja, popupInsumo, popupEditarInsumo },
     computed: {
+        groupedCards(): Record<string, Card[]> | null {
+            if (this.opcoes === 'Itens') {
+                // Aplica o filtro de pesquisa
+                const filteredCards = this.cards.filter(card =>
+                    card.name.toLowerCase().includes(this.searchText.toLowerCase())
+                );
+
+                // Filtra pelo grupo selecionado, se houver
+                const groupFilteredCards = this.selectedGroup
+                    ? filteredCards.filter(card => card.grupo === this.selectedGroup)
+                    : filteredCards;
+
+                const grouped = groupFilteredCards.reduce((acc: Record<string, Card[]>, card: Card) => {
+                    const group = card.grupo || 'Sem Grupo';
+                    if (!acc[group]) {
+                        acc[group] = [];
+                    }
+                    acc[group].push(card);
+                    return acc;
+                }, {});
+
+                // Ordena os grupos em ordem alfabética
+                const sortedGroups = Object.keys(grouped)
+                    .sort((a, b) => a.localeCompare(b))
+                    .reduce((acc: Record<string, Card[]>, group) => {
+                        acc[group] = grouped[group];
+                        return acc;
+                    }, {});
+
+                return sortedGroups;
+            }
+            return null;
+        },
         getPopupComponent() {
             if (this.isViewingDetails) {
                 // Retorna o popup de detalhes dependendo do tipo selecionado
@@ -114,27 +171,33 @@ export default defineComponent({
                 if (this.opcoes === 'Cardápios') {
                     response = await instance.get<Cardapio[]>('/buffet/cardapios');
                     this.cards = response.data
-                        .map((cardapio: Cardapio) => ({ name: cardapio.nomeCardapio, id: cardapio.idCardapio }))
+                        .map((cardapio: Cardapio) => ({ name: cardapio.nomeCardapio, id: cardapio.idCardapio, grupo: cardapio.tipo }))
                         .sort((a, b) => a.name.localeCompare(b.name));
                 } else if (this.opcoes === 'Grupos') {
                     response = await instance.get<Grupo[]>('/buffet/grupos');
                     this.cards = response.data
-                        .map((grupo: Grupo) => ({ name: grupo.nomeGrupo, id: grupo.idGrupo }))
+                        .map((grupo: Grupo) => ({ name: grupo.nomeGrupo, id: grupo.idGrupo, grupo: null }))
                         .sort((a, b) => a.name.localeCompare(b.name));
                 } else if (this.opcoes === 'Itens') {
-                    response = await instance.get<Item[]>('/buffet/itens');
+                    response = await instance.get<ItemTabela[]>('/buffet/itens');
                     this.cards = response.data
-                        .map((item: Item) => ({ name: item.nomeItem, id: item.idItem }))
+                        .map((item: ItemTabela) => ({ name: item.nomeItem, id: item.idItem, grupo: item.Grupo?.nomeGrupo || 'Sem Grupo' }))
                         .sort((a, b) => a.name.localeCompare(b.name));
+
+                    // Garante que o array de grupos contém apenas strings válidas
+                    this.availableGroups = [...new Set(
+                        this.cards.map(card => card.grupo).filter((grupo): grupo is string => !!grupo)
+                    )].sort((a, b) => a.localeCompare(b));
+
                 } else if (this.opcoes === 'Cervejas') {
                     response = await instance.get<Cerveja[]>('/cerveja/get-all');
                     this.cards = response.data
-                        .map((cerveja: Cerveja) => ({ name: cerveja.nome, id: cerveja.idCerveja }))
+                        .map((cerveja: Cerveja) => ({ name: cerveja.nome, id: cerveja.idCerveja, grupo: null }))
                         .sort((a, b) => a.name.localeCompare(b.name));
                 } else if (this.opcoes === 'Insumos') {
                     response = await instance.get<Insumo[]>('/buffet/insumos');
                     this.cards = response.data
-                        .map((item: Insumo) => ({ name: item.descricaoInsumo, id: item.idInsumo }))
+                        .map((item: Insumo) => ({ name: item.descricaoInsumo, id: item.idInsumo, grupo: null }))
                         .sort((a, b) => a.name.localeCompare(b.name));
                 }
 
@@ -194,3 +257,15 @@ export default defineComponent({
     }
 })
 </script>
+
+
+<style scoped>
+.group-name {
+    background-color: #2F4036;
+    color: white
+}
+
+table {
+    border: 1px solid #2F4036;
+}
+</style>
