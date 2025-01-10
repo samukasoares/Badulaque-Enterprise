@@ -25,7 +25,7 @@
     </div><br>
 
     <table v-if="opcoes">
-        <template v-if="opcoes === 'Itens' && groupedCards">
+        <template v-if="opcoes === 'Itens' || opcoes === 'Insumos' || opcoes === 'Cardápios' && groupedCards">
             <tbody v-for="(groupItems, groupName) in groupedCards" :key="groupName">
                 <tr>
                     <td class="group-name"><strong>{{ groupName }}</strong></td>
@@ -95,7 +95,7 @@ export default defineComponent({
     components: { popupCardapio, popupGrupo, popupItem, popupCerveja, popupDetalhesCardapio, popupEditarItem, popupEditarGrupo, NotificationMessage, popupEditarCerveja, popupInsumo, popupEditarInsumo },
     computed: {
         groupedCards(): Record<string, Card[]> | null {
-            if (this.opcoes === 'Itens') {
+            if (this.opcoes === 'Itens' || this.opcoes === 'Insumos' || this.opcoes === 'Cardápios') {
                 // Aplica o filtro de pesquisa
                 const filteredCards = this.cards.filter(card =>
                     card.name.toLowerCase().includes(this.searchText.toLowerCase())
@@ -197,7 +197,7 @@ export default defineComponent({
                 } else if (this.opcoes === 'Insumos') {
                     response = await instance.get<Insumo[]>('/buffet/insumos');
                     this.cards = response.data
-                        .map((item: Insumo) => ({ name: item.descricaoInsumo, id: item.idInsumo, grupo: null }))
+                        .map((item: Insumo) => ({ name: item.descricaoInsumo, id: item.idInsumo, grupo: item.fornecedor || 'Sem Grupo' }))
                         .sort((a, b) => a.name.localeCompare(b.name));
                 }
 

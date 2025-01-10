@@ -203,20 +203,34 @@ export default defineComponent({
                     .sort((a: any, b: any) => a.nome.localeCompare(b.nome)) // Ordena os insumos por nome
                     .map((insumo: any) => {
                         return `
-        <div class="insumo">
-        <h4>${insumo.nome}</h4>
-            <p>Quantidade: <strong>${insumo.quantidadeFormatada}</strong> | <strong>${insumo.embalagensNecessarias}</strong> embalagens de <strong>${insumo.embalagemFormatada}</strong>   |
-            Custo Previsto: <strong>${insumo.custoFormatado}</strong></p>
-        <hr>
-        </div>
-        `;
+                    <tr>
+                        <td>${insumo.nome}</td>
+                        <td>${insumo.quantidadeFormatada}</td>
+                        <td>${insumo.embalagensNecessarias} embalagens de ${insumo.embalagemFormatada}</td>
+                        <td>${insumo.custoFormatado}</td>
+                    </tr>
+                `;
                     })
                     .join('');
 
                 const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
                 // Substituir a tag {{grupos}} no template pelo HTML gerado com os insumos
                 template = template
-                    .replace('{{grupos}}', insumosHtml)
+                    .replace('{{grupos}}', `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantidade</th>
+                            <th>Embalagem</th>
+                            <th>Custo Previsto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${insumosHtml}
+                    </tbody>
+                </table>
+            `)
                     .replace('{{dataContrato}}', dataFormatada)
                     .replace('{{numConvidados}}', this.convidados.toString())
                     .replace('{{custoGeral}}', custoTotalGeralFormatado)
