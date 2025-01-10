@@ -12,6 +12,8 @@ export function gerarMensagemWhatsApp(orcamento: Orcamento, linkOrcamento: strin
     ? `Bar: *${orcamento.CardapioBar.nomeCardapioBar}*`
     : '';
 
+    const linkCardapiosBar = orcamento.CardapioBar && orcamento.CardapioBar.nomeCardapioBar ? `Link para Cardápio do bar: https://bit.ly/cardapios-bardulaque` : '';
+
     const linkCardapioText = orcamento.Cardapio.linkCardapio 
     ? `Link para Cardápio solicitado: ${orcamento.Cardapio.linkCardapio}` 
     : ''; 
@@ -28,6 +30,7 @@ ${detalhesOpcionais}
 
 Link para Orçamento completo: ${linkOrcamento}
 ${linkCardapioText}
+${linkCardapiosBar}
 
 Caso deseje visualizar os detalhes de cada cardápio, envie "cardápios" no chat que todos os cardápios são enviados!
                         
