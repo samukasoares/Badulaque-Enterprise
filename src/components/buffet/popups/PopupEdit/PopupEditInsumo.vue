@@ -27,8 +27,8 @@
                 <option value="Luflan">Luflan</option>
                 <option value="Mercado Amazonas">Mercado Amazonas</option>
                 <option value="Padaria">Padaria</option>
-                <option value="Paraty">Paraty Pescados</option>
-                <option value="Tenda">Tenda Atacado</option>
+                <option value="Paraty Pescados">Paraty Pescados</option>
+                <option value="Tenda Atacado">Tenda Atacado</option>
             </select>
             <label>Quantidade Embalagem:</label>
             <input type="number" required v-model="insumo.quantidadeEmbalagem">
