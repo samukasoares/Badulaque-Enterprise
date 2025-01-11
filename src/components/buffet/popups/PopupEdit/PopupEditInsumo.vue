@@ -25,6 +25,7 @@
                 <option value="Jotace">Jotace</option>
                 <option value="Laticínios Betim">Laticínios Betim</option>
                 <option value="Luflan">Luflan</option>
+                <option value="Mercado Amazonas">Mercado Amazonas</option>
                 <option value="Padaria">Padaria</option>
                 <option value="Paraty">Paraty Pescados</option>
                 <option value="Tenda">Tenda Atacado</option>
