@@ -23,6 +23,7 @@
                 <option value="Hortifruti">Hortifruti</option>
                 <option value="JS Locações">JS Locações</option>
                 <option value="Jotace">Jotace</option>
+                <option value="Laticínios Betim">Laticínios Betim</option>
                 <option value="Luflan">Luflan</option>
                 <option value="Padaria">Padaria</option>
                 <option value="Paraty">Paraty Pescados</option>
