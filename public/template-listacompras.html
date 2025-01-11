@@ -37,12 +37,11 @@
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
       }
 
       th,
       td {
-        padding: 6px;
+        padding: 3px;
         text-align: left;
         border: 1px solid #ddd;
       }
@@ -60,11 +59,6 @@
       tr:nth-child(even) td {
         background-color: #f9f9f9;
       }
-
-      .footer {
-        margin-top: 20px;
-        font-weight: bold;
-      }
     </style>
   </head>
 
@@ -78,9 +72,9 @@
 
         <img src="assets/MenuFullVerde.png" />
       </div>
-
+      <div>Previsão de custo do buffet: <strong>{{custoGeral}}</strong></div>
+      <br />
       <div class="conteudo">{{grupos}}</div>
-      <div>Valor Previsto da Compra: <strong>{{custoGeral}}</strong></div>
     </div>
   </body>
 </html>

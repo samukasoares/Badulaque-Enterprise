@@ -1,28 +1,34 @@
 <template>
     <div class="backdrop" @click.self="fechar">
         <form class="modal-form">
-            <h4>Definir Cardápio</h4><br>
+            <h4>Definir Cardápio</h4> <button type="button" @click="adicionarItem">+</button><br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Custo</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in itensEscolhidos" :key="index">
+                        <td>
+                            <select v-model="item.idItem" @change="atualizarCusto(index)" required>
+                                <option v-for="itemOpcao in itens" :key="itemOpcao.idItem" :value="itemOpcao.idItem">
+                                    {{ itemOpcao.nomeItem }}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" disabled :value="formatarValorMonetario(item.custo)">
+                        </td>
+                        <td>
+                            <button type="button" @click="removerItem(index)" class="botao-remover">Remover</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <div v-for="(item, index) in itensEscolhidos" :key="index">
-                <div class="form-group">
-                    <div class="form-item">
-                        <label>Item:</label> <button type="button" @click="removerItem(index)"
-                            class="botao-remover">Remover</button>
-
-                        <select v-model="item.idItem" @change="atualizarCusto(index)" required>
-                            <option v-for="item in itens" :key="item.idItem" :value="item.idItem">
-                                {{ item.nomeItem }}
-                            </option>
-                        </select>
-
-                    </div>
-                    <div class="form-item">
-                        <label>Custo:</label>
-                        <input type="text" disabled :value="formatarValorMonetario(item.custo)">
-                    </div>
-                </div>
-            </div>
-            <button type="button" @click="adicionarItem">+</button><br>
 
             <div class="form-group">
                 <div class="form-item">
@@ -34,10 +40,6 @@
                     <input type="text" disabled :value="formatarValorMonetario(custoTotal)">
                 </div>
             </div>
-
-
-
-
             <div class="form-group">
                 <div class="form-item">
                     <button type="submit" class="submit-button" @click="visualizarListaDeCompras">Lista de
@@ -61,6 +63,7 @@
 import instance from '@/common/utils/AuthService';
 import { formatarData } from '@/common/utils/Helper/Data';
 import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
+import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
 import { Item } from '@/common/utils/Interfaces/Buffet/Cardapio';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 import { defineComponent } from 'vue';
@@ -98,8 +101,7 @@ export default defineComponent({
             try {
                 let response = await instance.get<Item[]>('/buffet/itens');
                 this.itens = response.data;
-
-
+                this.itens = response.data.sort((a, b) => a.nomeItem.localeCompare(b.nomeItem));
             } catch (error) {
                 console.error('Erro ao achar itens:', error);
             }
@@ -193,30 +195,36 @@ export default defineComponent({
                     throw new Error('Dados de compras não encontrados ou estão no formato errado.');
                 }
 
-                // Obter o template HTML
-                const templatePath = '/template-listacompras.html'; // Caminho do arquivo HTML
-                const responseTemplate = await fetch(templatePath);
-                let template = await responseTemplate.text();
+                // Agrupar os insumos por fornecedor
+                const insumosPorFornecedor = listaFinal.reduce((acc: any, insumo: Insumo) => {
+                    const fornecedor = insumo.fornecedor || 'Sem Fornecedor'; // Usar 'Sem Fornecedor' caso não exista fornecedor
+                    if (!acc[fornecedor]) {
+                        acc[fornecedor] = [];
+                    }
+                    acc[fornecedor].push(insumo);
+                    return acc;
+                }, {});
 
-                // Processar os dados de insumos para gerar o conteúdo HTML
-                const insumosHtml = listaFinal
-                    .sort((a: any, b: any) => a.nome.localeCompare(b.nome)) // Ordena os insumos por nome
-                    .map((insumo: any) => {
-                        return `
-                    <tr>
-                        <td>${insumo.nome}</td>
-                        <td>${insumo.quantidadeFormatada}</td>
-                        <td>${insumo.embalagensNecessarias} embalagens de ${insumo.embalagemFormatada}</td>
-                        <td>${insumo.custoFormatado}</td>
-                    </tr>
-                `;
-                    })
-                    .join('');
+                // Gerar o conteúdo HTML para os insumos, separando por fornecedor
+                let insumosHtml = '';
+                for (const fornecedor in insumosPorFornecedor) {
+                    const itensDoFornecedor = insumosPorFornecedor[fornecedor];
+                    const tabelaDoFornecedor = itensDoFornecedor
+                        .sort((a: any, b: any) => a.nome.localeCompare(b.nome)) // Ordena os insumos por nome
+                        .map((insumo: any) => {
+                            return `
+                        <tr>
+                            <td>${insumo.nome}</td>
+                            <td>${insumo.quantidadeFormatada}</td>
+                            <td>${insumo.embalagensNecessarias} embalagens de ${insumo.embalagemFormatada}</td>
+                            <td>${insumo.custoFormatado}</td>
+                        </tr>
+                    `;
+                        })
+                        .join('');
 
-                const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
-                // Substituir a tag {{grupos}} no template pelo HTML gerado com os insumos
-                template = template
-                    .replace('{{grupos}}', `
+                    insumosHtml += `
+                <h3>${fornecedor}</h3>
                 <table>
                     <thead>
                         <tr>
@@ -227,10 +235,22 @@ export default defineComponent({
                         </tr>
                     </thead>
                     <tbody>
-                        ${insumosHtml}
+                        ${tabelaDoFornecedor}
                     </tbody>
                 </table>
-            `)
+            `;
+                }
+
+                const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
+
+                // Obter o template HTML
+                const templatePath = '/template-listacompras.html'; // Caminho do arquivo HTML
+                const responseTemplate = await fetch(templatePath);
+                let template = await responseTemplate.text();
+
+                // Substituir a tag {{grupos}} no template pelo HTML gerado com os insumos por fornecedor
+                template = template
+                    .replace('{{grupos}}', insumosHtml)
                     .replace('{{dataContrato}}', dataFormatada)
                     .replace('{{numConvidados}}', this.convidados.toString())
                     .replace('{{custoGeral}}', custoTotalGeralFormatado)
@@ -242,6 +262,7 @@ export default defineComponent({
                 this.$emit('error', 'Erro ao gerar a lista de compras.');
             }
         },
+
 
         async visualizarFichaTecnica() {
             try {

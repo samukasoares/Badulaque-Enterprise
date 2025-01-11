@@ -12,7 +12,7 @@
             </select>
         </div>
 
-        <div v-if="opcoes === 'Itens'" class="group-filter">
+        <div v-if="opcoes === 'Itens' || opcoes === 'Insumos'" class="group-filter">
             <label>Filtrar por Grupo:</label>
             <select v-model="selectedGroup">
                 <option value="">Todos</option>
@@ -184,7 +184,6 @@ export default defineComponent({
                         .map((item: ItemTabela) => ({ name: item.nomeItem, id: item.idItem, grupo: item.Grupo?.nomeGrupo || 'Sem Grupo' }))
                         .sort((a, b) => a.name.localeCompare(b.name));
 
-                    // Garante que o array de grupos contém apenas strings válidas
                     this.availableGroups = [...new Set(
                         this.cards.map(card => card.grupo).filter((grupo): grupo is string => !!grupo)
                     )].sort((a, b) => a.localeCompare(b));
@@ -199,6 +198,10 @@ export default defineComponent({
                     this.cards = response.data
                         .map((item: Insumo) => ({ name: item.descricaoInsumo, id: item.idInsumo, grupo: item.fornecedor || 'Sem Grupo' }))
                         .sort((a, b) => a.name.localeCompare(b.name));
+
+                    this.availableGroups = [...new Set(
+                        this.cards.map(card => card.grupo).filter((grupo): grupo is string => !!grupo)
+                    )].sort((a, b) => a.localeCompare(b));
                 }
 
             } catch (error) {
