@@ -33,6 +33,32 @@
       h3 {
         color: #2f4036;
       }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 3px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        color: #333;
+      }
+
+      td {
+        background-color: #fff;
+      }
+
+      tr:nth-child(even) td {
+        background-color: #f9f9f9;
+      }
     </style>
   </head>
 
@@ -46,9 +72,9 @@
 
         <img src="assets/MenuFullVerde.png" />
       </div>
-
+      <div>Previsão de custo do buffet: <strong>{{custoGeral}}</strong></div>
+      <br />
       <div class="conteudo">{{grupos}}</div>
-      <div>Valor Previsto da Compra: <strong>{{custoGeral}}</strong></div>
     </div>
   </body>
 </html>

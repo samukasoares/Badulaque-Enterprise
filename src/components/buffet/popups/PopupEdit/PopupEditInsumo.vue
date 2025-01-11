@@ -1,7 +1,7 @@
 <template>
     <div class="backdrop" @click.self="close">
         <form class="modal-form">
-            <h4>Criar Insumo</h4><br>
+            <h4>Editar Insumo</h4><br>
             <label>Nome</label>
             <input type="text" required v-model="insumo.descricaoInsumo">
             <label>Unidade</label>
@@ -11,7 +11,23 @@
                 <option>Unidades</option>
             </select>
             <label>Fornecedor</label>
-            <input type="text" required v-model="insumo.fornecedor">
+            <select v-model="insumo.fornecedor">
+                <option value="3GX">3GX</option>
+                <option value="Arosa">Arosa</option>
+                <option value="Bebidas Bom Preço">Bebidas Bom Preço</option>
+                <option value="Birigui">Birigui</option>
+                <option value="Bossi">Bossi</option>
+                <option value="Dinhana">Dinhana</option>
+                <option value="Edsonia">Edsonia</option>
+                <option value="Empório Incasa">Empório Incasa</option>
+                <option value="Hortifruti">Hortifruti</option>
+                <option value="JS Locações">JS Locações</option>
+                <option value="Jotace">Jotace</option>
+                <option value="Luflan">Luflan</option>
+                <option value="Padaria">Padaria</option>
+                <option value="Paraty">Paraty</option>
+                <option value="Tenda">Tenda</option>
+            </select>
             <label>Quantidade Embalagem:</label>
             <input type="number" required v-model="insumo.quantidadeEmbalagem">
             <label>Valor Embalagem:</label>

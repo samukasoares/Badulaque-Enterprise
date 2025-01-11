@@ -138,7 +138,7 @@ export default defineComponent({
                     : 'Ficha Técnica salva com sucesso!';
 
                 this.$emit('success', sucessoMensagem);
-                this.$emit('update-custo', this.valorTotalGeral); // Emitindo o custo total para o modal pai
+                this.$emit('update-custo', this.valorTotalGeral);
                 this.fechar();
             } catch (error) {
                 this.$emit('error', 'Erro ao salvar ou atualizar ficha técnica!');
