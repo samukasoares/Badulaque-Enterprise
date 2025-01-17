@@ -276,7 +276,7 @@ export default defineComponent({
                 // Verificar se a resposta contém dados válidos
                 const fichasTecnicas = response.data;
 
-                if (!Array.isArray(fichasTecnicas) || fichasTecnicas.length === 0) {
+                if (!fichasTecnicas || Object.keys(fichasTecnicas).length === 0) {
                     throw new Error('Dados de ficha técnica não encontrados ou estão no formato errado.');
                 }
 
@@ -285,27 +285,39 @@ export default defineComponent({
                 const responseTemplate = await fetch(templatePath);
                 let template = await responseTemplate.text();
 
-                // Processar os dados de ficha técnica para gerar o conteúdo HTML
-                const itensHtml = fichasTecnicas
-                    .map(item => {
-                        const insumosHtml = item.fichaTecnica
-                            .map((insumo: any) => `
+                // Processar os dados de ficha técnica agrupados por grupo
+                const gruposHtml = Object.entries(fichasTecnicas)
+                    .map(([grupo, itens]) => {
+                        const itensHtml = (itens as any[])
+                            .map(item => {
+                                const insumosHtml = item.fichaTecnica
+                                    .map((insumo: any) => `
                                 <p>• ${insumo.nomeInsumo}: <strong>${insumo.quantidade}</strong></p>
                             `)
-                            .join('');
-                        return `
+                                    .join('');
+                                return `
                             <div class="item">
                                 <h4>${item.nomeItem}</h4>
                                 <div>${insumosHtml}</div>
                             </div>
                         `;
+                            })
+                            .join('');
+
+                        return `
+                    <div class="grupo">
+                        <h3>${grupo}</h3>
+                        <div>${itensHtml}</div>
+                    </div>
+                `;
                     })
                     .join('');
 
                 const dataFormatada = this.dataContrato ? formatarData(this.dataContrato) : 'Data não disponível';
+
                 // Substituir os placeholders no template
                 template = template
-                    .replace('{{itens}}', itensHtml)
+                    .replace('{{itens}}', gruposHtml)
                     .replace('{{dataContrato}}', dataFormatada)
                     .replace('{{numConvidados}}', this.convidados.toString());
 
@@ -316,6 +328,7 @@ export default defineComponent({
                 this.$emit('error', 'Erro ao gerar a ficha técnica.');
             }
         }
+
     },
     mounted() {
         this.fetchItens()
