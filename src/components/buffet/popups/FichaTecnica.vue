@@ -1,7 +1,7 @@
 <template>
     <div class="backdrop" @click.self="fechar">
         <form class="modal-form">
-            <h4>Ficha Técnica</h4><button type="button" @click="adicionarInsumo" class="add-button">+</button>
+            <h4>Ficha Técnica</h4>
             <br />
             <table class="insumos-table">
                 <thead>
@@ -40,6 +40,7 @@
                 </tbody>
             </table>
             <br />
+            <button type="button" @click="adicionarInsumo">Adicionar Insumo</button><br>
             <label>Custo por pessoa:</label>
             <input type="number" :value="valorTotalGeral" disabled />
 
@@ -208,15 +209,6 @@ export default defineComponent({
     color: white;
     border: none;
     padding: 5px 10px;
-    cursor: pointer;
-}
-
-.add-button {
-    margin-top: 10px;
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 8px 15px;
     cursor: pointer;
 }
 </style>

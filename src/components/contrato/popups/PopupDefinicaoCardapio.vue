@@ -1,7 +1,7 @@
 <template>
     <div class="backdrop" @click.self="fechar">
         <form class="modal-form">
-            <h4>Definir Cardápio</h4> <button type="button" @click="adicionarItem">+</button><br>
+            <h4>Definir Cardápio</h4>
             <table>
                 <thead>
                     <tr>
@@ -28,6 +28,7 @@
                     </tr>
                 </tbody>
             </table>
+            <button type="button" @click="adicionarItem">Adicionar Item</button><br>
 
 
             <div class="form-group">

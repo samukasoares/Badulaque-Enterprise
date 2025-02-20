@@ -29,7 +29,7 @@
                     <label>Nome:</label>
                     <input type="text" v-model="nome" @input="formatNome" required>
                     <label>Email:</label>
-                    <input type="email" v-model="email" required>
+                    <input type="email" v-model="email" required @blur="verificarOrcamentoExistente">
                     <label>Telefone:</label>
                     <input type="tel" v-model="telefone" @input="formatTelefone" required>
 
@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                            }}
+                        }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                            }}
+                        }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
@@ -111,6 +111,8 @@
         </form>
     </div>
 
+    <PopupDetalhesOrcamento v-if="showModalEdicao" :orcamentoId="orcamentoId" @close="fecharModalEdicao" />
+
     <NotificationMessage :message="message" type="error" />
 
 </template>
@@ -126,11 +128,12 @@ import { Opcional } from '@/common/utils/Interfaces/Opcional/Opcional';
 import { RegistroOrcamentoData, RegistroOrcamento } from '@/common/utils/Interfaces/Orcamento/Registro';
 import notificationMixin from '@/mixins/notificationMixin';
 import NotificationMessage from '@/views/NotificationMessage.vue';
+import PopupDetalhesOrcamento from './PopupDetalhesOrcamento.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'PopupOrcamento',
-    components: { NotificationMessage },
+    components: { NotificationMessage, PopupDetalhesOrcamento },
     mixins: [notificationMixin],
     data() {
 
@@ -175,6 +178,9 @@ export default defineComponent({
             cardapioSelecionado: {} as Cardapio,
             cervejaSelecionada: {} as Cerveja,
             barSelecionado: null as CardapioBar | null,
+
+            showModalEdicao: false,
+            orcamentoId: 0 as number | null,
 
         };
     },
@@ -302,6 +308,26 @@ export default defineComponent({
                 this.referencia = `${tipoEventoInicial}${ano}${mes}${dia}`;
             }
         },
+
+        async verificarOrcamentoExistente() {
+            if (!this.email) return;
+
+            try {
+                const response = await instance.get(`/orcamento/verificar-email?email=${this.email}`);
+                if (response.data?.orcamento) {
+                    this.showError('Já existe um orçamento para este email. Você pode editá-lo agora.');
+
+                    this.orcamentoId = response.data.orcamento.idOrcamento;
+                    this.showModalEdicao = true;
+                }
+            } catch (error) {
+                console.error("Erro ao verificar orçamento:", error);
+            }
+        },
+        fecharModalEdicao() {
+            this.showModalEdicao = false;
+            this.orcamentoId = null;
+        }
     },
     watch: {
         data(newValue) {
@@ -318,10 +344,17 @@ export default defineComponent({
             }
         },
         barEnabled(newValue) {
-            if (!newValue) {
-                this.barSelecionado = null; // Limpa o campo de seleção quando o checkbox é desmarcado
+            if (newValue) {
+                const cardapioPadrao = this.cardapioBar.find(bar => bar.idCardapioBar === 2);
+                if (cardapioPadrao) {
+                    this.barSelecionado = cardapioPadrao;
+                }
+            } else {
+                // Se desmarcado, limpar o campo de seleção
+                this.barSelecionado = null;
             }
         },
+
         async estado(newValue) {
             const estadoSelecionado = this.estados.find(e => e.sigla === newValue);
             if (estadoSelecionado) {

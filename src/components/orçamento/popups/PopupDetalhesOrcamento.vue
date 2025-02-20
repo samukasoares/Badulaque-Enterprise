@@ -20,7 +20,7 @@
                         <label>Email:</label>
                         <input v-model="email" disabled type="text">
                         <label>Telefone:</label>
-                        <input v-model="telefone" disabled type="text">
+                        <input v-model="telefone" :disabled="!isEditing" type="text" @input="formatTelefone">
                         <label>Cidade:</label>
                         <input v-model="cidade" disabled type="text">
                         <label>Tipo de Evento:</label>
@@ -248,7 +248,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import NotificationMessage from '@/views/NotificationMessage.vue';
 import instance from '@/common/utils/AuthService';
 import { Orcamento, OrcamentoOpcional } from '@/common/utils/Interfaces/Orcamento/Orcamento';
@@ -269,7 +269,7 @@ import { formatarCelular } from '@/common/utils/Helper/Celular';
 export default defineComponent({
     props: {
         orcamentoId: {
-            type: Number,
+            type: Number as PropType<number | null>,
             required: false,
             default: null,
         },
@@ -319,7 +319,7 @@ export default defineComponent({
             valorPorPessoaBuffet: '',
             valorTotalBuffet: '',
 
-            isBarEnabled: this.cardapioBar !== null,
+            isBarEnabled: false,
             cardapioBar: '',
             valorPorPessoaBar: '',
             valorTotalBar: '',
@@ -497,6 +497,25 @@ export default defineComponent({
 
         removerOpcional(index: number) {
             this.opcionaisSelecionados.splice(index, 1);
+        },
+
+        formatTelefone(event: Event) {
+            const target = event.target as HTMLInputElement;
+            let input = target.value;
+            input = input.replace(/\D/g, ''); // Remove caracteres não numéricos
+            input = input.substring(0, 11);   // Limita a 11 dígitos
+
+            if (input.length > 10) {
+                input = input.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (input.length > 6) {
+                input = input.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (input.length > 2) {
+                input = input.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else if (input.length > 0) {
+                input = input.replace(/^(\d*)/, '($1');
+            }
+
+            this.telefone = input;
         },
 
         async onCardapioSelect() {
@@ -827,6 +846,7 @@ export default defineComponent({
                 this.tipoBarId = orcamento.CardapioBar?.idCardapioBar ?? 0;
                 this.valorPorPessoaBar = formatarValorMonetario(orcamento.valorPPBar);
                 this.valorTotalBar = formatarValorMonetario(orcamento.valorPPBar * orcamento.numConvidados);
+                this.isBarEnabled = !!orcamento.CardapioBar && !!orcamento.CardapioBar.idCardapioBar;
                 this.totalProposta = formatarValorMonetario(orcamento.valorTotalOrcamento);
                 this.observacoes = orcamento.observacoesOrcamento;
                 this.dataCriação = formatarDateToString(orcamento.createdAt);
