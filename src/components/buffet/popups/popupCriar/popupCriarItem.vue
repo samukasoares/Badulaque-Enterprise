@@ -41,7 +41,7 @@ export default defineComponent({
             grupos: [] as Grupo[],
             nome: '',
             unidade: '',
-            baseReceita: '',
+            baseReceita: '100',
             consumoPorPessoa: '',
             grupo: '' as number | string
         };
@@ -55,6 +55,7 @@ export default defineComponent({
             try {
                 let response = await instance.get<Grupo[]>('/buffet/grupos');
                 this.grupos = response.data
+                this.grupos = this.grupos.sort((a, b) => a.nomeGrupo.localeCompare(b.nomeGrupo));
             } catch (error) {
                 console.error('Erro ao buscar grupos:', error);
             }
