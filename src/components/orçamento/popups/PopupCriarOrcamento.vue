@@ -18,10 +18,10 @@
                     <label>Fonte:</label>
                     <select v-model="fonte" required>
                         <option value="" disabled>Selecione</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="google">Google</option>
-                        <option value="site">Site</option>
-                        <option value="indicacao">Indicação</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Google">Google</option>
+                        <option value="Site">Site</option>
+                        <option value="Indicação">Indicação</option>
                     </select>
                     <label class="checkbox-label">
                         <input type="checkbox" v-model="patrocinado">Patrocinado
@@ -39,7 +39,7 @@
                             <select v-model="estado" required>
                                 <option value="" disabled>Estado</option>
                                 <option v-for="estado in estados" :key="estado.id" :value="estado.sigla">{{ estado.sigla
-                                    }}
+                                }}
                                 </option>
                             </select>
                         </div>
@@ -48,7 +48,7 @@
                             <select v-model="cidade" required>
                                 <option value="" disabled>Selecione uma cidade...</option>
                                 <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">{{ cidade.nome
-                                    }}
+                                }}
                                 </option>
                             </select>
                         </div>
@@ -69,14 +69,14 @@
                     <select v-model="cardapioSelecionado" required>
                         <option v-for="cardapio in cardapios" :key="cardapio.idCardapio" :value="cardapio">{{
                             cardapio.nomeCardapio
-                        }}
+                            }}
                         </option>
                     </select>
                     <label>Cerveja:</label>
                     <select v-model="cervejaSelecionada" required>
                         <option v-for="cerveja in cervejas" :key="cerveja.idCerveja" :value="cerveja">{{
                             cerveja.nome
-                        }}
+                            }}
                         </option>
                     </select>
                     <label class="checkbox-label">
@@ -85,7 +85,7 @@
                     <select v-model="barSelecionado" :disabled="!barEnabled" required>
                         <option v-for="bar in cardapioBar" :key="bar.idCardapioBar" :value="bar">{{
                             bar.nomeCardapioBar
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>

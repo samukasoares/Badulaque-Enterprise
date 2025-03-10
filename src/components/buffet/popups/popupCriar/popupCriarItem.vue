@@ -41,7 +41,7 @@ export default defineComponent({
             grupos: [] as Grupo[],
             nome: '',
             unidade: '',
-            baseReceita: '100',
+            baseReceita: 100,
             consumoPorPessoa: '',
             grupo: '' as number | string
         };

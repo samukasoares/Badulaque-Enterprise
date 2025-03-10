@@ -231,6 +231,8 @@
                         <input v-model="sinalAVista" :disabled="!isEditing">
                         <label>Valor:</label>
                         <input v-model="valorAVista" disabled>
+
+                        <button class="submit-button" @click.prevent="recalcularOrcamento">Recalcular Orçamento</button>
                     </div>
                 </div>
             </div>
@@ -961,6 +963,108 @@ export default defineComponent({
                 await gerarPDFDoHtml(template, this.referencia);
             } catch (error) {
                 console.error('Erro ao gerar o PDF:', error);
+            }
+        },
+        async recalcularOrcamento() {
+            // Mapeia os opcionais (os já selecionados e os adicionados)
+            const UpdateOpcionais = [
+                ...this.opcionaisSelecionados.map((opcional) => ({
+                    Opcional_idOpcional: opcional.Opcional.idOpcional,
+                    valorOrcamento: this.removerFormatacaoMonetaria(opcional.valorOrcamento.toString()),
+                    porPessoa: opcional.Opcional.porPessoa
+                })),
+                ...this.opcionaisAdicionados.map((opcional) => ({
+                    Opcional_idOpcional: opcional.Opcional_idOpcional,
+                    valorOrcamento: this.removerFormatacaoMonetaria(opcional.valor),
+                    porPessoa: opcional.porPessoa
+                })),
+            ];
+
+            // Cria o objeto lead
+            const lead: RegistroLead = {
+                nomeLead: this.nome,
+                celular: this.telefone,
+                email: this.email,
+                cidade: this.cidade
+            };
+
+            // Define as formas de pagamento
+            const formasPagamento: UpdateFormaPagamento[] = [
+                {
+                    nParcelas: parseInt(this.parcelasParcelado, 10),
+                    type: 'Parcelado',
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorParcelas)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalParcelado))
+                },
+                {
+                    nParcelas: parseInt(this.parcelasEntrada, 10),
+                    type: 'Entrada Parcelada',
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorParcelasEntrada)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalEntrada))
+                },
+                {
+                    nParcelas: 1,
+                    type: 'À Vista',
+                    valorParcela: Number(this.removerFormatacaoMonetaria(this.valorAVista)),
+                    valorSinal: Number(this.removerFormatacaoMonetaria(this.sinalAVista))
+                }
+            ];
+
+            // Formata a data do evento
+            const formattedDate = new Date(this.dataEventoRaw).toISOString();
+
+            // Monta o objeto orcamento
+            const orcamento = {
+                idOrcamento: parseInt(this.id),
+                referenciaOrcamento: this.referencia,
+                Cardapio_idCardapio: this.cardapioBuffetId,
+                CardapioBar_idCardapioBar: this.isBarEnabled ? this.tipoBarId : null,
+                Cerveja_idCerveja: this.tipoBebidaId,
+                numConvidados: parseInt(this.convidados),
+                observacoesOrcamento: this.observacoes,
+                dataEvento: formattedDate,
+                ValorEspaco_idValorEspaco: this.valorEspacoId,
+                valorPPBar: this.removerFormatacaoMonetaria(this.valorPorPessoaBar) || 0,
+                valorPPCardapio: this.removerFormatacaoMonetaria(this.valorCardapio),
+                tipoEvento: this.tipoEvento,
+                cerimoniaLocal: this.cerimonia === 'Sim' ? 1 : 0,
+                fonte: this.fonte,
+                Lead_idLead: parseInt(this.leadId),
+                valorEspacoFinal: this.removerFormatacaoMonetaria(this.valorEspaco),
+                valorOpcionais: this.removerFormatacaoMonetaria(this.valorTotalOpcionais),
+                valorPPCerveja: this.removerFormatacaoMonetaria(this.valorCerveja),
+                valorTotalOrcamento: this.removerFormatacaoMonetaria(this.totalProposta)
+            };
+
+            // Monta o objeto de atualização
+            const updateOrcamento: UpdateOrcamento = {
+                orcamento: orcamento,
+                formasPagamento: formasPagamento,
+                lead: lead,
+                opcionais: UpdateOpcionais,
+            };
+
+            try {
+                // Chama o endpoint de recalcular
+                const response = await instance.post('/orcamento/recalcular', updateOrcamento);
+                this.showSuccess('Orçamento recalculado com sucesso!');
+
+                // Atualiza as informações na tela, se necessário
+                if (this.orcamentoId) {
+                    await this.fetchOrcamentoDetails(this.orcamentoId);
+                    this.opcionaisAdicionados = [];
+                }
+
+                await this.fetchOrcamentoDetails(orcamento.idOrcamento);
+            } catch (error) {
+                let errorMessage = 'Erro ao recalcular orçamento!';
+                if (error && typeof error === 'object' && 'response' in error) {
+                    const axiosError = error as { response: { data: { message?: string } } };
+                    if (axiosError.response?.data?.message) {
+                        errorMessage = axiosError.response.data.message;
+                    }
+                }
+                this.showError(errorMessage);
             }
         }
 
