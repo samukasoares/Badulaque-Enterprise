@@ -11,21 +11,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in sortedItensEscolhidos" :key="index">
-                        <td>
-                            <select v-model="item.idItem" @change="atualizarCusto(index)" required>
-                                <option v-for="itemOpcao in itens" :key="itemOpcao.idItem" :value="itemOpcao.idItem">
-                                    {{ itemOpcao.nomeItem }}
-                                </option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" disabled :value="formatarValorMonetario(item.custo)">
-                        </td>
-                        <td>
-                            <button type="button" @click="removerItem(index)" class="botao-remover">Remover</button>
-                        </td>
-                    </tr>
+                    <template v-for="(item, idx) in sortedItensEscolhidos" :key="item.idItem">
+                        <!-- cabeçalho de grupo sempre que for o primeiro do grupo -->
+                        <tr v-if="idx === 0 || sortedItensEscolhidos[idx - 1].Grupo_idGrupo !== item.Grupo_idGrupo"
+                            class="group-header">
+                            <td colspan="3">
+                                {{grupos.find(g => g.idGrupo === item.Grupo_idGrupo)?.nomeGrupo || 'Sem Grupo'}}
+                            </td>
+                        </tr>
+                        <!-- linha normal do item -->
+                        <tr>
+                            <td>
+                                <select v-model="item.idItem" @change="atualizarCusto(idx)" required>
+                                    <option v-for="itemOpcao in itens" :key="itemOpcao.idItem"
+                                        :value="itemOpcao.idItem">
+                                        {{ itemOpcao.nomeItem }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" disabled :value="formatarValorMonetario(item.custo)">
+                            </td>
+                            <td>
+                                <button type="button" @click="removerItem(idx)" class="botao-remover">
+                                    Remover
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
             <button type="button" @click="adicionarItem">Adicionar Item</button><br>
@@ -361,8 +374,37 @@ export default defineComponent({
                 return seqA - seqB; // crescente: menor sequencia primeiro
             });
         },
+
+        groupedItens(): { grupo: Grupo; items: Item[] }[] {
+            // primeiro, um map pra acumular items por idGrupo
+            const map = this.grupos.reduce((acc, g) => {
+                acc[g.idGrupo] = { grupo: g, items: [] as Item[] };
+                return acc;
+            }, {} as Record<number, { grupo: Grupo; items: Item[] }>);
+
+            // distribui cada item em seu grupo
+            for (const item of this.itensEscolhidos) {
+                const bucket = map[item.Grupo_idGrupo];
+                if (bucket) {
+                    bucket.items.push(item);
+                } else {
+                    // se quiser, trate items sem grupo conhecido
+                }
+            }
+
+            // transforma o map em array e ordena pela sequência do grupo
+            return Object.values(map).sort(
+                (a, b) => a.grupo.sequencia - b.grupo.sequencia
+            );
+        }
     },
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.group-header {
+    background-color: #425C4D;
+    font-weight: bold;
+    color: white
+}
+</style>
