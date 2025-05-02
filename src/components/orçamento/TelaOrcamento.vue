@@ -127,13 +127,15 @@ export default defineComponent({
                 });
             }
 
-            // Cria uma cópia do array antes de ordenar para evitar mutações indesejadas
-            const sortedOrcamentos = [...orcamentosFiltrados].sort((a, b) => {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
+            const getTime = (o: OrcamentoBasico): number =>
+                o.enviadoEm
+                    ? new Date(o.enviadoEm).getTime()
+                    : new Date(o.createdAt).getTime();
 
-            return sortedOrcamentos;
+            // único return, já com o fallback para createdAt
+            return [...orcamentosFiltrados].sort((a, b) => getTime(b) - getTime(a));
         },
+
 
         // Dados paginados
         paginatedOrcamentos(): OrcamentoBasico[] {

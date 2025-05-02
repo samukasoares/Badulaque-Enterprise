@@ -11,7 +11,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in itensEscolhidos" :key="index">
+                    <tr v-for="(item, index) in sortedItensEscolhidos" :key="index">
                         <td>
                             <select v-model="item.idItem" @change="atualizarCusto(index)" required>
                                 <option v-for="itemOpcao in itens" :key="itemOpcao.idItem" :value="itemOpcao.idItem">
@@ -63,9 +63,10 @@
 <script lang="ts">
 import instance from '@/common/utils/AuthService';
 import { formatarData } from '@/common/utils/Helper/Data';
+import { fetchGrupos } from '@/common/utils/Helper/FetchMethods';
 import { formatarValorMonetario } from '@/common/utils/Helper/Monetario';
 import { Insumo } from '@/common/utils/Interfaces/Buffet/Buffet';
-import { Item } from '@/common/utils/Interfaces/Buffet/Cardapio';
+import { Grupo, Item } from '@/common/utils/Interfaces/Buffet/Cardapio';
 import { gerarPDFDoHtml } from '@/common/utils/pdfService';
 import { defineComponent } from 'vue';
 
@@ -90,6 +91,7 @@ export default defineComponent({
             itens: [] as Item[],
             itensEscolhidos: [] as Item[],
             convidados: this.convidadosContrato || 0,
+            grupos: [] as Grupo[],
         };
     },
     methods: {
@@ -331,7 +333,8 @@ export default defineComponent({
         }
 
     },
-    mounted() {
+    async mounted() {
+        this.grupos = await fetchGrupos()
         this.fetchItens()
         this.fetchCardapioDefinido()
     },
@@ -339,6 +342,24 @@ export default defineComponent({
     computed: {
         custoTotal(): number {
             return this.itensEscolhidos.reduce((total, item) => total + item.custo, 0);
+        },
+
+        // novo: monta um dicionário idGrupo → sequencia
+        groupOrderMap(): Record<number, number> {
+            return this.grupos.reduce((map, g) => {
+                map[g.idGrupo] = g.sequencia;
+                return map;
+            }, {} as Record<number, number>);
+        },
+
+        // novo: itensEscolhidos ordenados pela sequencia do grupo
+        sortedItensEscolhidos(): Item[] {
+            const orderMap = this.groupOrderMap;
+            return [...this.itensEscolhidos].sort((a, b) => {
+                const seqA = orderMap[a.Grupo_idGrupo] ?? Number.MAX_SAFE_INTEGER;
+                const seqB = orderMap[b.Grupo_idGrupo] ?? Number.MAX_SAFE_INTEGER;
+                return seqA - seqB; // crescente: menor sequencia primeiro
+            });
         },
     },
 });
