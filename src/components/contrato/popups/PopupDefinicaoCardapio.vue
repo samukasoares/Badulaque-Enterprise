@@ -23,17 +23,19 @@
                         <tr>
                             <td>
                                 <select v-model="item.idItem" @change="atualizarCusto(idx)" required>
-                                    <option v-for="itemOpcao in itens" :key="itemOpcao.idItem"
-                                        :value="itemOpcao.idItem">
-                                        {{ itemOpcao.nomeItem }}
-                                    </option>
+                                    <optgroup v-for="group in groupedSelectItems" :key="group.idGrupo"
+                                        :label="group.nomeGrupo">
+                                        <option v-for="opt in group.items" :key="opt.idItem" :value="opt.idItem">
+                                            {{ opt.nomeItem }}
+                                        </option>
+                                    </optgroup>
                                 </select>
                             </td>
                             <td>
                                 <input type="text" disabled :value="formatarValorMonetario(item.custo)">
                             </td>
                             <td>
-                                <button type="button" @click="removerItem(idx)" class="botao-remover">
+                                <button type="button" @click="removerItem(item)" class="botao-remover">
                                     Remover
                                 </button>
                             </td>
@@ -134,8 +136,11 @@ export default defineComponent({
             });
         },
 
-        removerItem(index: number) {
-            this.itensEscolhidos.splice(index, 1);
+        removerItem(item: Item) {
+            const i = this.itensEscolhidos.indexOf(item);
+            if (i > -1) {
+                this.itensEscolhidos.splice(i, 1);
+            }
         },
 
         atualizarCusto(index: number) {
@@ -353,6 +358,16 @@ export default defineComponent({
     },
 
     computed: {
+        groupedSelectItems(): { idGrupo: number; nomeGrupo: string; items: Item[] }[] {
+            return this.grupos
+                .map(g => ({
+                    idGrupo: g.idGrupo,
+                    nomeGrupo: g.nomeGrupo,
+                    items: this.itens.filter(item => item.Grupo_idGrupo === g.idGrupo)
+                }))
+                // opcional: filtrar grupos sem itens
+                .filter(group => group.items.length > 0);
+        },
         custoTotal(): number {
             return this.itensEscolhidos.reduce((total, item) => total + item.custo, 0);
         },
@@ -403,8 +418,9 @@ export default defineComponent({
 
 <style scoped>
 .group-header {
-    background-color: #425C4D;
+    border: 1px solid black;
     font-weight: bold;
-    color: white
+    background-color: #F0E8DD;
+    color: #2F4036;
 }
 </style>
